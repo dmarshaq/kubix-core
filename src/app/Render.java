@@ -26,10 +26,6 @@ public class Render implements Runnable {
     private long window;
     private Matrix4f pr_matrix;
 
-    private Sprite ground1;
-    private Sprite ground2;
-    private Sprite player1;
-
     @Override
     public void run() {
         init();
@@ -148,10 +144,6 @@ public class Render implements Runnable {
         pr_matrix = Matrix4f.orthographic(-2f, 2f, -1.5f, 1.5f, -1f, 1f); // basically camera matrix
         Shader.BASIC.setUniformMatrix4f("pr_matrix", pr_matrix);
         Shader.BASIC.setUniform1i("tex", 1);
-
-//        ground1 = new Sprite(new Rect(0f, -3f, 4f, 2f, 0f), Context.GROUND_TEXTURE_PATH, Shader.BASIC);
-//        ground2 = new Sprite(new Rect(-4f, -3f, 4f, 2f, 0f), Context.GROUND_TEXTURE_PATH, Shader.BASIC);
-//        player1 = new Sprite(new Rect(0f, -1f, 41f / 64f * 2, 31f / 64f * 2, 0f), Context.PLAYER_TEXTURE_PATH, Shader.BASIC);
     }
 
     private void renderSnapshot() {
@@ -160,10 +152,6 @@ public class Render implements Runnable {
         renderCamera();
         renderEntities();
         renderEnvironment();
-
-//        ground1.render();
-//        ground2.render();
-//        player1.render();
     }
 
     private void renderEntities() {
