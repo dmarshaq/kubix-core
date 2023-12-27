@@ -37,7 +37,7 @@ public class Render implements Runnable {
 
         renderInit();
 
-        while(Context.isRunning()) {
+        while(GameContext.isRunning()) {
             // do some render
             render();
             synchronized (this) {
@@ -73,7 +73,7 @@ public class Render implements Runnable {
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE); // the window will be resizable
 
         // Create the window
-        window = glfwCreateWindow(Context.SCREEN_WIDTH, Context.SCREEN_HEIGHT, Context.TITLE, NULL, NULL);
+        window = glfwCreateWindow(GameContext.SCREEN_WIDTH, GameContext.SCREEN_HEIGHT, GameContext.TITLE, NULL, NULL);
         if ( window == NULL )
             throw new RuntimeException("Failed to create the GLFW window");
 
@@ -93,8 +93,8 @@ public class Render implements Runnable {
             // Center the window
             glfwSetWindowPos(
                     window,
-                    (vidmode.width() - Context.SCREEN_WIDTH) / 2,
-                    (vidmode.height() - Context.SCREEN_HEIGHT) / 2
+                    (vidmode.width() - GameContext.SCREEN_WIDTH) / 2,
+                    (vidmode.height() - GameContext.SCREEN_HEIGHT) / 2
             );
         } // the stack frame is popped automatically
 
@@ -169,36 +169,36 @@ public class Render implements Runnable {
     private void renderEntities() {
         int[] id = data.ENTITY_ID;
         for (int i = 0; i < id.length; i++) {
-            if (Context.ENTITY_SPRITE[id[i]] == null) {
-                switch (Context.ENTITY_TYPE[id[i]]) {
+            if (GameContext.ENTITY_SPRITE[id[i]] == null) {
+                switch (GameContext.ENTITY_TYPE[id[i]]) {
                     case PLAYER:
-                        Context.ENTITY_SPRITE[id[i]] = new Sprite(new Rect(Context.ENTITY_POSITION[id[i]], Context.PLAYER_WIDTH, Context.PLAYER_HEIGHT), Context.PLAYER_TEXTURE_PATH, Shader.BASIC);
+                        GameContext.ENTITY_SPRITE[id[i]] = new Sprite(new Rect(GameContext.ENTITY_POSITION[id[i]], GameContext.PLAYER_WIDTH, GameContext.PLAYER_HEIGHT), GameContext.PLAYER_TEXTURE_PATH, Shader.BASIC);
                         break;
                     case SLIME:
-                        Context.ENTITY_SPRITE[id[i]] = new Sprite(new Rect(Context.ENTITY_POSITION[id[i]], Context.SLIME_WIDTH, Context.SLIME_HEIGHT), Context.SLIME_TEXTURE_PATH, Shader.BASIC);
+                        GameContext.ENTITY_SPRITE[id[i]] = new Sprite(new Rect(GameContext.ENTITY_POSITION[id[i]], GameContext.SLIME_WIDTH, GameContext.SLIME_HEIGHT), GameContext.SLIME_TEXTURE_PATH, Shader.BASIC);
                         break;
                 }
             }
-            Context.ENTITY_SPRITE[id[i]].setPosition(Context.ENTITY_POSITION[id[i]]);
-            switch (Context.ENTITY_TYPE[id[i]]) {
+            GameContext.ENTITY_SPRITE[id[i]].setPosition(GameContext.ENTITY_POSITION[id[i]]);
+            switch (GameContext.ENTITY_TYPE[id[i]]) {
                 case PLAYER:
-                    Context.ENTITY_SPRITE[id[i]].flipY(Context.ENTITY_FLIP[id[i]], MathJ.pixelToWorld(-9));
+                    GameContext.ENTITY_SPRITE[id[i]].flipY(GameContext.ENTITY_FLIP[id[i]], MathJ.pixelToWorld(-9));
                     break;
                 case SLIME:
-                    Context.ENTITY_SPRITE[id[i]].flipY(Context.ENTITY_FLIP[id[i]]);
+                    GameContext.ENTITY_SPRITE[id[i]].flipY(GameContext.ENTITY_FLIP[id[i]]);
                     break;
             }
-            Context.ENTITY_SPRITE[id[i]].render();
+            GameContext.ENTITY_SPRITE[id[i]].render();
         }
     }
 
     private void renderEnvironment() {
         int[] id = data.CHUNKS_ID;
         for (int i = 0; i < id.length; i++) {
-            if (Context.CHUNKS_SPRITE[id[i]] == null) {
-                Context.CHUNKS_SPRITE[id[i]] = new Sprite(new Rect(Context.CHUNKS_POSITION[id[i]], Context.CHUNKS_WIDTH, Context.CHUNKS_HEIGHT), Context.GROUND_TEXTURE_PATH, Shader.BASIC);
+            if (GameContext.CHUNKS_SPRITE[id[i]] == null) {
+                GameContext.CHUNKS_SPRITE[id[i]] = new Sprite(new Rect(GameContext.CHUNKS_POSITION[id[i]], GameContext.CHUNKS_WIDTH, GameContext.CHUNKS_HEIGHT), GameContext.GROUND_TEXTURE_PATH, Shader.BASIC);
             }
-            Context.CHUNKS_SPRITE[id[i]].render();
+            GameContext.CHUNKS_SPRITE[id[i]].render();
         }
     }
 

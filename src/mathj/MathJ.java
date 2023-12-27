@@ -1,6 +1,6 @@
 package mathj;
 
-import app.Context;
+import app.GameContext;
 
 public interface MathJ {
 	
@@ -50,6 +50,6 @@ public interface MathJ {
 //	}
 
 	static float pixelToWorld(int size) {
-		return (float) size / Context.TILE_SIZE; // 64 is tile size
+		return (float) size / GameContext.TILE_SIZE; // 64 is tile size
 	}
 }

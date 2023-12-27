@@ -9,7 +9,7 @@ import java.util.Arrays;
 
 import static mathj.MathJ.*;
 
-public class Context {
+public class GameContext {
     // SCREEN & TILE SETTINGS
     public static final String TITLE = "2D Platformer";
     public static final int ORIGINAL_TILE_SIZE = 16; // 16 x 16 tile
@@ -69,7 +69,7 @@ public class Context {
     public static final Sprite[] CHUNKS_SPRITE = new Sprite[MAP_SIZE];
 
     // CONSTRUCTOR
-    public Context() {
+    public GameContext() {
         cleanEntityIDs();
 
         buildEnvironment();

@@ -3,7 +3,7 @@ package input;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWKeyCallback;
 
-import static app.Context.MAX_KEYS;
+import static app.GameContext.MAX_KEYS;
 
 public class Input extends GLFWKeyCallback {
 

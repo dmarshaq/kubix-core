@@ -1,6 +1,5 @@
 package app;
 
-import graphics.Sprite;
 import input.Input;
 import input.KeyCode;
 import mathj.MathJ;
@@ -10,16 +9,16 @@ import mathj.Vector3f;
 import java.util.ArrayList;
 
 import static org.lwjgl.glfw.GLFW.*;
-import static app.Context.*;
+import static app.GameContext.*;
 
 public class Update implements Runnable {
 
-    private Context context;
+    private GameContext context;
     private Render render;
     private Snapshot snapshot;
     private float fps;
 
-    public Update(final Context context, final Render render) {
+    public Update(final GameContext context, final Render render) {
         this.context = context;
         this.render = render;
     }
@@ -32,7 +31,7 @@ public class Update implements Runnable {
         double nextUpdateTime = System.nanoTime() + updateInterval;
         double lastFrameTime = 0;
 
-        while (Context.isRunning()) {
+        while (GameContext.isRunning()) {
             double time = System.nanoTime();
             if (lastFrameTime != 0) {
                 DeltaTime.setTime((float) (time - lastFrameTime)); // time diffrence between 2 frames, deltaTime
@@ -41,7 +40,7 @@ public class Update implements Runnable {
             lastFrameTime = time;
 
             if (render.getWindow() != 0 && glfwWindowShouldClose(render.getWindow())) {
-                Context.stopRunning();
+                GameContext.stopRunning();
             }
             // do some job
             snapshot = new Snapshot();
@@ -156,17 +155,6 @@ public class Update implements Runnable {
 
     private void updateCamera() {
         // Camera logic
-//        Vector3f velocity = new Vector3f(0f * DeltaTime.getSeconds(), 0f);
-//        if (Input.keysHold[ KeyCode.getKeyCode(KeyCode.D) ]) {
-//            velocity.x = 1f * DeltaTime.getSeconds();
-//        }
-//        else if (Input.keysHold[ KeyCode.getKeyCode(KeyCode.A) ]) {
-//            velocity.x = -1f * DeltaTime.getSeconds();
-//        }
-//
-//        Vector3f resultant = MathJ.sum2d(context.getCameraFov().getCenter(), velocity);
-//        context.setCameraCenter(resultant);
-
 //        System.out.println("FPS: " + fps);
 
         snapshot.cameraFov = new Rect(context.getCameraFov());

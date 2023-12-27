@@ -1,17 +1,18 @@
-package app;
+import app.GameContext;
+import app.Render;
+import app.Update;
 
-public class Main {
+public class KubixEngine {
     public static void main(String[] args){
 
         Render renderTask = new Render();
         Thread render = new Thread(renderTask);
         render.start();
 
-        Context gameContext = new Context();
+        GameContext gameContext = new GameContext();
 
         Update updateTask = new Update(gameContext, renderTask);
         Thread update = new Thread(updateTask);
-
         update.start();
     }
 }
