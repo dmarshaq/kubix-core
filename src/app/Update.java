@@ -29,7 +29,7 @@ public class Update implements Runnable {
 
     public void run() {
 
-        double updateInterval = 1000000000/FPS;
+        double updateInterval = (double) 1000000000 / FPS;
         double nextUpdateTime = System.nanoTime() + updateInterval;
         double lastFrameTime = 0;
 
@@ -84,11 +84,15 @@ public class Update implements Runnable {
     }
 
     private void updateEntities() {
-        // flags(booleans, isOnFire, ), propeties(health, velocity), positions
-        ArrayList<Integer> entityID = new ArrayList<Integer>();
+        ArrayList<Integer> entityID = new ArrayList<>();
 
         for (int i = 0; i < ENTITY_ID.length; i++) {
-            // check if entity should be nullified, only if it was deleted (a.k.a its id == -1)
+            /*
+             *   ------------------------------------------------------------------------------
+             *   ALL ENTITIES: Switch checks if entity should be nullified, only if it was
+             *   deleted (if it's id == -1).
+             *   ------------------------------------------------------------------------------
+             * */
             switch (ENTITY_ID[i]) {
                 case -1:
                     ENTITY_ID[i] = -2;
@@ -100,52 +104,99 @@ public class Update implements Runnable {
                     break;
                 case -2:
                     break;
+                /*
+                 *   ------------------------------------------------------------------------------
+                 *   ALL ENTITIES: Every other entity will continue to update and possibly
+                 *   be rendered.
+                 *   ------------------------------------------------------------------------------
+                 * */
                 default:
-                    // simple gravity pull
+                    /*
+                     *   ------------------------------------------------------------------------------
+                     *   ALL ENTITIES: Moves all entities down if they are above y = 0 line.
+                     *   ------------------------------------------------------------------------------
+                     * */
                     if (ENTITY_POSITION[i].y > 0) {
                         if (ENTITY_POSITION[i].y < 2f * Time.DeltaTime.getSeconds())
                             ENTITY_POSITION[i].y = 0;
                         else
                             ENTITY_POSITION[i].y -= 2f * Time.DeltaTime.getSeconds();
                     }
+
+                    /*
+                     *   ------------------------------------------------------------------------------
+                     *   ALL ENTITIES: Following switch identifies entity and changes its properties
+                     *   or trigger other events based on it's type.
+                     *   ------------------------------------------------------------------------------
+                     * */
                     switch (ENTITY_TYPE[i]) {
 
+                        /*
+                         *   ------------------------------------------------------------------------------
+                         *   PLAYER CASE
+                         *   ------------------------------------------------------------------------------
+                         * */
                         case PLAYER:
-
+                            // Timer demonstration.
                             if ((timer_player = Time.Timer.countTimer(timer_player)) == 0) {
-
-                                System.out.println("30 second past");
+                                System.out.println("5 second past");
+                                System.out.println("Slime is destroyed");
+                                Destroy(1);
                                 timer_player = -1;
                             }
+
+                            // Simple movement and animation switcher based on key press.
                             Vector3f velocity = new Vector3f();
+
                             if (Input.keysHold[ KeyCode.getKeyCode(KeyCode.D) ]) {
                                 if (ENTITY_FLIP[i])
                                     ENTITY_FLIP[i] = false;
-                                ENTITY_CURRENT_ANIM[i] = Anim.RUN;
-                                velocity.x = 1f * Time.DeltaTime.getSeconds();
+                                ENTITY_CURRENT_ANIM[i] = Anim.PLAYER_RUN;
+                                velocity.x = Player.PLAYER_SPEED * Time.DeltaTime.getSeconds();
                             }
                             else if (Input.keysHold[ KeyCode.getKeyCode(KeyCode.A) ]) {
                                 if (!ENTITY_FLIP[i])
                                     ENTITY_FLIP[i] = true;
-                                ENTITY_CURRENT_ANIM[i] = Anim.RUN;
-                                velocity.x = -1f * Time.DeltaTime.getSeconds();
+                                ENTITY_CURRENT_ANIM[i] = Anim.PLAYER_RUN;
+                                velocity.x = -Player.PLAYER_SPEED * Time.DeltaTime.getSeconds();
                             }
                             else {
-                                ENTITY_CURRENT_ANIM[i] = Anim.IDLE;
+                                ENTITY_CURRENT_ANIM[i] = Anim.PLAYER_IDLE;
                             }
 
                             ENTITY_POSITION[i].copyValues(MathJ.sum2d(ENTITY_POSITION[i], velocity));
+
+                            // Camera positioning based on player's position.
                             context.setCameraCenter(new Vector3f(ENTITY_POSITION[i].x + 0.08f, 0.5f, 0f));
                             break;
 
+                        /*
+                         *   ------------------------------------------------------------------------------
+                         *   SLIME CASE
+                         *   ------------------------------------------------------------------------------
+                         * */
                         case SLIME:
 
                             break;
+
+                        /*
+                         *   ------------------------------------------------------------------------------
+                         *   UNIDENTIFIED ENTITY CASE
+                         *   ------------------------------------------------------------------------------
+                         * */
                         default:
                             break;
                     }
-                    if (MathJ.isInRect(ENTITY_BOUNDING_BOX[i], context.getCameraFov()) && ENTITY_ID[i] > -1)
+
+                    /*
+                     *   ------------------------------------------------------------------------------
+                     *   ALL ENTITIES: Following if statement checks, if entity is in camera fov, if it is,
+                     *   sends it to this update snapshot.
+                     *   ------------------------------------------------------------------------------
+                     * */
+                    if (MathJ.isInRect(ENTITY_BOUNDING_BOX[i], context.getCameraFov()) && ENTITY_ID[i] > -1) {
                         entityID.add(i);
+                    }
             }
         }
 
@@ -153,7 +204,7 @@ public class Update implements Runnable {
     }
 
     private void updateEnvironment() {
-        ArrayList<Integer> chunksID = new ArrayList<Integer>();
+        ArrayList<Integer> chunksID = new ArrayList<>();
 
         for (int i = 0; i < CHUNKS_ID.length; i++) {
             if (MathJ.isInRect(new Rect(CHUNKS_POSITION[i], CHUNKS_WIDTH, CHUNKS_HEIGHT), context.getCameraFov())) {

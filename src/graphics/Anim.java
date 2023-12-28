@@ -1,31 +1,73 @@
 package graphics;
 
+import mathj.Rect;
+
+import java.util.HashMap;
+
+import static app.GameContext.Player.*;
+
 public enum Anim {
-    IDLE (0, "idle"),
-    WALK (1, "walk"),
-    RUN (2, "run"),
-    JUMP (3, "jump"),
-    FALL (4, "fall"),
-    ROLL (5, "roll");
+    PLAYER_IDLE (0, "res/player/player_idle.png", 1000, 5, PLAYER_PIX_WIDTH, PLAYER_PIX_HEIGHT),
+    PLAYER_WALK (1, "res/player/player_walk.png", 1000, 6, PLAYER_PIX_WIDTH, PLAYER_PIX_HEIGHT),
+    PLAYER_RUN (2, "res/player/player_run.png", 800, 6, PLAYER_PIX_WIDTH, PLAYER_PIX_HEIGHT),
+    PLAYER_JUMP (3, "res/player/player_jump.png", 1000, 4, PLAYER_PIX_WIDTH, PLAYER_PIX_HEIGHT),
+    PLAYER_FALL (4, "res/player/player_fall.png", 1000, 4, PLAYER_PIX_WIDTH, PLAYER_PIX_HEIGHT),
+    PLAYER_ROLL (5, "res/player/player_roll.png", 1000, 11, PLAYER_PIX_WIDTH, PLAYER_PIX_HEIGHT);
 
 
-    private int id;
-    private String name;
+    private int index; // corresponds to array index in animation list
 
-    Anim(int id, String name) {
-        this.id = id;
-        this.name = name;
+    private String animPath;
+    private float duration;
+    private int framesInAnim;
+    private int framePixWidth;
+    private int framePixHeight;
+
+    Anim(int index, String animPath, float duration, int framesInAnim, int framePixWidth, int framePixHeight) {
+        this.index = index;
+        this.animPath = animPath;
+        this.duration = duration;
+        this.framesInAnim = framesInAnim;
+        this.framePixWidth = framePixWidth;
+        this.framePixHeight = framePixHeight;
     }
 
-    public static int getID(Anim anim) {
-        return anim.id;
+    public int getIndex() {
+        return index;
     }
 
-    public static Anim getAnim(String name) {
-        for (Anim anim : Anim.values()) {
-            if (anim.name == name) return anim;
+    public String getAnimPath() {
+        return animPath;
+    }
+
+    public float getDuration() {
+        return duration;
+    }
+
+    public int getFramesInAnim() {
+        return framesInAnim;
+    }
+
+    public int getFramePixWidth() {
+        return framePixWidth;
+    }
+
+    public int getFramePixHeight() {
+        return framePixHeight;
+    }
+
+    public static Anim getIdleAnimInList(HashMap<Anim, Texture[]> anims) {
+        for (Anim anim : anims.keySet()) {
+            if (anim.index == 0) return anim;
         }
         return null;
     }
+
+//    public static Anim getAnim(String name) {
+//        for (Anim anim : Anim.values()) {
+//            if (anim.name == name) return anim;
+//        }
+//        return null;
+//    }
 
 }

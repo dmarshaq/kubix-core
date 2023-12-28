@@ -147,7 +147,6 @@ public class Render implements Runnable {
     }
 
     private void renderSnapshot() {
-        // data
 
         renderCamera();
         renderEntities();
@@ -156,52 +155,96 @@ public class Render implements Runnable {
 
     private void renderEntities() {
         int[] id = data.ENTITY_ID;
-        for (int i = 0; i < id.length; i++) {
-            if (GameContext.ENTITY_SPRITE[id[i]] == null) {
-                switch (GameContext.ENTITY_TYPE[id[i]]) {
+        for (int i : id) {
+
+            /*
+             *   ------------------------------------------------------------------------------
+             *   ALL ENTITIES: If sprite for the entity wasn't yet created,
+             *   creates it and assigns for the entity.
+             *   ------------------------------------------------------------------------------
+             * */
+            if (GameContext.ENTITY_SPRITE[i] == null) {
+                switch (GameContext.ENTITY_TYPE[i]) {
                     case PLAYER:
-                        GameContext.ENTITY_SPRITE[id[i]] = new Sprite(new Rect(GameContext.ENTITY_POSITION[id[i]], GameContext.PLAYER_WIDTH, GameContext.PLAYER_HEIGHT), GameContext.PLAYER_ANIM_PATHS, GameContext.PLAYER_FRAME_SIZE, GameContext.PLAYER_FRAMES_PER_ANIM, GameContext.PLAYER_ANIM_DURATION, Shader.BASIC);
-//                        GameContext.ENTITY_SPRITE[id[i]] = new Sprite(new Rect(GameContext.ENTITY_POSITION[id[i]], GameContext.PLAYER_WIDTH, GameContext.PLAYER_HEIGHT), GameContext.PLAYER_ANIM_PATHS[0][1], Shader.BASIC);
+                        GameContext.ENTITY_SPRITE[i] = new Sprite(new Rect(GameContext.ENTITY_POSITION[i], MathJ.pixelToWorld(GameContext.Player.PLAYER_PIX_WIDTH), MathJ.pixelToWorld(GameContext.Player.PLAYER_PIX_HEIGHT)), GameContext.Player.PLAYER_ANIMATIONS, Shader.BASIC);
                         break;
                     case SLIME:
-                        GameContext.ENTITY_SPRITE[id[i]] = new Sprite(new Rect(GameContext.ENTITY_POSITION[id[i]], GameContext.SLIME_WIDTH, GameContext.SLIME_HEIGHT), GameContext.SLIME_TEXTURE_PATH, Shader.BASIC);
+                        GameContext.ENTITY_SPRITE[i] = new Sprite(new Rect(GameContext.ENTITY_POSITION[i], GameContext.Slime.SLIME_WIDTH, GameContext.Slime.SLIME_HEIGHT), GameContext.Slime.SLIME_TEXTURE_PATH, Shader.BASIC);
                         break;
                 }
             }
-            GameContext.ENTITY_SPRITE[id[i]].setPosition(GameContext.ENTITY_POSITION[id[i]]);
-            switch (GameContext.ENTITY_TYPE[id[i]]) {
+            GameContext.ENTITY_SPRITE[i].setPosition(GameContext.ENTITY_POSITION[i]);
+
+
+            /*
+             *   ------------------------------------------------------------------------------
+             *   ALL ENTITIES: Following switch identifies entity and prepares its render
+             *   properties based on it's type.
+             *   ------------------------------------------------------------------------------
+             * */
+            switch (GameContext.ENTITY_TYPE[i]) {
+
+                /*
+                 *   ------------------------------------------------------------------------------
+                 *   PLAYER CASE
+                 *   ------------------------------------------------------------------------------
+                 * */
                 case PLAYER:
-                    GameContext.ENTITY_SPRITE[id[i]].flipY(GameContext.ENTITY_FLIP[id[i]], MathJ.pixelToWorld(-9));
-                    if (GameContext.ENTITY_SPRITE[id[i]].hasAnim()) {
-                        if (GameContext.ENTITY_SPRITE[id[i]].getCurrentAnim() != GameContext.ENTITY_CURRENT_ANIM[id[i]]) {
-                            GameContext.ENTITY_SPRITE[id[i]].setCurrentAnim(GameContext.ENTITY_CURRENT_ANIM[id[i]]);
+                    GameContext.ENTITY_SPRITE[i].flipY(GameContext.ENTITY_FLIP[i], -MathJ.pixelToWorld(8));
+                    if (GameContext.ENTITY_SPRITE[i].hasAnim()) {
+
+                        // Checks if new animation was ordered to play, if true, sets this animation to entity's sprite.
+                        if (GameContext.ENTITY_SPRITE[i].getCurrentAnim() != GameContext.ENTITY_CURRENT_ANIM[i]) {
+                            GameContext.ENTITY_SPRITE[i].setCurrentAnim(GameContext.ENTITY_CURRENT_ANIM[i]);
                         }
+
+
+                        // Easing will dictate at what time each frame occurs based on easing function.
                         MathJ.Easing easing = MathJ.Easing.LINEAR;
-                        switch (GameContext.ENTITY_SPRITE[id[i]].getCurrentAnim()) {
-                            case IDLE -> easing = MathJ.Easing.EASE_IN_OUT_BOUNCE;
-                            case RUN -> easing = MathJ.Easing.EASE_IN_OUT_SINE;
+                        switch (GameContext.ENTITY_SPRITE[i].getCurrentAnim()) {
+                            case PLAYER_IDLE -> easing = MathJ.Easing.LINEAR;
+                            case PLAYER_RUN -> easing = MathJ.Easing.LINEAR;
                         }
-                        GameContext.ENTITY_SPRITE[id[i]].cycleCurrentAnim(easing);
+                        GameContext.ENTITY_SPRITE[i].cycleCurrentAnim(easing);
                     }
                     break;
+
+                /*
+                 *   ------------------------------------------------------------------------------
+                 *   SLIME CASE
+                 *   ------------------------------------------------------------------------------
+                 * */
                 case SLIME:
-                    GameContext.ENTITY_SPRITE[id[i]].flipY(GameContext.ENTITY_FLIP[id[i]]);
+                    GameContext.ENTITY_SPRITE[i].flipY(GameContext.ENTITY_FLIP[i]);
                     break;
+
             }
-            GameContext.ENTITY_SPRITE[id[i]].render();
+            GameContext.ENTITY_SPRITE[i].render();
         }
     }
 
+    /*
+     *   ------------------------------------------------------------------------------
+     *   ENVIRONMENT: Simple render of each Chunk sprites, also makes sure that newly
+     *   loaded chunks get their new Sprites.
+     *   ------------------------------------------------------------------------------
+     * */
     private void renderEnvironment() {
         int[] id = data.CHUNKS_ID;
-        for (int i = 0; i < id.length; i++) {
-            if (GameContext.CHUNKS_SPRITE[id[i]] == null) {
-                GameContext.CHUNKS_SPRITE[id[i]] = new Sprite(new Rect(GameContext.CHUNKS_POSITION[id[i]], GameContext.CHUNKS_WIDTH, GameContext.CHUNKS_HEIGHT), GameContext.GROUND_TEXTURE_PATH, Shader.BASIC);
+        for (int i : id) {
+            if (GameContext.CHUNKS_SPRITE[i] == null) {
+                GameContext.CHUNKS_SPRITE[i] = new Sprite(new Rect(GameContext.CHUNKS_POSITION[i], GameContext.CHUNKS_WIDTH, GameContext.CHUNKS_HEIGHT), GameContext.GROUND_TEXTURE_PATH, Shader.BASIC);
             }
-            GameContext.CHUNKS_SPRITE[id[i]].render();
+            GameContext.CHUNKS_SPRITE[i].render();
         }
     }
 
+    /*
+     *   ------------------------------------------------------------------------------
+     *   CAMERA: this function takes camera's property from last update snapshot and
+     *   assigns it to pr_matrix which applies to Sprites with Basic shader.
+     *   ------------------------------------------------------------------------------
+     * */
     private void renderCamera() {
         Rect fov = data.cameraFov;
         Vector3f camPos = fov.getCenter();

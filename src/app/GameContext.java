@@ -7,8 +7,8 @@ import mathj.RectComponent;
 import mathj.Vector3f;
 
 import java.util.Arrays;
-import java.util.HashMap;
 
+import static graphics.Anim.*;
 import static mathj.MathJ.*;
 
 public class GameContext {
@@ -42,27 +42,30 @@ public class GameContext {
     public static final Rect DEFAULT_BOUNDING_BOX = new Rect(0f, 0f, 1f, 1f, 0f);
 
     // PLAYER
-    public static final String PLAYER_TEXTURE_PATH = "res/player/player.png";
-    public static final float PLAYER_WIDTH = pixelToWorld(22);
-    public static final float PLAYER_HEIGHT = pixelToWorld(24);
-    public static final Rect PLAYER_BOUNDING_BOX = new Rect(pixelToWorld(8), 0f, pixelToWorld(21), pixelToWorld(21), 0f);
-    public static final float[] PLAYER_ANIM_DURATION = new float[] {1000, 1000, 1000, 1000, 1000, 1000}; // milisecond
-    public static final int[] PLAYER_FRAMES_PER_ANIM = new int[] {5, 6, 6, 4, 4, 11};
-    public static final Rect PLAYER_FRAME_SIZE = new Rect(new Vector3f(), 22, 24);
-    public static final String[][] PLAYER_ANIM_PATHS = new String[][] {
-        {"idle", "res/player/player_idle.png"},
-        {"walk", "res/player/player_walk.png"},
-        {"run", "res/player/player_run.png"},
-        {"jump", "res/player/player_jump.png"},
-        {"fall", "res/player/player_fall.png"},
-        {"roll", "res/player/player_roll.png"}
-    };
+    public static class Player {
+        public static final int PLAYER_PIX_WIDTH = 22;
+        public static final int PLAYER_PIX_HEIGHT = 24;
+        public static final Rect PLAYER_BOUNDING_BOX = new Rect(pixelToWorld(8), 0f, pixelToWorld(21), pixelToWorld(21), 0f);
+
+        public static final float PLAYER_SPEED = 1.08f;
+
+        public static final Anim[] PLAYER_ANIMATIONS = new Anim[] {
+                PLAYER_IDLE,
+                PLAYER_WALK,
+                PLAYER_RUN,
+                PLAYER_JUMP,
+                PLAYER_FALL,
+                PLAYER_ROLL
+        };
+    }
 
     // SLIME
-    public static final String SLIME_TEXTURE_PATH = "res/slime/slime.png";
-    public static final float SLIME_WIDTH = pixelToWorld(16);
-    public static final float SLIME_HEIGHT = pixelToWorld(16);
-    public static final Rect SLIME_BOUNDING_BOX = new Rect(pixelToWorld(1), 0f, pixelToWorld(14), pixelToWorld(14), 0f);
+    public static class Slime {
+        public static final String SLIME_TEXTURE_PATH = "res/slime/slime.png";
+        public static final float SLIME_WIDTH = pixelToWorld(16);
+        public static final float SLIME_HEIGHT = pixelToWorld(16);
+        public static final Rect SLIME_BOUNDING_BOX = new Rect(pixelToWorld(1), 0f, pixelToWorld(14), pixelToWorld(14), 0f);
+    }
 
     // ENTITIES DATA
     public static final int MAX_ENTITIES = 16;
@@ -85,7 +88,7 @@ public class GameContext {
 
 
     // TIMERS ALL IN MILLISECONDS!
-    public static float timer_player = 30000;
+    public static float timer_player = 5000;
 
     // CONSTRUCTOR
     public GameContext() {
@@ -119,6 +122,7 @@ public class GameContext {
     public static boolean isRunning() {
         return running;
     }
+
     public static int Instantiate(Entity entity, Vector3f position) {
         for (int i = 0; i < MAX_ENTITIES; i++) {
             if (ENTITY_ID[i] == -2) {
@@ -126,17 +130,18 @@ public class GameContext {
                 ENTITY_TYPE[i] = entity;
                 ENTITY_POSITION[i] = position;
                 ENTITY_FLIP[i] = false;
-                ENTITY_CURRENT_ANIM[i] = Anim.IDLE;
 
                 switch (ENTITY_TYPE[i]) {
                     case PLAYER:
-                        ENTITY_BOUNDING_BOX[i] = new RectComponent(PLAYER_BOUNDING_BOX, ENTITY_POSITION[i]);
+                        ENTITY_BOUNDING_BOX[i] = new RectComponent(Player.PLAYER_BOUNDING_BOX, ENTITY_POSITION[i]);
+                        ENTITY_CURRENT_ANIM[i] = Player.PLAYER_ANIMATIONS[0];
                         break;
                     case SLIME:
-                        ENTITY_BOUNDING_BOX[i] = new RectComponent(SLIME_BOUNDING_BOX, ENTITY_POSITION[i]);
+                        ENTITY_BOUNDING_BOX[i] = new RectComponent(Slime.SLIME_BOUNDING_BOX, ENTITY_POSITION[i]);
                         break;
                     default:
                         ENTITY_BOUNDING_BOX[i] = new RectComponent(DEFAULT_BOUNDING_BOX, ENTITY_POSITION[i]);
+                        ENTITY_CURRENT_ANIM[i] = null;
                 }
                 return i;
             }
@@ -147,20 +152,30 @@ public class GameContext {
         return -1;
     }
 
+    public static void Destroy(int entityID) {
+        if ( ENTITY_ID[entityID] > -1 ) {
+            ENTITY_ID[entityID] = -1;
+        }
+        else {
+            System.out.println("Unable to destroy an instance of an Entity, because it is already destroyed.");
+        }
+    }
 
     public void cleanEntityIDs() {
         Arrays.fill(ENTITY_ID, -2);
     }
+
     public void setCameraCenter(Vector3f pos) {
         cameraFov.setCenter(pos);
     }
+
     public void setCameraFov(float width, float height) {
         cameraFov.width = width;
         cameraFov.height = height;
     }
+
     public Rect getCameraFov() {
         return cameraFov;
     }
-
 
 }
