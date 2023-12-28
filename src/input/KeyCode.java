@@ -21,7 +21,7 @@ public enum KeyCode {
         for (KeyCode e : KeyCode.values()) {
             if (e.old == key) return e.kubix;
         }
-        throw new IllegalArgumentException("Key Code not found!");
+        return -1;
     }
 
     public static int getKeyCode(KeyCode e) {

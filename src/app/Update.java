@@ -1,10 +1,12 @@
 package app;
 
+import graphics.Anim;
 import input.Input;
 import input.KeyCode;
 import mathj.MathJ;
 import mathj.Rect;
 import mathj.Vector3f;
+import time.Time;
 
 import java.util.ArrayList;
 
@@ -34,8 +36,8 @@ public class Update implements Runnable {
         while (GameContext.isRunning()) {
             double time = System.nanoTime();
             if (lastFrameTime != 0) {
-                DeltaTime.setTime((float) (time - lastFrameTime)); // time diffrence between 2 frames, deltaTime
-                fps = (1f / DeltaTime.getSeconds());
+                Time.DeltaTime.setTime((float) (time - lastFrameTime)); // time diffrence between 2 frames, deltaTime
+                fps = (1f / Time.DeltaTime.getSeconds());
             }
             lastFrameTime = time;
 
@@ -101,30 +103,39 @@ public class Update implements Runnable {
                 default:
                     // simple gravity pull
                     if (ENTITY_POSITION[i].y > 0) {
-                        if (ENTITY_POSITION[i].y < 2f * DeltaTime.getSeconds())
+                        if (ENTITY_POSITION[i].y < 2f * Time.DeltaTime.getSeconds())
                             ENTITY_POSITION[i].y = 0;
                         else
-                            ENTITY_POSITION[i].y -= 2f * DeltaTime.getSeconds();
+                            ENTITY_POSITION[i].y -= 2f * Time.DeltaTime.getSeconds();
                     }
                     switch (ENTITY_TYPE[i]) {
 
                         case PLAYER:
+
+                            if ((timer_player = Time.Timer.countTimer(timer_player)) == 0) {
+
+                                System.out.println("30 second past");
+                                timer_player = -1;
+                            }
                             Vector3f velocity = new Vector3f();
                             if (Input.keysHold[ KeyCode.getKeyCode(KeyCode.D) ]) {
                                 if (ENTITY_FLIP[i])
                                     ENTITY_FLIP[i] = false;
-
-                                velocity.x = 1f * DeltaTime.getSeconds();
+                                ENTITY_CURRENT_ANIM[i] = Anim.RUN;
+                                velocity.x = 1f * Time.DeltaTime.getSeconds();
                             }
                             else if (Input.keysHold[ KeyCode.getKeyCode(KeyCode.A) ]) {
                                 if (!ENTITY_FLIP[i])
                                     ENTITY_FLIP[i] = true;
-
-                                velocity.x = -1f * DeltaTime.getSeconds();
+                                ENTITY_CURRENT_ANIM[i] = Anim.RUN;
+                                velocity.x = -1f * Time.DeltaTime.getSeconds();
+                            }
+                            else {
+                                ENTITY_CURRENT_ANIM[i] = Anim.IDLE;
                             }
 
                             ENTITY_POSITION[i].copyValues(MathJ.sum2d(ENTITY_POSITION[i], velocity));
-                            context.setCameraCenter(new Vector3f(ENTITY_POSITION[i].x + 0.25f, 0.5f, 0f));
+                            context.setCameraCenter(new Vector3f(ENTITY_POSITION[i].x + 0.08f, 0.5f, 0f));
                             break;
 
                         case SLIME:

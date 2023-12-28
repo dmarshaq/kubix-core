@@ -14,7 +14,9 @@ public class Input extends GLFWKeyCallback {
 
     @Override
     public void invoke(long window, int key, int scancode, int action, int mods) {
-        keysPress[KeyCode.getKeyCode(key)] = action == GLFW.GLFW_PRESS;
-        keysHold[KeyCode.getKeyCode(key)] = action != GLFW.GLFW_RELEASE;
+        if (KeyCode.getKeyCode(key) != -1) {
+            keysPress[KeyCode.getKeyCode(key)] = action == GLFW.GLFW_PRESS;
+            keysHold[KeyCode.getKeyCode(key)] = action != GLFW.GLFW_RELEASE;
+        }
     }
 }

@@ -160,7 +160,8 @@ public class Render implements Runnable {
             if (GameContext.ENTITY_SPRITE[id[i]] == null) {
                 switch (GameContext.ENTITY_TYPE[id[i]]) {
                     case PLAYER:
-                        GameContext.ENTITY_SPRITE[id[i]] = new Sprite(new Rect(GameContext.ENTITY_POSITION[id[i]], GameContext.PLAYER_WIDTH, GameContext.PLAYER_HEIGHT), GameContext.PLAYER_TEXTURE_PATH, Shader.BASIC);
+                        GameContext.ENTITY_SPRITE[id[i]] = new Sprite(new Rect(GameContext.ENTITY_POSITION[id[i]], GameContext.PLAYER_WIDTH, GameContext.PLAYER_HEIGHT), GameContext.PLAYER_ANIM_PATHS, GameContext.PLAYER_FRAME_SIZE, GameContext.PLAYER_FRAMES_PER_ANIM, GameContext.PLAYER_ANIM_DURATION, Shader.BASIC);
+//                        GameContext.ENTITY_SPRITE[id[i]] = new Sprite(new Rect(GameContext.ENTITY_POSITION[id[i]], GameContext.PLAYER_WIDTH, GameContext.PLAYER_HEIGHT), GameContext.PLAYER_ANIM_PATHS[0][1], Shader.BASIC);
                         break;
                     case SLIME:
                         GameContext.ENTITY_SPRITE[id[i]] = new Sprite(new Rect(GameContext.ENTITY_POSITION[id[i]], GameContext.SLIME_WIDTH, GameContext.SLIME_HEIGHT), GameContext.SLIME_TEXTURE_PATH, Shader.BASIC);
@@ -171,6 +172,17 @@ public class Render implements Runnable {
             switch (GameContext.ENTITY_TYPE[id[i]]) {
                 case PLAYER:
                     GameContext.ENTITY_SPRITE[id[i]].flipY(GameContext.ENTITY_FLIP[id[i]], MathJ.pixelToWorld(-9));
+                    if (GameContext.ENTITY_SPRITE[id[i]].hasAnim()) {
+                        if (GameContext.ENTITY_SPRITE[id[i]].getCurrentAnim() != GameContext.ENTITY_CURRENT_ANIM[id[i]]) {
+                            GameContext.ENTITY_SPRITE[id[i]].setCurrentAnim(GameContext.ENTITY_CURRENT_ANIM[id[i]]);
+                        }
+                        MathJ.Easing easing = MathJ.Easing.LINEAR;
+                        switch (GameContext.ENTITY_SPRITE[id[i]].getCurrentAnim()) {
+                            case IDLE -> easing = MathJ.Easing.EASE_IN_OUT_BOUNCE;
+                            case RUN -> easing = MathJ.Easing.EASE_IN_OUT_SINE;
+                        }
+                        GameContext.ENTITY_SPRITE[id[i]].cycleCurrentAnim(easing);
+                    }
                     break;
                 case SLIME:
                     GameContext.ENTITY_SPRITE[id[i]].flipY(GameContext.ENTITY_FLIP[id[i]]);

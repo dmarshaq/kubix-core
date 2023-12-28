@@ -1,6 +1,9 @@
 package graphics;
 
+import mathj.Rect;
+
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -12,13 +15,20 @@ public class Texture {
     private int textureID;
 
     public Texture(String Path) {
-        textureID = load(Path);
+        textureID = load(Path, null);
     }
 
-    private int load(String path) {
+    public Texture(String Path, Rect cropRegion) {
+        textureID = load(Path, cropRegion);
+    }
+
+    private int load(String path, Rect cropRegion) {
         int[] pixels = null;
         try {
             BufferedImage image = ImageIO.read(new FileInputStream(path));
+            if (cropRegion != null) {
+                image = cropImage(image, cropRegion);
+            }
             width = image.getWidth();
             height = image.getHeight();
             pixels = new int[width * height];
@@ -46,6 +56,17 @@ public class Texture {
         return result;
     }
 
+    private BufferedImage cropImage(BufferedImage img, Rect cropRegion) {
+        BufferedImage image = img.getSubimage((int)cropRegion.getPositionObject().x, (int)cropRegion.getPositionObject().y, (int)cropRegion.width, (int)cropRegion.height);
+
+        BufferedImage copyOfImage = new BufferedImage(image.getWidth(), image.getHeight(), image.getType());
+        Graphics g = copyOfImage.getGraphics();
+        g.drawImage(image, 0, 0, null);
+        g.dispose();
+
+        return copyOfImage;
+    }
+
     public void bind() {
         glBindTexture(GL_TEXTURE_2D, textureID);
     }
@@ -65,4 +86,6 @@ public class Texture {
     public int getID() {
         return textureID;
     }
+
+
 }

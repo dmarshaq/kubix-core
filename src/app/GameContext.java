@@ -1,11 +1,13 @@
 package app;
 
+import graphics.Anim;
 import graphics.Sprite;
 import mathj.Rect;
 import mathj.RectComponent;
 import mathj.Vector3f;
 
 import java.util.Arrays;
+import java.util.HashMap;
 
 import static mathj.MathJ.*;
 
@@ -21,7 +23,7 @@ public class GameContext {
     public static final int SCREEN_HEIGHT = TILE_SIZE * MAX_SCREEN_ROW; // 768px
 
     // FPS
-    public static final int FPS = 240; // frames per second
+    public static final int FPS = 120; // frames per second
 
     // PHYSICS
     public static final float ACCELERATION_GRAVITY = 9.81f; // m/s^2
@@ -41,9 +43,20 @@ public class GameContext {
 
     // PLAYER
     public static final String PLAYER_TEXTURE_PATH = "res/player/player.png";
-    public static final float PLAYER_WIDTH = pixelToWorld(41);
-    public static final float PLAYER_HEIGHT = pixelToWorld(31);
+    public static final float PLAYER_WIDTH = pixelToWorld(22);
+    public static final float PLAYER_HEIGHT = pixelToWorld(24);
     public static final Rect PLAYER_BOUNDING_BOX = new Rect(pixelToWorld(8), 0f, pixelToWorld(21), pixelToWorld(21), 0f);
+    public static final float[] PLAYER_ANIM_DURATION = new float[] {1000, 1000, 1000, 1000, 1000, 1000}; // milisecond
+    public static final int[] PLAYER_FRAMES_PER_ANIM = new int[] {5, 6, 6, 4, 4, 11};
+    public static final Rect PLAYER_FRAME_SIZE = new Rect(new Vector3f(), 22, 24);
+    public static final String[][] PLAYER_ANIM_PATHS = new String[][] {
+        {"idle", "res/player/player_idle.png"},
+        {"walk", "res/player/player_walk.png"},
+        {"run", "res/player/player_run.png"},
+        {"jump", "res/player/player_jump.png"},
+        {"fall", "res/player/player_fall.png"},
+        {"roll", "res/player/player_roll.png"}
+    };
 
     // SLIME
     public static final String SLIME_TEXTURE_PATH = "res/slime/slime.png";
@@ -58,6 +71,7 @@ public class GameContext {
     public static final RectComponent[] ENTITY_BOUNDING_BOX = new RectComponent[MAX_ENTITIES];
     public static final Entity[] ENTITY_TYPE = new Entity[MAX_ENTITIES];
     public static final boolean[] ENTITY_FLIP = new boolean[MAX_ENTITIES];
+    public static final Anim[] ENTITY_CURRENT_ANIM = new Anim[MAX_ENTITIES];
     public static final Sprite[] ENTITY_SPRITE = new Sprite[MAX_ENTITIES];
 
     // ENVIRONMENT DATA
@@ -67,6 +81,11 @@ public class GameContext {
     public static final float CHUNKS_HEIGHT = 1f;
     public static final Vector3f[] CHUNKS_POSITION = new Vector3f[MAP_SIZE];
     public static final Sprite[] CHUNKS_SPRITE = new Sprite[MAP_SIZE];
+
+
+
+    // TIMERS ALL IN MILLISECONDS!
+    public static float timer_player = 30000;
 
     // CONSTRUCTOR
     public GameContext() {
@@ -89,7 +108,7 @@ public class GameContext {
     }
 
     private void instantiateEntities() {
-        Instantiate(Entity.PLAYER, new Vector3f(0f, 10f, 0f));
+        Instantiate(Entity.PLAYER, new Vector3f(0f, 2f, 0f));
         Instantiate(Entity.SLIME, new Vector3f(1f, 5f, 0f));
     }
 
@@ -107,6 +126,7 @@ public class GameContext {
                 ENTITY_TYPE[i] = entity;
                 ENTITY_POSITION[i] = position;
                 ENTITY_FLIP[i] = false;
+                ENTITY_CURRENT_ANIM[i] = Anim.IDLE;
 
                 switch (ENTITY_TYPE[i]) {
                     case PLAYER:
