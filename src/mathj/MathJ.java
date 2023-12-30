@@ -20,11 +20,11 @@ public interface MathJ {
 		return sum2d(a, neg2d(b));
 	}
 
-	static boolean isInRect(Vector3f point, Rect rect) {
+	static boolean touchesRect(Vector3f point, Rect rect) {
 		return rect.getXDomain().isInDomain(point.x) == 0 && rect.getYDomain().isInDomain(point.y) == 0;
 	}
 
-	static boolean isInRect(Rect rect1, Rect rect2) {
+	static boolean touchesRect(Rect rect1, Rect rect2) {
 		for (int i = 0; i < 4; i++) {
 			Vector3f corner = getRectCorner(i, rect1);
 			if (rect2.getXDomain().isInDomain(corner.x) == 0 && rect2.getYDomain().isInDomain(corner.y) == 0) {

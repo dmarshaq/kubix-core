@@ -61,7 +61,7 @@ public class Texture {
     }
 
     private BufferedImage cropImage(BufferedImage img, Rect cropRegion) {
-        BufferedImage image = img.getSubimage((int)cropRegion.getPositionObject().x, (int)cropRegion.getPositionObject().y, (int)cropRegion.width, (int)cropRegion.height);
+        BufferedImage image = img.getSubimage((int)cropRegion.x(), (int)cropRegion.y(), (int)cropRegion.width, (int)cropRegion.height);
 
         BufferedImage copyOfImage = new BufferedImage(image.getWidth(), image.getHeight(), image.getType());
         Graphics g = copyOfImage.getGraphics();

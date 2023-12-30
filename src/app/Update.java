@@ -194,7 +194,7 @@ public class Update implements Runnable {
                      *   sends it to this update snapshot.
                      *   ------------------------------------------------------------------------------
                      * */
-                    if (MathJ.isInRect(ENTITY_BOUNDING_BOX[i], context.getCameraFov()) && ENTITY_ID[i] > -1) {
+                    if (MathJ.touchesRect(ENTITY_BOUNDING_BOX[i], context.getCameraFov()) && ENTITY_ID[i] > -1) {
                         entityID.add(i);
                     }
             }
@@ -207,7 +207,7 @@ public class Update implements Runnable {
         ArrayList<Integer> chunksID = new ArrayList<>();
 
         for (int i = 0; i < CHUNKS_ID.length; i++) {
-            if (MathJ.isInRect(new Rect(CHUNKS_POSITION[i], CHUNKS_WIDTH, CHUNKS_HEIGHT), context.getCameraFov())) {
+            if (MathJ.touchesRect(new Rect(CHUNKS_POSITION[i], CHUNKS_WIDTH, CHUNKS_HEIGHT), context.getCameraFov())) {
                 chunksID.add(i);
             }
         }

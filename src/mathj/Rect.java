@@ -18,7 +18,7 @@ public class Rect {
 	}
 	
 	public Rect(Vector3f pos, float width, float height) {
-		this.position = new Vector3f(pos);
+		this.position = new Vector3f(pos.x, pos.y, pos.z);
 		this.width = width;
 		this.height = height;
 	}
@@ -50,16 +50,23 @@ public class Rect {
 	}
 
 	public Vector3f getPosition() {
-		return new Vector3f(position);
+		return new Vector3f(position.x, position.y, position.z);
 	}
 
-	public Vector3f getPositionObject() {
+	protected Vector3f getPositionObject() {
 		return position;
+	}
+
+	public float x() {
+		return position.x;
+	}
+
+	public float y() {
+		return position.y;
 	}
 
 	public void setPosition(Vector3f pos) {
 		position.copyValues(pos);
 	}
-
 
 }

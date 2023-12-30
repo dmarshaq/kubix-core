@@ -258,7 +258,6 @@ public class Render implements Runnable {
             GameContext.CHUNKS_SPRITE[i].render();
         }
     }
-
     /*
      *   ------------------------------------------------------------------------------
      *   CAMERA: this function takes camera's property from last update snapshot and

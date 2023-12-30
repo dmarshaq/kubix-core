@@ -21,18 +21,6 @@ public final class Vector3int {
 		this.z = z;
 	}
 
-	public Vector3int(Vector3int v) {
-		this.x = v.x;
-		this.y = v.y;
-		this.y = v.z;
-	}
-
-	public Vector3int(Vector3f v) {
-		this.x = (int)v.x;
-		this.y = (int)v.y;
-		this.y = (int)v.z;
-	}
-
 	public void copyValues(Vector3int v) {
 		this.x = v.x;
 		this.y = v.y;
