@@ -26,8 +26,8 @@ public class Shader {
     }
 
     public static void loadAll() {
-        BASIC = new Shader("res/shader/basic.vert", "res/shader/basic.frag");
-        BASIC_UI = new Shader("res/shader/basic_ui.vert", "res/shader/basic_ui.frag");
+        BASIC = new Shader("shader/basic.vert", "shader/basic.frag");
+        BASIC_UI = new Shader("shader/basic_ui.vert", "shader/basic_ui.frag");
     }
 
     public int getUniform(String name) {

@@ -11,6 +11,7 @@ import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
 import java.io.IOException;
 
+import static org.dmarshaq.utils.FileUtils.getResourcePath;
 import static org.lwjgl.opengl.GL11.*;
 
 public class Texture {
@@ -31,7 +32,7 @@ public class Texture {
     private int load(String path, Rect cropRegion) {
         int[] pixels = null;
         try {
-            BufferedImage image = ImageIO.read(new FileInputStream(path));
+            BufferedImage image = ImageIO.read(new FileInputStream(getResourcePath(path)));
             if (cropRegion != null) {
                 image = cropImage(image, cropRegion);
             }

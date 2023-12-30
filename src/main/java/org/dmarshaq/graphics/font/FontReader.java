@@ -1,10 +1,10 @@
 package org.dmarshaq.graphics.font;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.Scanner;
+
+import static org.dmarshaq.utils.FileUtils.getResource;
+
 
 public interface FontReader {
 
@@ -14,7 +14,7 @@ public interface FontReader {
         try {
             int fontCharacterIndex = 0;
             boolean dataFlow = false;
-            Scanner fileReader = new Scanner(new File(filePath));
+            Scanner fileReader = new Scanner(getResource(filePath));
             StringBuilder line = new StringBuilder();
             while (fileReader.hasNextLine()) {
                 line.replace(0, line.length(), fileReader.nextLine());
@@ -42,11 +42,8 @@ public interface FontReader {
                 }
             }
             fileReader.close();
-
-        } catch (FileNotFoundException e){
-            e.printStackTrace();
-        } catch (IOException e){
-            e.printStackTrace();
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
         }
 
         return result;

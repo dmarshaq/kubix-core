@@ -1,15 +1,15 @@
 package org.dmarshaq.utils;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import org.dmarshaq.graphics.font.FontReader;
+
+import java.io.*;
 
 public interface FileUtils {
 
-    static String loadAsString(String file) {
+    static String loadAsString(String filePath) {
         StringBuilder result = new StringBuilder();
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(file));
+            BufferedReader reader = new BufferedReader(new FileReader(getResource(filePath)));
             String buffer = "";
             while ((buffer = reader.readLine()) != null) {
                 result.append(buffer + '\n');
@@ -19,5 +19,13 @@ public interface FileUtils {
             e.printStackTrace();
         }
         return result.toString();
+    }
+
+    static File getResource(String filePath) {
+        return new File(getResourcePath(filePath));
+    }
+
+    static String getResourcePath(String filePath) {
+        return FileUtils.class.getClassLoader().getResource(filePath).getFile();
     }
 }

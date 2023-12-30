@@ -7,12 +7,12 @@ import java.util.HashMap;
 import static org.dmarshaq.app.GameContext.Player.*;
 
 public enum Anim {
-    PLAYER_IDLE (0, "res/player/player_idle.png", 1000, 5, PLAYER_PIX_WIDTH, PLAYER_PIX_HEIGHT),
-    PLAYER_WALK (1, "res/player/player_walk.png", 1000, 6, PLAYER_PIX_WIDTH, PLAYER_PIX_HEIGHT),
-    PLAYER_RUN (2, "res/player/player_run.png", 800, 6, PLAYER_PIX_WIDTH, PLAYER_PIX_HEIGHT),
-    PLAYER_JUMP (3, "res/player/player_jump.png", 1000, 4, PLAYER_PIX_WIDTH, PLAYER_PIX_HEIGHT),
-    PLAYER_FALL (4, "res/player/player_fall.png", 1000, 4, PLAYER_PIX_WIDTH, PLAYER_PIX_HEIGHT),
-    PLAYER_ROLL (5, "res/player/player_roll.png", 1000, 11, PLAYER_PIX_WIDTH, PLAYER_PIX_HEIGHT);
+    PLAYER_IDLE (0, "player/player_idle.png", 1000, 5, PLAYER_PIX_WIDTH, PLAYER_PIX_HEIGHT),
+    PLAYER_WALK (1, "player/player_walk.png", 1000, 6, PLAYER_PIX_WIDTH, PLAYER_PIX_HEIGHT),
+    PLAYER_RUN (2, "player/player_run.png", 800, 6, PLAYER_PIX_WIDTH, PLAYER_PIX_HEIGHT),
+    PLAYER_JUMP (3, "player/player_jump.png", 1000, 4, PLAYER_PIX_WIDTH, PLAYER_PIX_HEIGHT),
+    PLAYER_FALL (4, "player/player_fall.png", 1000, 4, PLAYER_PIX_WIDTH, PLAYER_PIX_HEIGHT),
+    PLAYER_ROLL (5, "player/player_roll.png", 1000, 11, PLAYER_PIX_WIDTH, PLAYER_PIX_HEIGHT);
 
 
     private int index; // corresponds to array index in animation list

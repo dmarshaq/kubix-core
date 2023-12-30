@@ -14,6 +14,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 import static org.dmarshaq.app.GameContext.*;
+import static org.dmarshaq.utils.FileUtils.getResourcePath;
 
 
 public class Font {
@@ -37,7 +38,7 @@ public class Font {
 
         int atlasHeight;
         try {
-            BufferedImage atlas = ImageIO.read(new FileInputStream(fontAtlasPath));
+            BufferedImage atlas = ImageIO.read(new FileInputStream(getResourcePath(fontAtlasPath)));
             atlasHeight = atlas.getHeight();
         } catch (IOException e) {
             throw new RuntimeException(e);

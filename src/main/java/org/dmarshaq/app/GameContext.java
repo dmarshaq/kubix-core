@@ -41,7 +41,7 @@ public class GameContext {
     private final Rect cameraFov = new Rect(0f, -1f, 4f, 3f, 0f);
 
     // ENVIRONMENT
-    public static final String GROUND_TEXTURE_PATH = "res/environment/ground.png";
+    public static final String GROUND_TEXTURE_PATH = "environment/ground.png";
 
     // DEFAULT ENTITY
     public static final Rect DEFAULT_BOUNDING_BOX = new Rect(0f, 0f, 1f, 1f, 0f);
@@ -66,7 +66,7 @@ public class GameContext {
 
     // SLIME
     public static class Slime {
-        public static final String SLIME_TEXTURE_PATH = "res/slime/slime.png";
+        public static final String SLIME_TEXTURE_PATH = "slime/slime.png";
         public static final float SLIME_WIDTH = pixelToWorld(16);
         public static final float SLIME_HEIGHT = pixelToWorld(16);
         public static final Rect SLIME_BOUNDING_BOX = new Rect(pixelToWorld(1), 0f, pixelToWorld(14), pixelToWorld(14), 0f);
@@ -94,11 +94,11 @@ public class GameContext {
     public static final UI GAME_UI = new UI(Matrix4f.orthographic(0f, SCREEN_WIDTH, 0f, SCREEN_HEIGHT, -1f, 1f));
 
     // FONTS
-    public static final String FONT_BASIC_PUP_BLACK_DATA_PATH = "res/font/BasicPupBlack.txt";
-    public static final String FONT_BASIC_PUP_BLACK_ATLAS_PATH = "res/font/BasicPupBlack.png";
+    public static final String FONT_BASIC_PUP_BLACK_DATA_PATH = "font/BasicPupBlack.txt";
+    public static final String FONT_BASIC_PUP_BLACK_ATLAS_PATH = "font/BasicPupBlack.png";
 
-    public static final String FONT_BASIC_PUP_WHITE_DATA_PATH = "res/font/BasicPupWhite.txt";
-    public static final String FONT_BASIC_PUP_WHITE_ATLAS_PATH = "res/font/BasicPupWhite.png";
+    public static final String FONT_BASIC_PUP_WHITE_DATA_PATH = "font/BasicPupWhite.txt";
+    public static final String FONT_BASIC_PUP_WHITE_ATLAS_PATH = "font/BasicPupWhite.png";
 
     // TIMERS ALL IN MILLISECONDS
     public static float timer_player = 5000;
