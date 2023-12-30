@@ -3,6 +3,7 @@
 out/
 libs/
 kubix-engine.iml
+target/
 !**/src/main/**/out/
 !**/src/test/**/out/
 
