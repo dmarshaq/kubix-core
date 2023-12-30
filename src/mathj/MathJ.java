@@ -90,10 +90,11 @@ public interface MathJ {
 			}
 		}
 	}
-//
-//	static int worldToPixel(float size) {
-//		return (int) (size * Context.TILE_SIZE); // 64 is tile size
-//	}
+
+
+	static int worldToPixel(float size) {
+		return (int) (size * GameContext.TILE_SIZE); // 64 is tile size
+	}
 
 	static float pixelToWorld(int size) {
 		return (float) size / GameContext.TILE_SIZE; // 64 is tile size

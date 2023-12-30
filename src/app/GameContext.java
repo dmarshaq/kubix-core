@@ -2,6 +2,11 @@ package app;
 
 import graphics.Anim;
 import graphics.Sprite;
+import graphics.font.Character;
+import graphics.font.Font;
+import graphics.font.FontReader;
+import graphics.ui.UI;
+import mathj.Matrix4f;
 import mathj.Rect;
 import mathj.RectComponent;
 import mathj.Vector3f;
@@ -85,8 +90,15 @@ public class GameContext {
     public static final Vector3f[] CHUNKS_POSITION = new Vector3f[MAP_SIZE];
     public static final Sprite[] CHUNKS_SPRITE = new Sprite[MAP_SIZE];
 
+    // USER INTERFACE
+    public static final UI GAME_UI = new UI(Matrix4f.orthographic(0f, SCREEN_WIDTH, 0f, SCREEN_HEIGHT, -1f, 1f));
 
+    // FONT
+    public static final String FONT_BASIC_PUP_BLACK_DATA_PATH = "res/font/BasicPupBlack.txt";
+    public static final String FONT_BASIC_PUP_BLACK_ATLAS_PATH = "res/font/BasicPupBlack.png";
 
+    public static final String FONT_BASIC_PUP_WHITE_DATA_PATH = "res/font/BasicPupWhite.txt";
+    public static final String FONT_BASIC_PUP_WHITE_ATLAS_PATH = "res/font/BasicPupWhite.png";
     // TIMERS ALL IN MILLISECONDS!
     public static float timer_player = 5000;
 
@@ -111,8 +123,9 @@ public class GameContext {
     }
 
     private void instantiateEntities() {
-        Instantiate(Entity.PLAYER, new Vector3f(0f, 2f, 0f));
+        Instantiate(Entity.PLAYER, new Vector3f(0f, 10f, 0f));
         Instantiate(Entity.SLIME, new Vector3f(1f, 5f, 0f));
+
     }
 
     // PUBLIC METHODS

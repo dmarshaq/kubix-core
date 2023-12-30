@@ -22,6 +22,7 @@ public enum Anim {
     private int framesInAnim;
     private int framePixWidth;
     private int framePixHeight;
+    private Texture[] textures;
 
     Anim(int index, String animPath, float duration, int framesInAnim, int framePixWidth, int framePixHeight) {
         this.index = index;
@@ -56,18 +57,19 @@ public enum Anim {
         return framePixHeight;
     }
 
+    public Texture[] getTextures() {
+        return textures;
+    }
+
+    public void setTextures(Texture[] tex) {
+        this.textures = tex;
+    }
+
     public static Anim getIdleAnimInList(HashMap<Anim, Texture[]> anims) {
         for (Anim anim : anims.keySet()) {
             if (anim.index == 0) return anim;
         }
         return null;
     }
-
-//    public static Anim getAnim(String name) {
-//        for (Anim anim : Anim.values()) {
-//            if (anim.name == name) return anim;
-//        }
-//        return null;
-//    }
 
 }

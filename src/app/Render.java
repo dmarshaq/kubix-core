@@ -2,17 +2,17 @@ package app;
 
 import graphics.Shader;
 import graphics.Sprite;
+import graphics.Texture;
+import graphics.font.Font;
 import input.Input;
-import mathj.MathJ;
-import mathj.Matrix4f;
-import mathj.Rect;
-import mathj.Vector3f;
+import mathj.*;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.IntBuffer;
 
+import static app.GameContext.*;
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
@@ -69,7 +69,7 @@ public class Render implements Runnable {
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE); // the window will be resizable
 
         // Create the window
-        window = glfwCreateWindow(GameContext.SCREEN_WIDTH, GameContext.SCREEN_HEIGHT, GameContext.TITLE, NULL, NULL);
+        window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, GameContext.TITLE, NULL, NULL);
         if ( window == NULL )
             throw new RuntimeException("Failed to create the GLFW window");
 
@@ -89,8 +89,8 @@ public class Render implements Runnable {
             // Center the window
             glfwSetWindowPos(
                     window,
-                    (vidmode.width() - GameContext.SCREEN_WIDTH) / 2,
-                    (vidmode.height() - GameContext.SCREEN_HEIGHT) / 2
+                    (vidmode.width() - SCREEN_WIDTH) / 2,
+                    (vidmode.height() - SCREEN_HEIGHT) / 2
             );
         } // the stack frame is popped automatically
 
@@ -144,13 +144,25 @@ public class Render implements Runnable {
         pr_matrix = Matrix4f.orthographic(-2f, 2f, -1.5f, 1.5f, -1f, 1f); // basically camera matrix
         Shader.BASIC.setUniformMatrix4f("pr_matrix", pr_matrix);
         Shader.BASIC.setUniform1i("tex", 1);
+        Shader.BASIC.disable();
+        Shader.BASIC_UI.setUniformMatrix4f("pr_matrix", Matrix4f.orthographic(0f, SCREEN_WIDTH, 0f, SCREEN_HEIGHT, -1f, 1f));
+        Shader.BASIC_UI.setUniform1i("tex", 1);
+        Shader.BASIC_UI.disable();
+        // Fonts
+        Font.loadFonts();
+
+        // UI
+        GAME_UI.addText("Kubix Engine v0.1.5", Font.BASIC_PUP_WHITE, new Vector3int(0, SCREEN_HEIGHT, 0));
+        GAME_UI.addText("This system needs some rework!", Font.BASIC_PUP_BLACK, new Vector3int(0, SCREEN_HEIGHT - 12, 0));
+        GAME_UI.addText("But font is still nice.", Font.BASIC_PUP_WHITE, new Vector3int(0, SCREEN_HEIGHT - 24, 0));
+        GAME_UI.addText("Just needs a little flexibility and optimization :) .", Font.BASIC_PUP_WHITE, new Vector3int(0, SCREEN_HEIGHT - 36, 0));
     }
 
     private void renderSnapshot() {
-
         renderCamera();
         renderEntities();
         renderEnvironment();
+        renderUI();
     }
 
     private void renderEntities() {
@@ -169,7 +181,7 @@ public class Render implements Runnable {
                         GameContext.ENTITY_SPRITE[i] = new Sprite(new Rect(GameContext.ENTITY_POSITION[i], MathJ.pixelToWorld(GameContext.Player.PLAYER_PIX_WIDTH), MathJ.pixelToWorld(GameContext.Player.PLAYER_PIX_HEIGHT)), GameContext.Player.PLAYER_ANIMATIONS, Shader.BASIC);
                         break;
                     case SLIME:
-                        GameContext.ENTITY_SPRITE[i] = new Sprite(new Rect(GameContext.ENTITY_POSITION[i], GameContext.Slime.SLIME_WIDTH, GameContext.Slime.SLIME_HEIGHT), GameContext.Slime.SLIME_TEXTURE_PATH, Shader.BASIC);
+                        GameContext.ENTITY_SPRITE[i] = new Sprite(new Rect(GameContext.ENTITY_POSITION[i], GameContext.Slime.SLIME_WIDTH, GameContext.Slime.SLIME_HEIGHT), Texture.SLIME_TEXTURE, Shader.BASIC);
                         break;
                 }
             }
@@ -222,7 +234,15 @@ public class Render implements Runnable {
             GameContext.ENTITY_SPRITE[i].render();
         }
     }
-
+    /*
+     *   ------------------------------------------------------------------------------
+     *   UI: Render of each ui element, accomplished by simply calling ui object's
+     *   update method.
+     *   ------------------------------------------------------------------------------
+     * */
+    private void renderUI() {
+        GameContext.GAME_UI.render();
+    }
     /*
      *   ------------------------------------------------------------------------------
      *   ENVIRONMENT: Simple render of each Chunk sprites, also makes sure that newly
@@ -233,7 +253,7 @@ public class Render implements Runnable {
         int[] id = data.CHUNKS_ID;
         for (int i : id) {
             if (GameContext.CHUNKS_SPRITE[i] == null) {
-                GameContext.CHUNKS_SPRITE[i] = new Sprite(new Rect(GameContext.CHUNKS_POSITION[i], GameContext.CHUNKS_WIDTH, GameContext.CHUNKS_HEIGHT), GameContext.GROUND_TEXTURE_PATH, Shader.BASIC);
+                GameContext.CHUNKS_SPRITE[i] = new Sprite(new Rect(GameContext.CHUNKS_POSITION[i], GameContext.CHUNKS_WIDTH, GameContext.CHUNKS_HEIGHT), Texture.GROUND_TEXTURE, Shader.BASIC);
             }
             GameContext.CHUNKS_SPRITE[i].render();
         }
@@ -250,5 +270,6 @@ public class Render implements Runnable {
         Vector3f camPos = fov.getCenter();
         pr_matrix = Matrix4f.orthographic((fov.width / -2f) + camPos.x, (fov.width / 2f) + camPos.x, (fov.height/ -2f) + camPos.y, (fov.height / 2f) + camPos.y, -1f + camPos.z, 1f + camPos.z);
         Shader.BASIC.setUniformMatrix4f("pr_matrix", pr_matrix);
+        Shader.BASIC.disable();
     }
 }

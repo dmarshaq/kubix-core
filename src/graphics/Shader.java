@@ -13,7 +13,7 @@ public class Shader {
     public static final int VERTEX_ATTRIBUTE = 0;
     public static final int TCORDS_ATTRIBUTE = 1;
 
-    public static Shader BASIC;
+    public static Shader BASIC, BASIC_UI;
 
     private boolean enabled = false;
 
@@ -27,6 +27,7 @@ public class Shader {
 
     public static void loadAll() {
         BASIC = new Shader("res/shader/basic.vert", "res/shader/basic.frag");
+        BASIC_UI = new Shader("res/shader/basic_ui.vert", "res/shader/basic_ui.frag");
     }
 
     public int getUniform(String name) {
@@ -73,4 +74,7 @@ public class Shader {
         enabled = false;
     }
 
+    public int getID() {
+        return ID;
+    }
 }

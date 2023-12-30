@@ -1,5 +1,6 @@
 package graphics;
 
+import app.GameContext;
 import mathj.Rect;
 
 import javax.imageio.ImageIO;
@@ -13,6 +14,9 @@ import static org.lwjgl.opengl.GL11.*;
 public class Texture {
     private int width, height;
     private int textureID;
+
+    public static final Texture SLIME_TEXTURE = new Texture(GameContext.Slime.SLIME_TEXTURE_PATH);
+    public static final Texture GROUND_TEXTURE = new Texture(GameContext.GROUND_TEXTURE_PATH);
 
     public Texture(String Path) {
         textureID = load(Path, null);

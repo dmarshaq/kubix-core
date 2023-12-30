@@ -5,8 +5,11 @@ import time.Time;
 
 import java.util.HashMap;
 
+import static org.lwjgl.opengl.GL11.GL_NO_ERROR;
+import static org.lwjgl.opengl.GL11.glGetError;
+
 public class Sprite {
-    private HashMap<Anim, Texture[]> animList = null;
+    private Anim[] animations;
     private float animTimer = 0;
     private float[] animDuration = null;
     private Anim currentAnim = null;
@@ -18,8 +21,8 @@ public class Sprite {
     private Matrix4f ml_matrix; // will offset sprite on screen based of shape position
     private Matrix4f rf_matrix; // reflection matrix
 
-    public Sprite(Rect rect, String texturePath, Shader shader) {
-        texture = new Texture(texturePath);
+    public Sprite(Rect rect, Texture texture, Shader shader) {
+        this.texture = texture;
 
         this.shader = shader;
         shape = rect;
@@ -31,9 +34,10 @@ public class Sprite {
     }
 
     public Sprite(Rect rect, Anim[] animations, Shader shader) {
-        animList = loadAnimationsIntoTextures(animations);
-        texture = animList.get(Anim.getIdleAnimInList(animList))[0];
-        setCurrentAnim(Anim.getIdleAnimInList(animList));
+        this.animations = animations;
+        loadAnimationsIntoTextures(this.animations);
+        texture = animations[0].getTextures()[0];
+        setCurrentAnim(animations[0]);
 
         this.shader = shader;
         shape = rect;
@@ -45,28 +49,31 @@ public class Sprite {
 
     public void render() {
         ml_matrix = Matrix4f.translate(shape.getPosition());
+
         shader.setUniformMatrix4f("ml_matrix", ml_matrix);
         shader.setUniformMatrix4f("rf_matrix", rf_matrix);
+
         texture.bind();
         shader.enable();
         mesh.render();
         shader.disable();
         texture.unbind();
+//        int error = glGetError();
+//        if (error != GL_NO_ERROR)
+//            System.out.println(error + " < 1");
     }
 
-    private HashMap<Anim, Texture[]> loadAnimationsIntoTextures(Anim[] anims) {
-        HashMap<Anim, Texture[]> result = new HashMap<>();
-
+    private void loadAnimationsIntoTextures(Anim[] anims) {
         for (Anim anim : anims) {
-            String animationPath = anim.getAnimPath();
-            Texture[] animationTextures = new Texture[anim.getFramesInAnim()];
-            for (int x = 0; x < animationTextures.length; x++) {
-                animationTextures[x] = new Texture(animationPath, new Rect(x * anim.getFramePixWidth(), 0, anim.getFramePixWidth(), anim.getFramePixHeight(), 0));
+            if (anim.getTextures() == null) {
+                String animationPath = anim.getAnimPath();
+                Texture[] animationTextures = new Texture[anim.getFramesInAnim()];
+                for (int x = 0; x < animationTextures.length; x++) {
+                    animationTextures[x] = new Texture(animationPath, new Rect(x * anim.getFramePixWidth(), 0, anim.getFramePixWidth(), anim.getFramePixHeight(), 0));
+                }
+                anim.setTextures(animationTextures);
             }
-            result.put(anim, animationTextures);
         }
-
-        return result;
     }
 
     private void buildMesh() {
@@ -117,7 +124,7 @@ public class Sprite {
     }
 
     public boolean hasAnim() {
-        return animList != null;
+        return animations != null;
     }
 
     public void setCurrentAnim(Anim anim) {
@@ -133,12 +140,12 @@ public class Sprite {
         animTimer -= Time.DeltaTime.getMiliSeconds();
 
         float timeRemapped = MathJ.Easing.applyEasing((currentAnim.getDuration() - animTimer) / currentAnim.getDuration(), easing);
-        float keyFramesCount = animList.get(currentAnim).length;
+        float keyFramesCount = currentAnim.getFramesInAnim();
 
         for (int i = (int) (keyFramesCount - 1); i >= 0; i--) {
             float keyFrameTime = i / keyFramesCount;
             if (keyFrameTime <= timeRemapped) {
-                texture = animList.get(currentAnim)[i];
+                texture = currentAnim.getTextures()[i];
                 break;
             }
         }
@@ -146,5 +153,13 @@ public class Sprite {
             animTimer = currentAnim.getDuration();
         }
 
+    }
+
+    public float getHeight() {
+        return shape.height;
+    }
+
+    public float getWidth() {
+        return shape.width;
     }
 }
