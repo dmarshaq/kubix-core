@@ -3,15 +3,15 @@ package org.dmarshaq.graphics.ui;
 
 import org.dmarshaq.graphics.Sprite;
 import org.dmarshaq.graphics.font.Font;
-import org.dmarshaq.mathj.Vector3int;
+import org.dmarshaq.mathj.Vector3f;
 
 public class Text {
     private Sprite[] characters;
     private String text;
-    private Vector3int position;
+    private Vector3f position;
 
 
-    public Text(String text, Font font, Vector3int position) {
+    public Text(String text, Font font, Vector3f position) {
         this.text = text;
         this.position = position;
         characters = font.buildSpriteText(text, position);

@@ -1,10 +1,9 @@
 package org.dmarshaq.graphics.ui;
 
-
 import org.dmarshaq.graphics.Shader;
 import org.dmarshaq.graphics.font.Font;
 import org.dmarshaq.mathj.Matrix4f;
-import org.dmarshaq.mathj.Vector3int;
+import org.dmarshaq.mathj.Vector3f;
 
 import java.util.ArrayList;
 
@@ -19,7 +18,7 @@ public class UI {
 
     }
 
-    public void addText(String text, Font font, Vector3int position) {
+    public void addText(String text, Font font, Vector3f position) {
         textList.add(new Text(text, font, position));
     }
 

@@ -3,29 +3,25 @@ package org.dmarshaq.graphics;
 import org.dmarshaq.mathj.*;
 import org.dmarshaq.time.Time;
 
-import java.util.HashMap;
-
-import static org.lwjgl.opengl.GL11.GL_NO_ERROR;
-import static org.lwjgl.opengl.GL11.glGetError;
-
 public class Sprite {
     private Anim[] animations;
     private float animTimer = 0;
     private float[] animDuration = null;
     private Anim currentAnim = null;
 
-    private Rect shape;
+    private RectComponent rectComponent;
     private VertexArray mesh;
     private Texture texture;
     private Shader shader;
+    private float layer;
     private Matrix4f ml_matrix; // will offset sprite on screen based of shape position
     private Matrix4f rf_matrix; // reflection matrix
 
-    public Sprite(Rect rect, Texture texture, Shader shader) {
+    public Sprite(RectComponent rect, Texture texture, Shader shader) {
         this.texture = texture;
 
         this.shader = shader;
-        shape = rect;
+        rectComponent = rect;
 
         buildMesh();
 
@@ -33,14 +29,14 @@ public class Sprite {
 
     }
 
-    public Sprite(Rect rect, Anim[] animations, Shader shader) {
+    public Sprite(RectComponent rect, Anim[] animations, Shader shader) {
         this.animations = animations;
         loadAnimationsIntoTextures(this.animations);
-        texture = animations[0].getTextures()[0];
-        setCurrentAnim(animations[0]);
+        // Sets first animation in this sprite animation list to be played, no need to set texture, because when animation is played texture is switched automatically.
+        setCurrentAnim(this.animations[0]);
 
         this.shader = shader;
-        shape = rect;
+        rectComponent = rect;
 
         buildMesh();
 
@@ -48,7 +44,8 @@ public class Sprite {
     }
 
     public void render() {
-        ml_matrix = Matrix4f.translate(shape.getPosition());
+        ml_matrix = rectComponent.getReferenceTransform();
+        ml_matrix.multiply( Matrix4f.translate(rectComponent.getOffsetObject()) );
 
         shader.setUniformMatrix4f("ml_matrix", ml_matrix);
         shader.setUniformMatrix4f("rf_matrix", rf_matrix);
@@ -58,9 +55,6 @@ public class Sprite {
         mesh.render();
         shader.disable();
         texture.unbind();
-//        int error = glGetError();
-//        if (error != GL_NO_ERROR)
-//            System.out.println(error + " < 1");
     }
 
     private void loadAnimationsIntoTextures(Anim[] anims) {
@@ -69,7 +63,7 @@ public class Sprite {
                 String animationPath = anim.getAnimPath();
                 Texture[] animationTextures = new Texture[anim.getFramesInAnim()];
                 for (int x = 0; x < animationTextures.length; x++) {
-                    animationTextures[x] = new Texture(animationPath, new Rect(x * anim.getFramePixWidth(), 0, anim.getFramePixWidth(), anim.getFramePixHeight(), 0));
+                    animationTextures[x] = new Texture(animationPath, new Rect(x * anim.getFramePixWidth(), 0, anim.getFramePixWidth(), anim.getFramePixHeight()));
                 }
                 anim.setTextures(animationTextures);
             }
@@ -79,9 +73,9 @@ public class Sprite {
     private void buildMesh() {
         float[] vertices = new float[] {
                 0f, 0f, 0f,
-                0f, shape.height, 0f,
-                shape.width, shape.height, 0f,
-                shape.width, 0f, 0f
+                0f, rectComponent.height, 0f,
+                rectComponent.width, rectComponent.height, 0f,
+                rectComponent.width, 0f, 0f
         };
 
         byte[] indices = new byte[] {
@@ -99,14 +93,18 @@ public class Sprite {
         mesh = new VertexArray(vertices, indices, tcs);
     }
 
-    public void setPosition(Vector3f pos) {
-        shape.setPosition(pos);
+    public void setOffset(Vector2f offset) {
+        rectComponent.setPosition(offset);
+    }
+
+    public void setTransform(Matrix4f transform) {
+        rectComponent.setReferenceTransform(transform);
     }
 
     public void flipY(boolean bool) {
         if (bool) {
-            rf_matrix = Matrix4f.scale(-1, 1);
-            rf_matrix = Matrix4f.translate(new Vector3f(shape.width, 0f, 0f)).multiply(rf_matrix);
+            rf_matrix = Matrix4f.translate(new Vector3f(rectComponent.width, 0f, 0f));
+            rf_matrix.multiply(Matrix4f.scale(-1, 1));
         }
         else {
             rf_matrix = Matrix4f.scale(1, 1);
@@ -115,8 +113,8 @@ public class Sprite {
 
     public void flipY(boolean bool, float xOffset) {
         if (bool) {
-            rf_matrix = Matrix4f.scale(-1, 1);
-            rf_matrix = Matrix4f.translate(new Vector3f(shape.width + xOffset, 0f, 0f)).multiply(rf_matrix);
+            rf_matrix = Matrix4f.translate(new Vector3f(rectComponent.width + xOffset, 0f, 0f));
+            rf_matrix.multiply(Matrix4f.scale(-1, 1));
         }
         else {
             rf_matrix = Matrix4f.scale(1, 1);
@@ -156,10 +154,10 @@ public class Sprite {
     }
 
     public float getHeight() {
-        return shape.height;
+        return rectComponent.height;
     }
 
     public float getWidth() {
-        return shape.width;
+        return rectComponent.width;
     }
 }

@@ -1,66 +1,67 @@
 package org.dmarshaq.mathj;
 
+import static org.dmarshaq.mathj.MathJ.Math2D;
+
 public class RectComponent extends Rect {
-    private Vector3f reference;
+    private Matrix4f reference;
 
     public RectComponent() {
         super();
-        this.reference = new Vector3f();
+        this.reference = new Matrix4f();
     }
-/*
-//    public RectComponent(float x, float y, float width, float height, float z) {
-//        super(x, y, width, height, z);
-//        this.reference = new Vector3f();
-//    }
-//
-//    public RectComponent(Vector3f pos, float width, float height) {
-//        super(pos, width, height);
-//        this.reference = new Vector3f();
-//    }
-//
-//    public RectComponent(float x, float y, float width, float height, float z, Vector3f reference) {
-//        super(x, y, width, height, z);
-//        this.reference = reference;
-//    }
-//
-//    public RectComponent(Vector3f pos, float width, float height, Vector3f reference) {
-//        super(pos, width, height);
-//        this.reference = reference;
-//    }
-*/
-    public RectComponent(Rect rect, Vector3f reference) {
-        super(rect);
+
+    public RectComponent(float xOffset, float yOffset, float width, float height, Matrix4f reference) {
+        super(new Rect(xOffset, yOffset, width, height));
         this.reference = reference;
     }
 
-    public RectComponent(RectComponent rect) {
-        super.setPosition(rect.getPositionObject());
-        this.width = rect.width;
-        this.height = rect.height;
-        this.reference = rect.getReferencePosition();
+    public RectComponent(Rect rect, Matrix4f reference) {
+        super(new Rect(rect));
+        this.reference = reference;
+    }
+
+    public RectComponent(RectComponent rectC) {
+        super.setPosition(rectC.getPositionObject());
+        this.width = rectC.width;
+        this.height = rectC.height;
+        this.reference = rectC.getReferenceTransform();
     }
 
     @Override
-    public Vector3f getPosition() {
-        return MathJ.sum2d(super.getPositionObject(), reference);
+    public Vector2f getPosition() {
+        return new Vector2f(x(), y());
     }
 
     @Override
-    public Vector3f getCenter() {
-        return MathJ.sum2d(super.getCenter(), reference);
+    public float x() {
+        return super.x() + Math2D.toVector2f( Matrix4f.getPosition(reference) ).x;
     }
 
-    public void setReferencePosition(Vector3f refPos) {
-        reference = refPos;
+    @Override
+    public float y() {
+        return super.y() + Math2D.toVector2f( Matrix4f.getPosition(reference) ).y;
     }
 
-    public Vector3f getReferencePosition() {
+    @Override
+    public Vector2f getCenter() {
+        return Math2D.sum(super.getCenter(), Math2D.toVector2f( Matrix4f.getPosition(reference) ) );
+    }
+
+    public Vector2f getOffsetObject() {
+        return super.getPositionObject();
+    }
+
+    public void setReferenceTransform(Matrix4f transform) {
+        reference = transform;
+    }
+
+    public Matrix4f getReferenceTransform() {
         return reference;
     }
 
     @Override
     public String toString() {
-        return "at: " + super.getPositionObject() + " width: " + width + " height: " + height + " refPos: " + reference;
+        return "at: " + super.getPositionObject() + " width: " + width + " height: " + height + " reference: " + reference;
     }
 
 

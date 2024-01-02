@@ -6,10 +6,7 @@ import org.dmarshaq.graphics.font.Character;
 import org.dmarshaq.graphics.font.Font;
 import org.dmarshaq.graphics.font.FontReader;
 import org.dmarshaq.graphics.ui.UI;
-import org.dmarshaq.mathj.Matrix4f;
-import org.dmarshaq.mathj.Rect;
-import org.dmarshaq.mathj.RectComponent;
-import org.dmarshaq.mathj.Vector3f;
+import org.dmarshaq.mathj.*;
 
 import java.util.Arrays;
 
@@ -38,19 +35,19 @@ public class GameContext {
     public static final int MAX_KEYS = 5;
 
     // CAMERA
-    private final Rect cameraFov = new Rect(0f, -1f, 4f, 3f, 0f);
+    private final Rect cameraFov = new Rect(0f, -1f, 4f, 3f);
 
     // ENVIRONMENT
     public static final String GROUND_TEXTURE_PATH = "environment/ground.png";
 
     // DEFAULT ENTITY
-    public static final Rect DEFAULT_BOUNDING_BOX = new Rect(0f, 0f, 1f, 1f, 0f);
+    public static final Rect DEFAULT_BOUNDING_BOX = new Rect(0f, 0f, 1f, 1f);
 
     // PLAYER
     public static class Player {
         public static final int PLAYER_PIX_WIDTH = 22;
         public static final int PLAYER_PIX_HEIGHT = 24;
-        public static final Rect PLAYER_BOUNDING_BOX = new Rect(pixelToWorld(8), 0f, pixelToWorld(21), pixelToWorld(21), 0f);
+        public static final Rect PLAYER_BOUNDING_BOX = new Rect(pixelToWorld(8), 0f, pixelToWorld(21), pixelToWorld(21));
 
         public static final float PLAYER_SPEED = 1.08f;
 
@@ -69,13 +66,13 @@ public class GameContext {
         public static final String SLIME_TEXTURE_PATH = "slime/slime.png";
         public static final float SLIME_WIDTH = pixelToWorld(16);
         public static final float SLIME_HEIGHT = pixelToWorld(16);
-        public static final Rect SLIME_BOUNDING_BOX = new Rect(pixelToWorld(1), 0f, pixelToWorld(14), pixelToWorld(14), 0f);
+        public static final Rect SLIME_BOUNDING_BOX = new Rect(pixelToWorld(1), 0f, pixelToWorld(14), pixelToWorld(14));
     }
 
     // ENTITIES DATA
     public static final int MAX_ENTITIES = 16;
     public static final int[] ENTITY_ID = new int[MAX_ENTITIES];
-    public static final Vector3f[] ENTITY_POSITION = new Vector3f[MAX_ENTITIES];
+    public static final Matrix4f[] ENTITY_TRANSFORM = new Matrix4f[MAX_ENTITIES];
     public static final RectComponent[] ENTITY_BOUNDING_BOX = new RectComponent[MAX_ENTITIES];
     public static final Entity[] ENTITY_TYPE = new Entity[MAX_ENTITIES];
     public static final boolean[] ENTITY_FLIP = new boolean[MAX_ENTITIES];
@@ -94,11 +91,20 @@ public class GameContext {
     public static final UI GAME_UI = new UI(Matrix4f.orthographic(0f, SCREEN_WIDTH, 0f, SCREEN_HEIGHT, -1f, 1f));
 
     // FONTS
+    public static final float FONT_BASIC_PUP_BLACK_SCALE = 2f;
     public static final String FONT_BASIC_PUP_BLACK_DATA_PATH = "font/BasicPupBlack.txt";
     public static final String FONT_BASIC_PUP_BLACK_ATLAS_PATH = "font/BasicPupBlack.png";
 
+    public static final float FONT_BASIC_PUP_WHITE_SCALE = 2f;
     public static final String FONT_BASIC_PUP_WHITE_DATA_PATH = "font/BasicPupWhite.txt";
     public static final String FONT_BASIC_PUP_WHITE_ATLAS_PATH = "font/BasicPupWhite.png";
+
+    // LAYERS
+    public static final class Layer {
+        public static final float DEFAULT = 0.0f;
+        public static final float PLAYER = 0.1f;
+        public static final float UI = 0.5f;
+    }
 
     // TIMERS ALL IN MILLISECONDS
     public static float timer_player = 5000;
@@ -115,17 +121,16 @@ public class GameContext {
     // PRIVATE METHODS
     private void buildEnvironment() {
         float y = 0f - CHUNKS_HEIGHT;
-        float z = 0f;
         for (int i = 0; i < MAP_SIZE; i++) {
             float x = ((MAP_SIZE / -2f) + i) * CHUNKS_WIDTH;
             CHUNKS_ID[i] = i;
-            CHUNKS_POSITION[i] = new Vector3f(x, y, z);
+            CHUNKS_POSITION[i] = new Vector3f(x, y, Layer.DEFAULT);
         }
     }
 
     private void instantiateEntities() {
-        Instantiate(Entity.PLAYER, new Vector3f(0f, 10f, 0f));
-        Instantiate(Entity.SLIME, new Vector3f(1f, 5f, 0f));
+        Instantiate(Entity.PLAYER, new Vector3f(0f, 0f, Layer.PLAYER));
+        Instantiate(Entity.SLIME, new Vector3f(1f, 5f, Layer.DEFAULT));
 
     }
 
@@ -141,29 +146,35 @@ public class GameContext {
         for (int i = 0; i < MAX_ENTITIES; i++) {
             if (ENTITY_ID[i] == -2) {
                 ENTITY_ID[i] = i;
-                ENTITY_TYPE[i] = entity;
-                ENTITY_POSITION[i] = position;
-                ENTITY_FLIP[i] = false;
+                ENTITY_TRANSFORM[i] = Matrix4f.translate(position);
 
-                switch (ENTITY_TYPE[i]) {
-                    case PLAYER:
-                        ENTITY_BOUNDING_BOX[i] = new RectComponent(Player.PLAYER_BOUNDING_BOX, ENTITY_POSITION[i]);
-                        ENTITY_CURRENT_ANIM[i] = Player.PLAYER_ANIMATIONS[0];
-                        break;
-                    case SLIME:
-                        ENTITY_BOUNDING_BOX[i] = new RectComponent(Slime.SLIME_BOUNDING_BOX, ENTITY_POSITION[i]);
-                        break;
-                    default:
-                        ENTITY_BOUNDING_BOX[i] = new RectComponent(DEFAULT_BOUNDING_BOX, ENTITY_POSITION[i]);
-                        ENTITY_CURRENT_ANIM[i] = null;
-                }
-                return i;
+                InstantiateDefaultEntityProperties(entity, i);
+                break;
             }
             else if (i == MAX_ENTITIES - 1) {
                 System.out.println("Unable to create a new instance of an Entity: " + entity + " at position: " + position);
             }
         }
         return -1;
+    }
+
+    private static int InstantiateDefaultEntityProperties(Entity entity, int i) {
+        ENTITY_TYPE[i] = entity;
+        ENTITY_FLIP[i] = false;
+
+        switch (ENTITY_TYPE[i]) {
+            case PLAYER:
+                ENTITY_BOUNDING_BOX[i] = new RectComponent(Player.PLAYER_BOUNDING_BOX, ENTITY_TRANSFORM[i] );
+                ENTITY_CURRENT_ANIM[i] = Player.PLAYER_ANIMATIONS[0];
+                break;
+            case SLIME:
+                ENTITY_BOUNDING_BOX[i] = new RectComponent(Slime.SLIME_BOUNDING_BOX, ENTITY_TRANSFORM[i] );
+                break;
+            default:
+                ENTITY_BOUNDING_BOX[i] = new RectComponent(DEFAULT_BOUNDING_BOX, ENTITY_TRANSFORM[i] );
+                ENTITY_CURRENT_ANIM[i] = null;
+        }
+        return i;
     }
 
     public static void Destroy(int entityID) {
@@ -179,7 +190,7 @@ public class GameContext {
         Arrays.fill(ENTITY_ID, -2);
     }
 
-    public void setCameraCenter(Vector3f pos) {
+    public void setCameraCenter(Vector2f pos) {
         cameraFov.setCenter(pos);
     }
 

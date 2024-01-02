@@ -3,45 +3,47 @@ package org.dmarshaq.mathj;
 import org.dmarshaq.app.GameContext;
 
 public interface MathJ {
-	
-	static float dot(Vector3f a, Vector3f b) {
-		return a.x * b.x + a.y * b.y;
-	}
-	
-	static Vector3f sum2d(Vector3f a, Vector3f b) {
-		return new Vector3f(a.x + b.x, a.y + b.y);
-	}
-	
-	static Vector3f neg2d(Vector3f a) {
-		return new Vector3f(-a.x, -a.y);
-	} 
-	
-	static Vector3f diffrence2d(Vector3f a, Vector3f b) {
-		return sum2d(a, neg2d(b));
-	}
 
-	static boolean touchesRect(Vector3f point, Rect rect) {
-		return rect.getXDomain().isInDomain(point.x) == 0 && rect.getYDomain().isInDomain(point.y) == 0;
-	}
-
-	static boolean touchesRect(Rect rect1, Rect rect2) {
-		for (int i = 0; i < 4; i++) {
-			Vector3f corner = getRectCorner(i, rect1);
-			if (rect2.getXDomain().isInDomain(corner.x) == 0 && rect2.getYDomain().isInDomain(corner.y) == 0) {
-				return true;
-			}
+	final class Math2D {
+		public static float dot(Vector2f a, Vector2f b) {
+			return a.x * b.x + a.y * b.y;
 		}
-		return false;
-	}
 
-	static Vector3f getRectCorner(int cornerId, Rect rect) {
-		return switch (cornerId) {
-			case (0) -> rect.getPosition();
-			case (1) -> MathJ.sum2d(rect.getPosition(), new Vector3f(0, rect.height));
-			case (2) -> MathJ.sum2d(rect.getPosition(), new Vector3f(rect.width, rect.height));
-			case (3) -> MathJ.sum2d(rect.getPosition(), new Vector3f(rect.width, 0));
-			default -> null;
-		};
+		public static Vector2f sum(Vector2f a, Vector2f b) {
+			return new Vector2f(a.x + b.x, a.y + b.y);
+		}
+
+		public static Vector3f sum(Vector3f a, Vector3f b, float layer) {
+			return new Vector3f(a.x + b.x, a.y + b.y, layer);
+		}
+
+		public static void negate(Vector2f v) {
+			v.x = -v.x;
+			v.y = -v.y;
+		}
+
+		public static void negate(Vector3f v) {
+			v.x = -v.x;
+			v.y = -v.y;
+		}
+
+		public static Vector2f diffrence(Vector2f a, Vector2f b) {
+			negate(b);
+			return sum(a, b);
+		}
+
+		public static Vector3f diffrence(Vector3f a, Vector3f b, float layer) {
+			negate(b);
+			return sum(a, b, layer);
+		}
+
+		public static Vector2f toVector2f(Vector3f v) {
+			return new Vector2f(v.x, v.y);
+		}
+
+		public static Vector3f toVector3f(Vector2f v, float layer) {
+			return new Vector3f(v.x, v.y, layer);
+		}
 	}
 
 	// EASING functions

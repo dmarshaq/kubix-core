@@ -1,24 +1,26 @@
 package org.dmarshaq.mathj;
 
+import static org.dmarshaq.mathj.MathJ.Math2D;
+
 public class Rect {
-	private Vector3f position;
+	private Vector2f position;
 	public float width;
 	public float height;
 	
 	public Rect() {
-		this.position = new Vector3f();
+		this.position = new Vector2f();
 		this.width = 0;
 		this.height = 0;
 	}
 	
-	public Rect(float x, float y, float width, float height, float z) {
-		this.position = new Vector3f(x, y, z);
+	public Rect(float x, float y, float width, float height) {
+		this.position = new Vector2f(x, y);
 		this.width = width;
 		this.height = height;
 	}
 	
-	public Rect(Vector3f pos, float width, float height) {
-		this.position = new Vector3f(pos.x, pos.y, pos.z);
+	public Rect(Vector2f pos, float width, float height) {
+		this.position = new Vector2f(pos.x, pos.y);
 		this.width = width;
 		this.height = height;
 	}
@@ -41,19 +43,19 @@ public class Rect {
 		return new Domain(position.y, position.y + height);
 	}
 	
-	public Vector3f getCenter() {
-		return MathJ.sum2d(position, new Vector3f(width/2, height/2));
+	public Vector2f getCenter() {
+		return Math2D.sum(position, new Vector2f(width/2, height/2));
 	}
 
-	public void setCenter(Vector3f pos) {
-		position.copyValues(MathJ.sum2d(pos, new Vector3f(width/-2, height/-2)));
+	public void setCenter(Vector2f pos) {
+		position.copyValues(Math2D.sum(pos, new Vector2f(width/-2, height/-2)));
 	}
 
-	public Vector3f getPosition() {
-		return new Vector3f(position.x, position.y, position.z);
+	public Vector2f getPosition() {
+		return new Vector2f(position.x, position.y);
 	}
 
-	protected Vector3f getPositionObject() {
+	protected Vector2f getPositionObject() {
 		return position;
 	}
 
@@ -65,8 +67,32 @@ public class Rect {
 		return position.y;
 	}
 
-	public void setPosition(Vector3f pos) {
+	public void setPosition(Vector2f pos) {
 		position.copyValues(pos);
+	}
+
+	public boolean touchesRect(Vector2f point) {
+		return getXDomain().isInDomain(point.x) == 0 && getYDomain().isInDomain(point.y) == 0;
+	}
+
+	public boolean touchesRect(Rect rect) {
+		for (int i = 0; i < 4; i++) {
+			Vector2f corner = rect.getRectCorner(i);
+			if (getXDomain().isInDomain(corner.x) == 0 && getYDomain().isInDomain(corner.y) == 0) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public Vector2f getRectCorner(int cornerId) {
+		return switch (cornerId) {
+			case (0) -> getPosition();
+			case (1) -> Math2D.sum(getPosition(), new Vector2f(0, height));
+			case (2) -> Math2D.sum(getPosition(), new Vector2f(width, height));
+			case (3) -> Math2D.sum(getPosition(), new Vector2f(width, 0));
+			default -> null;
+		};
 	}
 
 }

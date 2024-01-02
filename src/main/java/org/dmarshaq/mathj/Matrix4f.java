@@ -1,6 +1,8 @@
 package org.dmarshaq.mathj;
 
 import org.dmarshaq.utils.BufferUtils;
+
+import java.lang.reflect.Array;
 import java.nio.FloatBuffer;
 
 public class Matrix4f {
@@ -34,6 +36,17 @@ public class Matrix4f {
         result.elements[0 + 3 * 4] = (left + right) / (left - right);
         result.elements[1 + 3 * 4] = (bottom + top) / (bottom - top);
         result.elements[2 + 3 * 4] = (near + far) / (near - far);
+
+        return result;
+    }
+
+    public static Matrix4f translate(Vector2f vector) {
+        Matrix4f result = identity();
+
+        result.elements[0 + 3 * 4] = vector.x;
+        result.elements[1 + 3 * 4] = vector.y;
+        result.elements[2 + 3 * 4] = 0;
+        result.elements[3 + 3 * 4] = 1f;
 
         return result;
     }
@@ -73,8 +86,11 @@ public class Matrix4f {
         return result;
     }
 
-    public Matrix4f multiply(Matrix4f matrix) {
-        Matrix4f result = new Matrix4f();
+    public static Vector3f getPosition(Matrix4f matrix) {
+        return new Vector3f(matrix.elements[0 + 3 * 4], matrix.elements[1 + 3 * 4], matrix.elements[2 + 3 * 4]);
+    }
+
+    public void multiply(Matrix4f matrix) {
 
         for (int y = 0; y < 4; y++) {
             for (int x = 0; x < 4; x++) {
@@ -82,11 +98,31 @@ public class Matrix4f {
                 for (int e = 0; e < 4; e++) {
                     sum += this.elements[x + e * 4] * matrix.elements[e + y * 4];
                 }
-                result.elements[x + y * 4] = sum;
+                this.elements[x + y * 4] = sum;
             }
         }
+    }
 
-        return result;
+    public void setPosition(Vector3f vector, float layer) {
+        this.elements[0 + 3 * 4] = vector.x;
+        this.elements[1 + 3 * 4] = vector.y;
+        this.elements[3 + 3 * 4] = 1f;
+        setLayer(layer);
+    }
+
+    public void setPosition(Vector3f vector) {
+        this.elements[0 + 3 * 4] = vector.x;
+        this.elements[1 + 3 * 4] = vector.y;
+        this.elements[3 + 3 * 4] = 1f;
+        setLayer(vector.z);
+    }
+
+    public void setLayer(float layer) {
+        this.elements[2 + 3 * 4] = layer;
+    }
+
+    public void copy(Matrix4f matrix) {
+        this.elements = matrix.elements.clone();
     }
 
     public FloatBuffer toFloatBuffer() {

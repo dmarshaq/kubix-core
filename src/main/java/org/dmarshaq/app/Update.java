@@ -3,14 +3,13 @@ package org.dmarshaq.app;
 import org.dmarshaq.graphics.Anim;
 import org.dmarshaq.input.Input;
 import org.dmarshaq.input.KeyCode;
-import org.dmarshaq.mathj.MathJ;
-import org.dmarshaq.mathj.Rect;
-import org.dmarshaq.mathj.Vector3f;
+import org.dmarshaq.mathj.*;
 import org.dmarshaq.time.Time;
 
 import java.util.ArrayList;
 
 import static org.lwjgl.glfw.GLFW.*;
+import static org.dmarshaq.mathj.MathJ.Math2D;
 import static org.dmarshaq.app.GameContext.*;
 
 public class Update implements Runnable {
@@ -84,7 +83,8 @@ public class Update implements Runnable {
     }
 
     private void updateEntities() {
-        ArrayList<Integer> entityID = new ArrayList<>();
+        // entities to render
+        ArrayList<Integer> entityToRenderID = new ArrayList<>();
 
         for (int i = 0; i < ENTITY_ID.length; i++) {
             /*
@@ -96,7 +96,7 @@ public class Update implements Runnable {
             switch (ENTITY_ID[i]) {
                 case -1:
                     ENTITY_ID[i] = -2;
-                    ENTITY_POSITION[i] = null;
+                    ENTITY_TRANSFORM[i] = null;
                     ENTITY_BOUNDING_BOX[i] = null;
                     ENTITY_TYPE[i] = null;
                     ENTITY_SPRITE[i] = null;
@@ -113,14 +113,23 @@ public class Update implements Runnable {
                 default:
                     /*
                      *   ------------------------------------------------------------------------------
-                     *   ALL ENTITIES: Moves all entities down if they are above y = 0 line.
+                     *   ALL ENTITIES: Following if moves all entities down if they are above y = 0 line.
+                     *
+                     *   IMPORTANT:
+                     *   * Position used throughout update is exact position from the end of the last update
+                     *   * it only assigned once per update in the beginning, the only thing that is changes is
+                     *   * ENTITY_TRANSFORM. This is made to "blend" all unrelated entity changes in position in
+                     *   * single update. This means that unrelated changes will appear to be applied
+                     *   * simultaneously at the end of update.
                      *   ------------------------------------------------------------------------------
                      * */
-                    if (ENTITY_POSITION[i].y > 0) {
-                        if (ENTITY_POSITION[i].y < 2f * Time.DeltaTime.getSeconds())
-                            ENTITY_POSITION[i].y = 0;
+                    Vector3f initialPosition = Matrix4f.getPosition(ENTITY_TRANSFORM[i]);
+
+                    if (initialPosition.y > 0) {
+                        if (initialPosition.y < 2f * Time.DeltaTime.getSeconds())
+                            ENTITY_TRANSFORM[i].setPosition(new Vector3f(initialPosition.x, 0f, initialPosition.z));
                         else
-                            ENTITY_POSITION[i].y -= 2f * Time.DeltaTime.getSeconds();
+                            ENTITY_TRANSFORM[i].multiply(Matrix4f.translate( new Vector2f(0f, -2f * Time.DeltaTime.getSeconds() ) ));
                     }
 
                     /*
@@ -164,10 +173,20 @@ public class Update implements Runnable {
                                 ENTITY_CURRENT_ANIM[i] = Anim.PLAYER_IDLE;
                             }
 
-                            ENTITY_POSITION[i].copyValues(MathJ.sum2d(ENTITY_POSITION[i], velocity));
+                            ENTITY_TRANSFORM[i].multiply( Matrix4f.translate(velocity) );
+//                            ENTITY_POSITION[i].copyValues(MathJ.sum2d(ENTITY_POSITION[i], velocity));
 
                             // Camera positioning based on player's position.
-                            context.setCameraCenter(new Vector3f(ENTITY_POSITION[i].x + 0.08f, 0.5f, 0f));
+                            /*
+                             *   ------------------------------------------------------------------------------
+                             *   IMPORTANT:
+                             *   * For example right here I don't access initialPosition, because camera center
+                             *   * is related to result of transformation right before this next statement.
+                             *   * So in this case I can just access entities most recent position via it's
+                             *   * ENTITY_TRANSFORM.
+                             *   ------------------------------------------------------------------------------
+                             * */
+                            context.setCameraCenter( new Vector2f( Matrix4f.getPosition(ENTITY_TRANSFORM[i]).x + 0.08f, 0.5f ) );
                             break;
 
                         /*
@@ -194,20 +213,36 @@ public class Update implements Runnable {
                      *   sends it to this update snapshot.
                      *   ------------------------------------------------------------------------------
                      * */
-                    if (MathJ.touchesRect(ENTITY_BOUNDING_BOX[i], context.getCameraFov()) && ENTITY_ID[i] > -1) {
-                        entityID.add(i);
+                    if (context.getCameraFov().touchesRect(ENTITY_BOUNDING_BOX[i]) && ENTITY_ID[i] > -1) {
+                        entityToRenderID.add(i);
                     }
             }
         }
 
-        snapshot.ENTITY_ID = entityID.stream().mapToInt(i -> i).toArray();
+        /*
+         *   ------------------------------------------------------------------------------
+         *   ALL ENTITIES: Actually loads snapshot array by array.
+         *   ------------------------------------------------------------------------------
+         * */
+        snapshot.initEntityData(entityToRenderID.size());
+        int i = 0;
+        for (int eID : entityToRenderID) {
+            snapshot.ENTITY_ID[i] = eID;
+            snapshot.ENTITY_TRANSFORM[i] = new Matrix4f();
+            snapshot.ENTITY_TRANSFORM[i].copy(ENTITY_TRANSFORM[eID]);
+            snapshot.ENTITY_TYPE[i] = ENTITY_TYPE[eID];
+            snapshot.ENTITY_FLIP[i] = ENTITY_FLIP[eID];
+            snapshot.ENTITY_CURRENT_ANIM[i] = ENTITY_CURRENT_ANIM[eID];
+            i++;
+        }
+
     }
 
     private void updateEnvironment() {
         ArrayList<Integer> chunksID = new ArrayList<>();
 
         for (int i = 0; i < CHUNKS_ID.length; i++) {
-            if (MathJ.touchesRect(new Rect(CHUNKS_POSITION[i], CHUNKS_WIDTH, CHUNKS_HEIGHT), context.getCameraFov())) {
+            if (context.getCameraFov().touchesRect(new Rect(Math2D.toVector2f(CHUNKS_POSITION[i]), CHUNKS_WIDTH, CHUNKS_HEIGHT))) {
                 chunksID.add(i);
             }
         }
