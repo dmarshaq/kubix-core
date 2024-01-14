@@ -2,7 +2,10 @@ package org.dmarshaq.utils;
 
 import org.dmarshaq.graphics.font.FontReader;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.*;
+import java.net.URLClassLoader;
 
 public interface FileUtils {
 

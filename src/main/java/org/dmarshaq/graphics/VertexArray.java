@@ -20,11 +20,11 @@ public class VertexArray {
         glVertexAttribPointer(Shader.VERTEX_ATTRIBUTE, 3, GL_FLOAT, false, 0, 0);
         glEnableVertexAttribArray(Shader.VERTEX_ATTRIBUTE);
 
-        tbo = glGenBuffers();
-        glBindBuffer(GL_ARRAY_BUFFER, tbo);
-        glBufferData(GL_ARRAY_BUFFER, BufferUtils.createFloatBuffer(textureCoordinates), GL_STATIC_DRAW);
-        glVertexAttribPointer(Shader.TCORDS_ATTRIBUTE, 2, GL_FLOAT, false, 0, 0);
-        glEnableVertexAttribArray(Shader.TCORDS_ATTRIBUTE);
+//        tbo = glGenBuffers();
+//        glBindBuffer(GL_ARRAY_BUFFER, tbo);
+//        glBufferData(GL_ARRAY_BUFFER, BufferUtils.createFloatBuffer(textureCoordinates), GL_STATIC_DRAW);
+//        glVertexAttribPointer(Shader.TCORDS_ATTRIBUTE, 2, GL_FLOAT, false, 0, 0);
+//        glEnableVertexAttribArray(Shader.TCORDS_ATTRIBUTE);
 
         ibo = glGenBuffers();
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);

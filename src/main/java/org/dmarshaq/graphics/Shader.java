@@ -11,9 +11,11 @@ import static org.lwjgl.opengl.GL20.*;
 public class Shader {
 
     public static final int VERTEX_ATTRIBUTE = 0;
-    public static final int TCORDS_ATTRIBUTE = 1;
+    public static final int COLOR_ATTRIBUTE = 1;
+    public static final int TCOORDS_ATTRIBUTE = 2;
+    public static final int TINDEX_ATTRIBUTE = 3;
 
-    public static Shader BASIC, BASIC_UI;
+    public static Shader BASIC;
 
     private boolean enabled = false;
 
@@ -27,7 +29,6 @@ public class Shader {
 
     public static void loadAll() {
         BASIC = new Shader("shader/basic.vert", "shader/basic.frag");
-        BASIC_UI = new Shader("shader/basic_ui.vert", "shader/basic_ui.frag");
     }
 
     public int getUniform(String name) {
@@ -43,6 +44,8 @@ public class Shader {
         }
         return result;
     }
+
+    // variables
     public void setUniform1i(String name, int value) {
         if (!enabled) enable();
         glUniform1i(getUniform(name), value);
@@ -62,6 +65,12 @@ public class Shader {
     public void setUniformMatrix4f(String name, Matrix4f matrix) {
         if (!enabled) enable();
         glUniformMatrix4fv(getUniform(name), false, matrix.toFloatBuffer());
+    }
+
+    // arrays
+    public void setUniform1iv(String name, int[] array) {
+        if (!enabled) enable();
+        glUniform1iv(getUniform(name), array);
     }
 
     public void enable() {

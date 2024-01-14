@@ -1,12 +1,12 @@
 package org.dmarshaq.graphics.ui;
 
 
-import org.dmarshaq.graphics.Sprite;
+import org.dmarshaq.graphics.SpriteDTO;
 import org.dmarshaq.graphics.font.Font;
 import org.dmarshaq.mathj.Vector3f;
 
 public class Text {
-    private Sprite[] characters;
+    private SpriteDTO[] characters;
     private String text;
     private Vector3f position;
 
@@ -20,7 +20,7 @@ public class Text {
 //    public int getTextCenterY() {
 //        int maxHeight = 0;
 //        if (characters != null) {
-//            for (Sprite c : characters) {
+//            for (SpriteDTO c : characters) {
 //                if (c.getHeight() > maxHeight) {
 //                    maxHeight = (int) c.getHeight();
 //                }
@@ -32,7 +32,7 @@ public class Text {
 //    public int getTextCenterX() {
 //        int length = 0;
 //        if (characters != null) {
-//            for (Sprite c : characters) {
+//            for (SpriteDTO c : characters) {
 //                length += (int) c.getWidth();
 //            }
 //        }
@@ -41,8 +41,8 @@ public class Text {
 
     public void render() {
         if (characters != null) {
-            for (Sprite c : characters) {
-                c.render();
+            for (SpriteDTO c : characters) {
+//                c.render();
             }
         }
     }

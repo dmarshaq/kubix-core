@@ -34,17 +34,17 @@ public class RectComponent extends Rect {
 
     @Override
     public float x() {
-        return super.x() + Math2D.toVector2f( Matrix4f.getPosition(reference) ).x;
+        return super.x() + Math2D.toVector2f( Matrix4f.getTransformPosition(reference) ).x;
     }
 
     @Override
     public float y() {
-        return super.y() + Math2D.toVector2f( Matrix4f.getPosition(reference) ).y;
+        return super.y() + Math2D.toVector2f( Matrix4f.getTransformPosition(reference) ).y;
     }
 
     @Override
     public Vector2f getCenter() {
-        return Math2D.sum(super.getCenter(), Math2D.toVector2f( Matrix4f.getPosition(reference) ) );
+        return Math2D.sum(super.getCenter(), Math2D.toVector2f( Matrix4f.getTransformPosition(reference) ) );
     }
 
     public Vector2f getOffsetObject() {

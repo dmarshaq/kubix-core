@@ -2,7 +2,6 @@ package org.dmarshaq.mathj;
 
 import org.dmarshaq.utils.BufferUtils;
 
-import java.lang.reflect.Array;
 import java.nio.FloatBuffer;
 
 public class Matrix4f {
@@ -51,17 +50,6 @@ public class Matrix4f {
         return result;
     }
 
-    public static Matrix4f translate(Vector3f vector) {
-        Matrix4f result = identity();
-
-        result.elements[0 + 3 * 4] = vector.x;
-        result.elements[1 + 3 * 4] = vector.y;
-        result.elements[2 + 3 * 4] = vector.z;
-        result.elements[3 + 3 * 4] = 1f;
-
-        return result;
-    }
-
     public static Matrix4f rotate(float angle) {
         Matrix4f result = identity();
 
@@ -86,7 +74,7 @@ public class Matrix4f {
         return result;
     }
 
-    public static Vector3f getPosition(Matrix4f matrix) {
+    public static Vector3f getTransformPosition(Matrix4f matrix) {
         return new Vector3f(matrix.elements[0 + 3 * 4], matrix.elements[1 + 3 * 4], matrix.elements[2 + 3 * 4]);
     }
 
@@ -103,21 +91,14 @@ public class Matrix4f {
         }
     }
 
-    public void setPosition(Vector3f vector, float layer) {
+    public void setTransformPosition(Vector2f vector, float layer) {
         this.elements[0 + 3 * 4] = vector.x;
         this.elements[1 + 3 * 4] = vector.y;
         this.elements[3 + 3 * 4] = 1f;
-        setLayer(layer);
+        setTransformLayer(layer);
     }
 
-    public void setPosition(Vector3f vector) {
-        this.elements[0 + 3 * 4] = vector.x;
-        this.elements[1 + 3 * 4] = vector.y;
-        this.elements[3 + 3 * 4] = 1f;
-        setLayer(vector.z);
-    }
-
-    public void setLayer(float layer) {
+    public void setTransformLayer(float layer) {
         this.elements[2 + 3 * 4] = layer;
     }
 

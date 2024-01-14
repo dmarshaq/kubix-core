@@ -4,7 +4,7 @@ import org.dmarshaq.mathj.Rect;
 
 import java.util.HashMap;
 
-import static org.dmarshaq.app.GameContext.Player.*;
+import static org.dmarshaq.app.GameContext.HelloWorld.Player.*;
 
 public enum Anim {
     PLAYER_IDLE (0, "player/player_idle.png", 1000, 5, PLAYER_PIX_WIDTH, PLAYER_PIX_HEIGHT),

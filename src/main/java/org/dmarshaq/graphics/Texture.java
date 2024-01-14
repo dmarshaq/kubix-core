@@ -2,6 +2,7 @@ package org.dmarshaq.graphics;
 
 
 import org.dmarshaq.app.GameContext;
+import org.dmarshaq.app.GameContext.HelloWorld.*;
 import org.dmarshaq.mathj.Rect;
 import org.dmarshaq.utils.BufferUtils;
 
@@ -18,15 +19,14 @@ public class Texture {
     private int width, height;
     private int textureID;
 
-    public static final Texture SLIME_TEXTURE = new Texture(GameContext.Slime.SLIME_TEXTURE_PATH);
-    public static final Texture GROUND_TEXTURE = new Texture(GameContext.GROUND_TEXTURE_PATH);
+    public static Texture SLIME_TEXTURE;
 
-    public Texture(String Path) {
-        textureID = load(Path, null);
+    public static void loadTextures() {
+        SLIME_TEXTURE = new Texture(Slime.SLIME_TEXTURE_PATH);
     }
 
-    public Texture(String Path, Rect cropRegion) {
-        textureID = load(Path, cropRegion);
+    private Texture(String Path) {
+        textureID = load(Path, null);
     }
 
     private int load(String path, Rect cropRegion) {
@@ -39,19 +39,21 @@ public class Texture {
             width = image.getWidth();
             height = image.getHeight();
             pixels = new int[width * height];
-            image.getRGB(0 ,0, width, height, pixels, 0 , width);
+            image.getRGB(0, 0, width, height, pixels, 0 , width);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         int[] data = new int[width * height];
-        for (int i = 0; i < width * height; i++) {
-            int a = (pixels[i] & 0xff000000) >> 24;
-            int r = (pixels[i] & 0xff0000) >> 16;
-            int g = (pixels[i] & 0xff00) >> 8;
-            int b = (pixels[i] & 0xff);
-
-            data[i] = a << 24 | b << 16 | g << 8 | r;
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                int index = x + y * width;
+                int a = (pixels[index] & 0xff000000) >> 24;
+                int r = (pixels[index] & 0xff0000) >> 16;
+                int g = (pixels[index] & 0xff00) >> 8;
+                int b = (pixels[index] & 0xff);
+                data[x + (height - 1 - y) * width] = a << 24 | b << 16 | g << 8 | r;
+            }
         }
 
         int result = glGenTextures();

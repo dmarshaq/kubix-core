@@ -1,11 +1,9 @@
 package org.dmarshaq.graphics.font;
 
 
-import org.dmarshaq.graphics.Shader;
-import org.dmarshaq.graphics.Sprite;
+import org.dmarshaq.graphics.SpriteDTO;
 import org.dmarshaq.graphics.Texture;
 import org.dmarshaq.mathj.Rect;
-import org.dmarshaq.mathj.RectComponent;
 import org.dmarshaq.mathj.Vector3f;
 
 import javax.imageio.ImageIO;
@@ -13,7 +11,6 @@ import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
 import java.io.IOException;
 
-import static org.dmarshaq.app.GameContext.*;
 import static org.dmarshaq.utils.FileUtils.getResourcePath;
 
 
@@ -27,8 +24,8 @@ public class Font {
     private float scale;
 
     public static void loadFonts() {
-        BASIC_PUP_BLACK = new Font(FONT_BASIC_PUP_BLACK_DATA_PATH, FONT_BASIC_PUP_BLACK_ATLAS_PATH, FONT_BASIC_PUP_BLACK_SCALE);
-        BASIC_PUP_WHITE = new Font(FONT_BASIC_PUP_WHITE_DATA_PATH, FONT_BASIC_PUP_WHITE_ATLAS_PATH, FONT_BASIC_PUP_WHITE_SCALE);
+//        BASIC_PUP_BLACK = new Font(FONT_BASIC_PUP_BLACK_DATA_PATH, FONT_BASIC_PUP_BLACK_ATLAS_PATH, FONT_BASIC_PUP_BLACK_SCALE);
+//        BASIC_PUP_WHITE = new Font(FONT_BASIC_PUP_WHITE_DATA_PATH, FONT_BASIC_PUP_WHITE_ATLAS_PATH, FONT_BASIC_PUP_WHITE_SCALE);
     }
 
     private Font(String fontDataPath, String fontAtlasPath, float fontScale) {
@@ -49,14 +46,14 @@ public class Font {
         for (Character c : characters) {
             fontBuilder.append((char) c.getId());
 
-            textures[i] = new Texture(fontAtlasPath, new Rect( c.getX(), c.getY(), c.getWidth(), c.getHeight()));
+//            textures[i] = new Texture(fontAtlasPath, new Rect( c.getX(), c.getY(), c.getWidth(), c.getHeight()));
             i++;
         }
         font = fontBuilder.toString();
     }
 
-    public Sprite[] buildSpriteText(String text, Vector3f position) {
-        Sprite[] result = new Sprite[text.length()];
+    public SpriteDTO[] buildSpriteText(String text, Vector3f position) {
+        SpriteDTO[] result = new SpriteDTO[text.length()];
         int line = (int) position.y;
         int cursor = (int) position.x;
         for(int i = 0; i < result.length; i++) {
@@ -66,7 +63,7 @@ public class Font {
             int xoffset = (int) (characters[c].getXoffset() * scale);
             int yoffset = (int) (characters[c].getYoffset() * scale);
 
-//            result[i] = new Sprite( new RectComponent(new Vector3f( cursor + xoffset, line - height - yoffset ), width, height), textures[c], Shader.BASIC_UI);
+//            result[i] = new SpriteDTO( new RectComponent(new Vector3f( cursor + xoffset, line - height - yoffset ), width, height), textures[c], Shader.BASIC_UI);
             cursor += (int) (characters[c].getXadvance() * scale);
         }
         return result;

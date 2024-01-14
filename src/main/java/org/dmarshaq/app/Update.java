@@ -1,16 +1,17 @@
 package org.dmarshaq.app;
 
 import org.dmarshaq.graphics.Anim;
+import org.dmarshaq.graphics.SpriteDTO;
+import org.dmarshaq.graphics.Texture;
 import org.dmarshaq.input.Input;
 import org.dmarshaq.input.KeyCode;
 import org.dmarshaq.mathj.*;
 import org.dmarshaq.time.Time;
 
-import java.util.ArrayList;
 
 import static org.lwjgl.glfw.GLFW.*;
-import static org.dmarshaq.mathj.MathJ.Math2D;
 import static org.dmarshaq.app.GameContext.*;
+import static org.dmarshaq.app.GameContext.HelloWorld.*;
 
 public class Update implements Runnable {
 
@@ -18,6 +19,7 @@ public class Update implements Runnable {
     private Render render;
     private Snapshot snapshot;
     private float fps;
+
 
     public Update(final GameContext context, final Render render) {
         this.context = context;
@@ -31,7 +33,7 @@ public class Update implements Runnable {
         double updateInterval = (double) 1000000000 / FPS;
         double nextUpdateTime = System.nanoTime() + updateInterval;
         double lastFrameTime = 0;
-
+        System.out.println("Here, Update");
         while (GameContext.isRunning()) {
             double time = System.nanoTime();
             if (lastFrameTime != 0) {
@@ -44,11 +46,13 @@ public class Update implements Runnable {
                 GameContext.stopRunning();
             }
             // do some job
-            snapshot = new Snapshot();
 
+            snapshot = new Snapshot();
             update();
+            snapshot.closeSpriteInputStream();
 
             render.loadData(snapshot);
+
             synchronized (render) {
                 render.notify();
             }
@@ -72,72 +76,53 @@ public class Update implements Runnable {
 
     private void update() {
 
-        // Environment
-        updateEnvironment();
+        // Layers Clean Up
+        Layer.clearRenderSpritesCount();
 
         // Entities
         updateEntities();
 
         // Camera
         updateCamera();
+
     }
+
+    private int c;
 
     private void updateEntities() {
         // entities to render
-        ArrayList<Integer> entityToRenderID = new ArrayList<>();
+        for (int x = 0; x < 128; x++) {
+            for (int y = 0; y < 128; y++) {
+                snapshot.addSpriteToRender( new SpriteDTO(Matrix4f.translate(new Vector2f((float) x / 4, (float) y / 4)), Texture.SLIME_TEXTURE, Layer.DEFAULT) );
+            }
+        }
 
         for (int i = 0; i < ENTITY_ID.length; i++) {
-            /*
-             *   ------------------------------------------------------------------------------
-             *   ALL ENTITIES: Switch checks if entity should be nullified, only if it was
-             *   deleted (if it's id == -1).
-             *   ------------------------------------------------------------------------------
-             * */
+
             switch (ENTITY_ID[i]) {
                 case -1:
                     ENTITY_ID[i] = -2;
                     ENTITY_TRANSFORM[i] = null;
                     ENTITY_BOUNDING_BOX[i] = null;
                     ENTITY_TYPE[i] = null;
-                    ENTITY_SPRITE[i] = null;
-                    ENTITY_FLIP[i] = false;
+                    ENTITY_SPRITE_DTO[i].getLayer().decrementSpriteCount();
+                    ENTITY_SPRITE_DTO[i] = null;
+                    ENTITY_CURRENT_ANIM[i] = null;
                     break;
                 case -2:
                     break;
-                /*
-                 *   ------------------------------------------------------------------------------
-                 *   ALL ENTITIES: Every other entity will continue to update and possibly
-                 *   be rendered.
-                 *   ------------------------------------------------------------------------------
-                 * */
+
                 default:
-                    /*
-                     *   ------------------------------------------------------------------------------
-                     *   ALL ENTITIES: Following if moves all entities down if they are above y = 0 line.
-                     *
-                     *   IMPORTANT:
-                     *   * Position used throughout update is exact position from the end of the last update
-                     *   * it only assigned once per update in the beginning, the only thing that is changes is
-                     *   * ENTITY_TRANSFORM. This is made to "blend" all unrelated entity changes in position in
-                     *   * single update. This means that unrelated changes will appear to be applied
-                     *   * simultaneously at the end of update.
-                     *   ------------------------------------------------------------------------------
-                     * */
-                    Vector3f initialPosition = Matrix4f.getPosition(ENTITY_TRANSFORM[i]);
+
+                    Vector3f initialPosition = Matrix4f.getTransformPosition(ENTITY_TRANSFORM[i]);
 
                     if (initialPosition.y > 0) {
                         if (initialPosition.y < 2f * Time.DeltaTime.getSeconds())
-                            ENTITY_TRANSFORM[i].setPosition(new Vector3f(initialPosition.x, 0f, initialPosition.z));
+                            ENTITY_TRANSFORM[i].setTransformPosition(new Vector2f(initialPosition.x, 0f), initialPosition.z);
                         else
                             ENTITY_TRANSFORM[i].multiply(Matrix4f.translate( new Vector2f(0f, -2f * Time.DeltaTime.getSeconds() ) ));
                     }
 
-                    /*
-                     *   ------------------------------------------------------------------------------
-                     *   ALL ENTITIES: Following switch identifies entity and changes its properties
-                     *   or trigger other events based on it's type.
-                     *   ------------------------------------------------------------------------------
-                     * */
                     switch (ENTITY_TYPE[i]) {
 
                         /*
@@ -150,22 +135,22 @@ public class Update implements Runnable {
                             if ((timer_player = Time.Timer.countTimer(timer_player)) == 0) {
                                 System.out.println("5 second past");
                                 System.out.println("Slime is destroyed");
-                                Destroy(1);
+                                HelloWorld.Destroy(1);
                                 timer_player = -1;
                             }
 
                             // Simple movement and animation switcher based on key press.
-                            Vector3f velocity = new Vector3f();
+                            Vector2f velocity = new Vector2f();
 
                             if (Input.keysHold[ KeyCode.getKeyCode(KeyCode.D) ]) {
-                                if (ENTITY_FLIP[i])
-                                    ENTITY_FLIP[i] = false;
+//                                if (ENTITY_FLIP[i])
+//                                    ENTITY_FLIP[i] = false;
                                 ENTITY_CURRENT_ANIM[i] = Anim.PLAYER_RUN;
                                 velocity.x = Player.PLAYER_SPEED * Time.DeltaTime.getSeconds();
                             }
                             else if (Input.keysHold[ KeyCode.getKeyCode(KeyCode.A) ]) {
-                                if (!ENTITY_FLIP[i])
-                                    ENTITY_FLIP[i] = true;
+//                                if (!ENTITY_FLIP[i])
+//                                    ENTITY_FLIP[i] = true;
                                 ENTITY_CURRENT_ANIM[i] = Anim.PLAYER_RUN;
                                 velocity.x = -Player.PLAYER_SPEED * Time.DeltaTime.getSeconds();
                             }
@@ -174,19 +159,8 @@ public class Update implements Runnable {
                             }
 
                             ENTITY_TRANSFORM[i].multiply( Matrix4f.translate(velocity) );
-//                            ENTITY_POSITION[i].copyValues(MathJ.sum2d(ENTITY_POSITION[i], velocity));
 
-                            // Camera positioning based on player's position.
-                            /*
-                             *   ------------------------------------------------------------------------------
-                             *   IMPORTANT:
-                             *   * For example right here I don't access initialPosition, because camera center
-                             *   * is related to result of transformation right before this next statement.
-                             *   * So in this case I can just access entities most recent position via it's
-                             *   * ENTITY_TRANSFORM.
-                             *   ------------------------------------------------------------------------------
-                             * */
-                            context.setCameraCenter( new Vector2f( Matrix4f.getPosition(ENTITY_TRANSFORM[i]).x + 0.08f, 0.5f ) );
+                            HelloWorld.setCameraCenter( new Vector2f( Matrix4f.getTransformPosition(ENTITY_TRANSFORM[i]).x + 0.08f, 0.5f ) );
                             break;
 
                         /*
@@ -200,10 +174,11 @@ public class Update implements Runnable {
 
                         /*
                          *   ------------------------------------------------------------------------------
-                         *   UNIDENTIFIED ENTITY CASE
+                         *   DEFAULT ENTITY CASE
                          *   ------------------------------------------------------------------------------
                          * */
                         default:
+
                             break;
                     }
 
@@ -213,48 +188,18 @@ public class Update implements Runnable {
                      *   sends it to this update snapshot.
                      *   ------------------------------------------------------------------------------
                      * */
-                    if (context.getCameraFov().touchesRect(ENTITY_BOUNDING_BOX[i]) && ENTITY_ID[i] > -1) {
-                        entityToRenderID.add(i);
+                    if (ENTITY_BOUNDING_BOX[i] != null && HelloWorld.getCameraFov().touchesRect(ENTITY_BOUNDING_BOX[i]) && ENTITY_ID[i] > -1) {
+                        snapshot.addSpriteToRender(ENTITY_SPRITE_DTO[i]);
                     }
             }
         }
-
-        /*
-         *   ------------------------------------------------------------------------------
-         *   ALL ENTITIES: Actually loads snapshot array by array.
-         *   ------------------------------------------------------------------------------
-         * */
-        snapshot.initEntityData(entityToRenderID.size());
-        int i = 0;
-        for (int eID : entityToRenderID) {
-            snapshot.ENTITY_ID[i] = eID;
-            snapshot.ENTITY_TRANSFORM[i] = new Matrix4f();
-            snapshot.ENTITY_TRANSFORM[i].copy(ENTITY_TRANSFORM[eID]);
-            snapshot.ENTITY_TYPE[i] = ENTITY_TYPE[eID];
-            snapshot.ENTITY_FLIP[i] = ENTITY_FLIP[eID];
-            snapshot.ENTITY_CURRENT_ANIM[i] = ENTITY_CURRENT_ANIM[eID];
-            i++;
-        }
-
-    }
-
-    private void updateEnvironment() {
-        ArrayList<Integer> chunksID = new ArrayList<>();
-
-        for (int i = 0; i < CHUNKS_ID.length; i++) {
-            if (context.getCameraFov().touchesRect(new Rect(Math2D.toVector2f(CHUNKS_POSITION[i]), CHUNKS_WIDTH, CHUNKS_HEIGHT))) {
-                chunksID.add(i);
-            }
-        }
-
-        snapshot.CHUNKS_ID = chunksID.stream().mapToInt(i -> i).toArray();
     }
 
     private void updateCamera() {
         // Camera logic
-//        System.out.println("FPS: " + fps);
+        System.out.println("FPS: " + fps);
 
-        snapshot.cameraFov = new Rect(context.getCameraFov());
+        snapshot.cameraFov = new Rect(HelloWorld.getCameraFov());
     }
 }
 

@@ -89,8 +89,8 @@ public class Rect {
 		return switch (cornerId) {
 			case (0) -> getPosition();
 			case (1) -> Math2D.sum(getPosition(), new Vector2f(0, height));
-			case (2) -> Math2D.sum(getPosition(), new Vector2f(width, height));
-			case (3) -> Math2D.sum(getPosition(), new Vector2f(width, 0));
+			case (2) -> Math2D.sum(getPosition(), new Vector2f(width, 0));
+			case (3) -> Math2D.sum(getPosition(), new Vector2f(width, height));
 			default -> null;
 		};
 	}

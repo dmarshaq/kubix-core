@@ -23,8 +23,6 @@ public class UI {
     }
 
     public void render() {
-        Shader.BASIC_UI.setUniformMatrix4f("pr_matrix", pr_matrix);
-        Shader.BASIC_UI.disable();
 
         for (Text t : textList) {
             t.render();

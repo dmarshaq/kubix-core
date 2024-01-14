@@ -3,22 +3,28 @@ package org.dmarshaq.app;
 import org.dmarshaq.graphics.Shader;
 import org.dmarshaq.graphics.Sprite;
 import org.dmarshaq.graphics.Texture;
-import org.dmarshaq.graphics.font.Font;
 import org.dmarshaq.input.Input;
 import org.dmarshaq.mathj.*;
+import org.dmarshaq.utils.BufferUtils;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.IntBuffer;
 
+import static org.dmarshaq.app.GameContext.Render.*;
 import static org.dmarshaq.app.GameContext.SCREEN_HEIGHT;
 import static org.dmarshaq.app.GameContext.SCREEN_WIDTH;
-import static org.dmarshaq.app.GameContext.Layer;
+import static org.dmarshaq.app.Render.Renderer.*;
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.*;
+import static org.lwjgl.opengl.GL15.*;
+import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
+import static org.lwjgl.opengl.GL20.*;
+import static org.lwjgl.opengl.GL30.glBindVertexArray;
+import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.system.MemoryUtil.*;
 
@@ -27,6 +33,18 @@ public class Render implements Runnable {
     private Snapshot data;
     private long window;
     private Matrix4f pr_matrix;
+    // Render data
+    static class Renderer {
+        public static int drawcalls = 0;
+        public static final int FLOATS_PER_VERTEX = 10;
+        public static final int VERTICES_PER_SPRITE = 4;
+        public static final int SPRITE_STRIDE_IN_ARRAY = FLOATS_PER_VERTEX * VERTICES_PER_SPRITE; // floats allocated per each sprite (quad its storing)
+
+        public static final float[] VERTICES = new float[MAX_QUADS_PER_BATCH * SPRITE_STRIDE_IN_ARRAY]; // 3D array compacted in single dimension array
+        public static final int[] INDICES = new int[MAX_QUADS_PER_BATCH * 6];
+        public static final int[] TEXTURES_USED = new int[32];
+        public static int vao, vbo, ibo;
+    }
 
     @Override
     public void run() {
@@ -35,9 +53,15 @@ public class Render implements Runnable {
 
         renderInit();
 
+        GameContext gameContext = new GameContext();
+
+        Update updateTask = new Update(gameContext, this);
+        Thread update = new Thread(updateTask);
+        update.start();
+
+
         while(GameContext.isRunning()) {
             // do some render
-            render();
             synchronized (this) {
                 try {
                     wait();
@@ -45,6 +69,7 @@ public class Render implements Runnable {
                     throw new RuntimeException(e);
                 }
             }
+            render();
         }
 
         // Free the window callbacks and destroy the window
@@ -59,7 +84,7 @@ public class Render implements Runnable {
         this.data = data;
     }
 
-    private void init() {
+    public void init() {
 
         // Initialize GLFW. Most GLFW functions will not work before doing this.
         if ( !glfwInit() )
@@ -74,7 +99,6 @@ public class Render implements Runnable {
         window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, GameContext.TITLE, NULL, NULL);
         if ( window == NULL )
             throw new RuntimeException("Failed to create the GLFW window");
-
 
 
         // Get the thread stack and push a new frame
@@ -105,8 +129,6 @@ public class Render implements Runnable {
         // Enable v-sync
         glfwSwapInterval(1);
 
-
-
         // Make the window visible
         glfwShowWindow(window);
     }
@@ -136,150 +158,277 @@ public class Render implements Runnable {
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         // Background
-        glClearColor(0.3f, 0.4f, 0.8f, 1.0f);
+        glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
 
-        // Active textures, use 1, default
-        glActiveTexture(GL_TEXTURE1);
+        // Setup textures
+        Texture.loadTextures();
 
-        // Setup shaders
+        // Setup shader
         Shader.loadAll();
+
         pr_matrix = Matrix4f.orthographic(-2f, 2f, -1.5f, 1.5f, -1f, 1f); // basically camera matrix
         Shader.BASIC.setUniformMatrix4f("pr_matrix", pr_matrix);
-        Shader.BASIC.setUniform1i("tex", 1);
-        Shader.BASIC.disable();
-        Shader.BASIC_UI.setUniformMatrix4f("pr_matrix", Matrix4f.orthographic(0f, SCREEN_WIDTH, 0f, SCREEN_HEIGHT, -1f, 1f));
-        Shader.BASIC_UI.setUniform1i("tex", 1);
-        Shader.BASIC_UI.disable();
-        // Fonts
-        Font.loadFonts();
 
-        // UI
-//        GameContext.GAME_UI.addText("Kubix Engine v0.1.5", Font.BASIC_PUP_WHITE, new Vector3f(0f, SCREEN_HEIGHT, Layer.UI));
-//        GameContext.GAME_UI.addText("\"Balls\"", Font.BASIC_PUP_WHITE, new Vector3f(SCREEN_WIDTH / 2f, SCREEN_HEIGHT / 2f, Layer.UI));
+        int[] samplers = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
+                12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
+                22, 23, 24, 25, 26, 27, 28, 29, 30, 31 };
+        Shader.BASIC.setUniform1iv("u_Textures", samplers);
+
+        // Build indices
+        for (int i = 0; i < MAX_QUADS_PER_BATCH; i++) {
+            for (int j = 0; j < 6; j++) {
+                int val = j;
+                if (j > 2 && j < 5) {
+                    val--;
+                }
+                if (j == 5) {
+                    val = 1;
+                }
+                INDICES[i * 6 + j] = (i * 4 + val);
+            }
+        }
+
+        // vertex buffer creation
+        vao = glGenVertexArrays();
+        glBindVertexArray(vao);
+
+        vbo = glGenBuffers();
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        glBufferData(GL_ARRAY_BUFFER, VERTICES.length * 4, GL_DYNAMIC_DRAW);
+
+        glVertexAttribPointer(Shader.VERTEX_ATTRIBUTE, 3, GL_FLOAT, false, 10 * 4, 0 * 4);
+        glEnableVertexAttribArray(Shader.VERTEX_ATTRIBUTE);
+
+        glVertexAttribPointer(Shader.COLOR_ATTRIBUTE, 4, GL_FLOAT, false, 10 * 4, 3 * 4);
+        glEnableVertexAttribArray(Shader.COLOR_ATTRIBUTE);
+
+        glVertexAttribPointer(Shader.TCOORDS_ATTRIBUTE, 2, GL_FLOAT, false, 10 * 4, 7 * 4);
+        glEnableVertexAttribArray(Shader.TCOORDS_ATTRIBUTE);
+
+        glVertexAttribPointer(Shader.TINDEX_ATTRIBUTE, 1, GL_FLOAT, false, 10 * 4, 9 * 4);
+        glEnableVertexAttribArray(Shader.TINDEX_ATTRIBUTE);
+
+        ibo = glGenBuffers();
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, BufferUtils.createIntBuffer(INDICES), GL_STATIC_DRAW);
+
+        // Do not unbind other static buffers, buffers would likely to be erased by graphics
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+        Shader.BASIC.setUniformMatrix4f("ml_matrix", Matrix4f.identity());
+        Shader.BASIC.disable();
+
+
     }
 
     private void renderSnapshot() {
-        renderCamera();
-        renderEntities();
-        renderEnvironment();
-        renderUI();
+        loadCameraMatrix();
+
+        Sprite[] spriteArray = data.getSpriteDataArray();
+
+        // BATCHES LOOP
+        int lastBatchIndexStopped = 0;
+        while (lastBatchIndexStopped < spriteArray.length) {
+            // Vertices loading
+            lastBatchIndexStopped = nextBatch(lastBatchIndexStopped, spriteArray);
+            // Textures loading
+            loadTexturesUsedIntoSlots();
+            // Binding dynamic draw vertex buffer
+            glBindBuffer(GL_ARRAY_BUFFER, vbo);
+            // Enabling shader
+            Shader.BASIC.enable();
+            // Actually loading vertices into graphics memory
+            glBufferSubData(GL_ARRAY_BUFFER, 0, VERTICES);
+            // Drawing
+            // TODO select precise number of indices to render, not render every indices each time
+            glDrawElements(GL_TRIANGLES, INDICES.length, GL_UNSIGNED_INT, 0);
+            drawcalls++;
+            // Cleaning up
+            flush();
+        }
+
+        System.out.println("Drawcalls per render: "  + drawcalls);
+        drawcalls = 0;
     }
 
-    private void renderEntities() {
-        for (int i = 0; i < data.ENTITY_ID.length; i++) {
 
-            /*
-             *   ------------------------------------------------------------------------------
-             *   ALL ENTITIES: If sprite for the entity wasn't yet created,
-             *   creates it and assigns for the entity.
-             *
-             *   IMPORTANT:
-             *   * Render doesn't change actual values on any entity, the only values it is allowed
-             *   * to change are ENTITY_SPRITE values because sprite is only used to render and store
-             *   * render related data. Plus sprite is never updated in actual update, because
-             *   * update needs to be fully ended in order sent actual snapshot data with all
-             *   * entities to be rendered so only specific sprites will be rendered or created.
-             *   ------------------------------------------------------------------------------
-             * */
-            int id = data.ENTITY_ID[i];
+    private int nextBatch(int startIndex, Sprite[] spriteArray) {
+        int spriteGlobalIndex = 0;
+        int nextBatchStartIndex = 0;
+        int spritesLoaded = 0;
+        int offsetToStartIndex = 0;
+        int currentLayerIndex = -1;
 
-            if (GameContext.ENTITY_SPRITE[id] == null) {
-                switch (data.ENTITY_TYPE[i]) {
-                    case PLAYER:
-                        GameContext.ENTITY_SPRITE[id] = new Sprite(new RectComponent(0f, 0f, MathJ.pixelToWorld(GameContext.Player.PLAYER_PIX_WIDTH), MathJ.pixelToWorld(GameContext.Player.PLAYER_PIX_HEIGHT), data.ENTITY_TRANSFORM[i]), GameContext.Player.PLAYER_ANIMATIONS, Shader.BASIC);
-                        break;
-                    case SLIME:
-                        GameContext.ENTITY_SPRITE[id] = new Sprite(new RectComponent(0f, 0f, GameContext.Slime.SLIME_WIDTH, GameContext.Slime.SLIME_HEIGHT, data.ENTITY_TRANSFORM[i]), Texture.SLIME_TEXTURE, Shader.BASIC);
-                        break;
+        while (spritesLoaded < MAX_QUADS_PER_BATCH) {
+            spriteGlobalIndex = startIndex + offsetToStartIndex;
+            offsetToStartIndex++;
+
+            if (spriteGlobalIndex >= spriteArray.length) {
+                return spriteArray.length;
+            }
+
+            Sprite sprite = spriteArray[spriteGlobalIndex];
+
+            // check if null, if true skip that element
+            if (sprite == null) {
+                continue;
+            }
+
+            // layer check logic
+            else if (currentLayerIndex != -1 && currentLayerIndex != sprite.getLayer().getIndex() && nextBatchStartIndex != 0) {
+                break;
+            }
+            currentLayerIndex = sprite.getLayer().getIndex();
+
+            // manage texture
+            if (!tryAllocateTextureSlot( sprite.getTexture().getID() )) {
+                if (nextBatchStartIndex == 0) {
+                    nextBatchStartIndex = spriteGlobalIndex;
                 }
-            }
-            else {
-                GameContext.ENTITY_SPRITE[id].setTransform(data.ENTITY_TRANSFORM[i]);
+                continue;
             }
 
-            /*
-             *   ------------------------------------------------------------------------------
-             *   ALL ENTITIES: Manages animation if sprite has one.
-             *   ------------------------------------------------------------------------------
-             * */
-            if (GameContext.ENTITY_SPRITE[id].hasAnim()) {
+            // if every check before is good, load sprite data into actual vertices used
+            loadSpriteVertices(spritesLoaded, spriteArray[spriteGlobalIndex]);
+            spritesLoaded++;
 
-                // Checks if new animation was ordered to play, if true, sets this animation to entity's sprite.
-                if (GameContext.ENTITY_SPRITE[id].getCurrentAnim() != data.ENTITY_CURRENT_ANIM[i]) {
-                    GameContext.ENTITY_SPRITE[id].setCurrentAnim(data.ENTITY_CURRENT_ANIM[i]);
-                }
+            // little clean up, plus it will ensure our nextBatch doesn't go twice for any sprite
+            spriteArray[spriteGlobalIndex] = null;
+
+        }
+
+        if (nextBatchStartIndex == 0) {
+            nextBatchStartIndex = spriteGlobalIndex;
+        }
+
+        return nextBatchStartIndex;
+    }
+
+    private void loadSpriteVertices(int spriteIndex, Sprite sprite) {
+        int vertexArraySpriteStart = spriteIndex * SPRITE_STRIDE_IN_ARRAY;
+        int offset;
+        // ORDER: BOTTOM LEFT -> BOTTOM RIGHT -> TOP LEFT -> TOP RIGHT
+
+        Vector3f position = Matrix4f.getTransformPosition(sprite.getTransform());
+
+        // BOTTOM LEFT
+        offset = 0;
+        VERTICES[vertexArraySpriteStart + 0 + offset] = position.x;
+        VERTICES[vertexArraySpriteStart + 1 + offset] = position.y;
+        VERTICES[vertexArraySpriteStart + 2 + offset] = position.z;
+
+        VERTICES[vertexArraySpriteStart + 3 + offset] = 1.0f;
+        VERTICES[vertexArraySpriteStart + 4 + offset] = 1.0f;
+        VERTICES[vertexArraySpriteStart + 5 + offset] = 1.0f;
+        VERTICES[vertexArraySpriteStart + 6 + offset] = 1.0f;
+
+        VERTICES[vertexArraySpriteStart + 7 + offset] = 0.0f;
+        VERTICES[vertexArraySpriteStart + 8 + offset] = 0.0f;
+
+        VERTICES[vertexArraySpriteStart + 9 + offset] = 0.0f;
+
+        // BOTTOM RIGHT
+        offset += 10;
+        VERTICES[vertexArraySpriteStart + 0 + offset] = position.x + MathJ.pixelToWorld(sprite.getTexture().getWidth());
+        VERTICES[vertexArraySpriteStart + 1 + offset] = position.y;
+        VERTICES[vertexArraySpriteStart + 2 + offset] = position.z;
+
+        VERTICES[vertexArraySpriteStart + 3 + offset] = 1.0f;
+        VERTICES[vertexArraySpriteStart + 4 + offset] = 1.0f;
+        VERTICES[vertexArraySpriteStart + 5 + offset] = 1.0f;
+        VERTICES[vertexArraySpriteStart + 6 + offset] = 1.0f;
+
+        VERTICES[vertexArraySpriteStart + 7 + offset] = 1.0f;
+        VERTICES[vertexArraySpriteStart + 8 + offset] = 0.0f;
+
+        VERTICES[vertexArraySpriteStart + 9 + offset] = 0.0f;
+
+        // TOP LEFT
+        offset += 10;
+        VERTICES[vertexArraySpriteStart + 0 + offset] = position.x;
+        VERTICES[vertexArraySpriteStart + 1 + offset] = position.y + MathJ.pixelToWorld(sprite.getTexture().getHeight());
+        VERTICES[vertexArraySpriteStart + 2 + offset] = position.z;
+
+        VERTICES[vertexArraySpriteStart + 3 + offset] = 1.0f;
+        VERTICES[vertexArraySpriteStart + 4 + offset] = 1.0f;
+        VERTICES[vertexArraySpriteStart + 5 + offset] = 1.0f;
+        VERTICES[vertexArraySpriteStart + 6 + offset] = 1.0f;
+
+        VERTICES[vertexArraySpriteStart + 7 + offset] = 0.0f;
+        VERTICES[vertexArraySpriteStart + 8 + offset] = 1.0f;
+
+        VERTICES[vertexArraySpriteStart + 9 + offset] = 0.0f;
+
+        // TOP RIGHT
+        offset += 10;
+        VERTICES[vertexArraySpriteStart + 0 + offset] = position.x + MathJ.pixelToWorld(sprite.getTexture().getWidth());
+        VERTICES[vertexArraySpriteStart + 1 + offset] = position.y + MathJ.pixelToWorld(sprite.getTexture().getHeight());
+        VERTICES[vertexArraySpriteStart + 2 + offset] = position.z;
+
+        VERTICES[vertexArraySpriteStart + 3 + offset] = 1.0f;
+        VERTICES[vertexArraySpriteStart + 4 + offset] = 1.0f;
+        VERTICES[vertexArraySpriteStart + 5 + offset] = 1.0f;
+        VERTICES[vertexArraySpriteStart + 6 + offset] = 1.0f;
+
+        VERTICES[vertexArraySpriteStart + 7 + offset] = 1.0f;
+        VERTICES[vertexArraySpriteStart + 8 + offset] = 1.0f;
+
+        VERTICES[vertexArraySpriteStart + 9 + offset] = 0.0f;
 
 
-                // Easing will dictate at what time each frame occurs based on easing function.
-                MathJ.Easing easing = MathJ.Easing.LINEAR;
-                switch (GameContext.ENTITY_SPRITE[id].getCurrentAnim()) {
-                    case PLAYER_IDLE -> easing = MathJ.Easing.LINEAR;
-                    case PLAYER_RUN -> easing = MathJ.Easing.LINEAR;
-                }
-                GameContext.ENTITY_SPRITE[id].cycleCurrentAnim(easing);
+    }
+
+    private boolean tryAllocateTextureSlot(int textureID) {
+        for (int i = 0; i < TEXTURES_USED.length; i++) {
+            if (textureID == TEXTURES_USED[i]) {
+                // Use existing one for sprite
+                return true;
             }
-            /*
-             *   ------------------------------------------------------------------------------
-             *   ALL ENTITIES: Following switch identifies entity and prepares its render
-             *   properties based on it's type.
-             *   ------------------------------------------------------------------------------
-             * */
-            switch (data.ENTITY_TYPE[i]) {
-
-                /*
-                 *   ------------------------------------------------------------------------------
-                 *   PLAYER CASE
-                 *   ------------------------------------------------------------------------------
-                 * */
-                case PLAYER:
-                    GameContext.ENTITY_SPRITE[id].flipY(data.ENTITY_FLIP[i], -MathJ.pixelToWorld(8));
-
-                    break;
-
-                /*
-                 *   ------------------------------------------------------------------------------
-                 *   SLIME CASE
-                 *   ------------------------------------------------------------------------------
-                 * */
-                case SLIME:
-                    GameContext.ENTITY_SPRITE[id].flipY(data.ENTITY_FLIP[i]);
-                    break;
-
+            if (TEXTURES_USED[i] == 0) {
+                // Allocate another texture slot for sprite
+                TEXTURES_USED[i] = textureID;
+                return true;
             }
-            GameContext.ENTITY_SPRITE[id].render();
+            if (i == TEXTURES_USED.length - 1) {
+                // Not enough space skip sprite
+                return false;
+            }
+        }
+        // Failed in allocation
+        System.out.println("Failed in allocation of texture slot.");
+        return false;
+    }
+
+    private void loadTexturesUsedIntoSlots() {
+        for (int i = 0; i < TEXTURES_USED.length; i++) {
+            glActiveTexture(GL_TEXTURE0 + i);
+            glBindTexture(GL_TEXTURE_2D, TEXTURES_USED[i]);
         }
     }
-    /*
-     *   ------------------------------------------------------------------------------
-     *   UI: Render of each ui element, accomplished by simply calling ui object's
-     *   update method.
-     *   ------------------------------------------------------------------------------
-     * */
-    private void renderUI() {
-        GameContext.GAME_UI.render();
+
+    private void flush() {
+        unbindUsedTextures();
+
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        Shader.BASIC.disable();
     }
-    /*
-     *   ------------------------------------------------------------------------------
-     *   ENVIRONMENT: Simple render of each Chunk sprites, also makes sure that newly
-     *   loaded chunks get their new Sprites.
-     *   ------------------------------------------------------------------------------
-     * */
-    private void renderEnvironment() {
-        int[] id = data.CHUNKS_ID;
-        for (int i : id) {
-            if (GameContext.CHUNKS_SPRITE[i] == null) {
-                GameContext.CHUNKS_SPRITE[i] = new Sprite(new RectComponent(0f, 0f, GameContext.CHUNKS_WIDTH, GameContext.CHUNKS_HEIGHT, Matrix4f.translate(GameContext.CHUNKS_POSITION[i])), Texture.GROUND_TEXTURE, Shader.BASIC);
-            }
-            GameContext.CHUNKS_SPRITE[i].render();
+
+    private void unbindUsedTextures() {
+        for (int i = 0; i < TEXTURES_USED.length; i++) {
+            glActiveTexture(GL_TEXTURE0 + i);
+            glBindTexture(GL_TEXTURE_2D, 0);
+            TEXTURES_USED[i] = 0;
         }
     }
-    /*
-     *   ------------------------------------------------------------------------------
-     *   CAMERA: this function takes camera's property from last update snapshot and
-     *   assigns it to pr_matrix which applies to Sprites with Basic shader.
-     *   ------------------------------------------------------------------------------
-     * */
-    private void renderCamera() {
+
+    private void loadCameraMatrix() {
+        /*
+         *   ------------------------------------------------------------------------------
+         *   CAMERA: this function takes camera's property from last update snapshot and
+         *   assigns it to pr_matrix which applies to Sprites with Basic shader.
+         *   ------------------------------------------------------------------------------
+         * */
+
         Rect fov = data.cameraFov;
         Vector2f camPos = fov.getCenter();
         pr_matrix = Matrix4f.orthographic((fov.width / -2f) + camPos.x, (fov.width / 2f) + camPos.x, (fov.height/ -2f) + camPos.y, (fov.height / 2f) + camPos.y, -1f, 1f);
