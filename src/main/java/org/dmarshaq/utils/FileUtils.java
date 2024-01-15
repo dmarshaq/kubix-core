@@ -1,34 +1,38 @@
 package org.dmarshaq.utils;
 
-import org.dmarshaq.graphics.font.FontReader;
-
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.URLClassLoader;
+import java.nio.charset.StandardCharsets;
 
 public interface FileUtils {
 
     static String loadAsString(String filePath) {
-        StringBuilder result = new StringBuilder();
+        String result = "";
+
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(getResource(filePath)));
-            String buffer = "";
-            while ((buffer = reader.readLine()) != null) {
-                result.append(buffer + '\n');
-            }
-            reader.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+            InputStream inputStream = URLClassLoader.getSystemResourceAsStream(filePath);
+            result = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
+        } catch (Exception e) {
+            System.out.println("Could not read resource file " + filePath + " due to: " + e.toString());
+            throw new RuntimeException(e);
         }
-        return result.toString();
+
+        return result;
     }
 
-    static File getResource(String filePath) {
-        return new File(getResourcePath(filePath));
-    }
+    static BufferedImage loadAsImage(String filePath) {
+        BufferedImage result;
 
-    static String getResourcePath(String filePath) {
-        return FileUtils.class.getClassLoader().getResource(filePath).getFile();
+        try {
+            InputStream inputStream = URLClassLoader.getSystemResourceAsStream(filePath);
+            result = ImageIO.read(inputStream);
+        } catch (IOException e) {
+            System.out.println("Could not read resource file " + filePath + " due to: " + e.toString());
+            throw new RuntimeException(e);
+        }
+
+        return result;
     }
 }

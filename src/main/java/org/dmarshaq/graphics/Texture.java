@@ -1,19 +1,14 @@
 package org.dmarshaq.graphics;
 
 
-import org.dmarshaq.app.GameContext;
 import org.dmarshaq.app.GameContext.HelloWorld.*;
-import org.dmarshaq.mathj.Rect;
 import org.dmarshaq.utils.BufferUtils;
 
-import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.FileInputStream;
-import java.io.IOException;
 
 import static org.dmarshaq.app.GameContext.HelloWorld.TILESET_TEXTURE_PATH;
-import static org.dmarshaq.utils.FileUtils.getResourcePath;
+import static org.dmarshaq.utils.FileUtils.loadAsImage;
+
 import static org.lwjgl.opengl.GL11.*;
 
 public class Texture {
@@ -40,15 +35,12 @@ public class Texture {
 
     private int load(String path) {
         int[] pixels = null;
-        try {
-            BufferedImage image = ImageIO.read(new FileInputStream(getResourcePath(path)));
-            width = image.getWidth();
-            height = image.getHeight();
-            pixels = new int[width * height];
-            image.getRGB(0, 0, width, height, pixels, 0 , width);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
+        BufferedImage image = loadAsImage(path);
+        width = image.getWidth();
+        height = image.getHeight();
+        pixels = new int[width * height];
+        image.getRGB(0 ,0, width, height, pixels, 0 , width);
 
         int[] data = new int[width * height];
         for (int y = 0; y < height; y++) {

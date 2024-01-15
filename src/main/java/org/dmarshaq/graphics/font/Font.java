@@ -3,15 +3,7 @@ package org.dmarshaq.graphics.font;
 
 import org.dmarshaq.graphics.SpriteDTO;
 import org.dmarshaq.graphics.Texture;
-import org.dmarshaq.mathj.Rect;
 import org.dmarshaq.mathj.Vector3f;
-
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.FileInputStream;
-import java.io.IOException;
-
-import static org.dmarshaq.utils.FileUtils.getResourcePath;
 
 
 public class Font {
@@ -32,14 +24,6 @@ public class Font {
         this.scale = fontScale;
         characters = FontReader.constructFontData(fontDataPath);
         StringBuilder fontBuilder = new StringBuilder();
-
-        int atlasHeight;
-        try {
-            BufferedImage atlas = ImageIO.read(new FileInputStream(getResourcePath(fontAtlasPath)));
-            atlasHeight = atlas.getHeight();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
 
         textures = new Texture[characters.length];
         int i = 0;
