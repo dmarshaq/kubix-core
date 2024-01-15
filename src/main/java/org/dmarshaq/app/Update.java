@@ -6,6 +6,7 @@ import org.dmarshaq.graphics.Texture;
 import org.dmarshaq.input.Input;
 import org.dmarshaq.input.KeyCode;
 import org.dmarshaq.mathj.*;
+import org.dmarshaq.mathj.MathJ.Math2D;
 import org.dmarshaq.time.Time;
 
 
@@ -33,7 +34,6 @@ public class Update implements Runnable {
         double updateInterval = (double) 1000000000 / FPS;
         double nextUpdateTime = System.nanoTime() + updateInterval;
         double lastFrameTime = 0;
-        System.out.println("Here, Update");
         while (GameContext.isRunning()) {
             double time = System.nanoTime();
             if (lastFrameTime != 0) {
@@ -82,21 +82,64 @@ public class Update implements Runnable {
         // Entities
         updateEntities();
 
+        // No clip primitive 2D movement
+        Vector2f camCenter = camera.getCameraCenter();
+        Vector2f velocity = new Vector2f();
+        if (Input.keysHold[ KeyCode.getKeyCode(KeyCode.D) ]) {
+            velocity.x += 0.02f;
+        }
+        if (Input.keysHold[ KeyCode.getKeyCode(KeyCode.A) ]) {
+            velocity.x -= 0.02f;
+        }
+        if (Input.keysHold[ KeyCode.getKeyCode(KeyCode.W) ]) {
+            velocity.y += 0.02f;
+        }
+        if (Input.keysHold[ KeyCode.getKeyCode(KeyCode.S) ]) {
+            velocity.y -= 0.02f;
+        }
+        camera.setCameraCenter(Math2D.sum(camCenter, velocity));
+
         // Camera
         updateCamera();
 
     }
 
-    private int c;
+    private int angle = 45;
 
     private void updateEntities() {
-        // entities to render
-        for (int x = 0; x < 128; x++) {
-            for (int y = 0; y < 128; y++) {
-                snapshot.addSpriteToRender( new SpriteDTO(Matrix4f.translate(new Vector2f((float) x / 4, (float) y / 4)), Texture.SLIME_TEXTURE, Layer.DEFAULT) );
+//        Matrix4f rotationAnchor = Matrix4f.TRS(new Vector2f(0f, 0f), Layer.DEFAULT.zOrder(), angle, 0.25f, 0.25f);
+//        Matrix4f transform = Matrix4f.TRS(new Vector2f(-0.5f, -0.5f), Layer.DEFAULT.zOrder(), 0f, 1f, 1f );
+//
+//        rotationAnchor.multiply(transform);
+//
+//        snapshot.addSpriteToRender( new SpriteDTO(rotationAnchor, Texture.TILESET_TEXTURE, Layer.DEFAULT) );
+
+        for (int x = 0; x < 16; x++) {
+            for (int y = 0; y < 12; y++) {
+
+                Matrix4f rotationAnchor = Matrix4f.TRS(new Vector2f(x / 2f, y / 2f), Layer.DEFAULT.zOrder(), angle, 0.25f, 0.25f);
+                Matrix4f transform = Matrix4f.TRS(new Vector2f(-0.5f, -0.5f), Layer.DEFAULT.zOrder(), 0f, 1f, 1f );
+
+                rotationAnchor.multiply(transform);
+
+                snapshot.addSpriteToRender( new SpriteDTO(rotationAnchor, Texture.TILESET_TEXTURE, Layer.DEFAULT) );
+
             }
         }
-
+        angle++;
+        if (angle >= 360) {
+            angle = 0;
+        }
+//        for (int x = 0; x < 16; x++) {
+//            for (int y = 0; y < 12; y++) {
+//
+//                Matrix4f transform = Matrix4f.TRS(new Vector2f((float) x / 4, (float) y / 4), Layer.L1.zOrder(), -angle, 1f, 1f );
+//
+//                snapshot.addSpriteToRender( new SpriteDTO(transform, Texture.SLIME_TEXTURE, Layer.L1) );
+//
+//            }
+//        }
+        // entities to render
         for (int i = 0; i < ENTITY_ID.length; i++) {
 
             switch (ENTITY_ID[i]) {
@@ -114,7 +157,7 @@ public class Update implements Runnable {
 
                 default:
 
-                    Vector3f initialPosition = Matrix4f.getTransformPosition(ENTITY_TRANSFORM[i]);
+                    Vector3f initialPosition = ENTITY_TRANSFORM[i].getTransformPosition();
 
                     if (initialPosition.y > 0) {
                         if (initialPosition.y < 2f * Time.DeltaTime.getSeconds())
@@ -160,7 +203,7 @@ public class Update implements Runnable {
 
                             ENTITY_TRANSFORM[i].multiply( Matrix4f.translate(velocity) );
 
-                            HelloWorld.setCameraCenter( new Vector2f( Matrix4f.getTransformPosition(ENTITY_TRANSFORM[i]).x + 0.08f, 0.5f ) );
+                            camera.setCameraCenter( new Vector2f( ENTITY_TRANSFORM[i].getTransformPosition().x + 0.08f, 0.5f ) );
                             break;
 
                         /*
@@ -188,7 +231,7 @@ public class Update implements Runnable {
                      *   sends it to this update snapshot.
                      *   ------------------------------------------------------------------------------
                      * */
-                    if (ENTITY_BOUNDING_BOX[i] != null && HelloWorld.getCameraFov().touchesRect(ENTITY_BOUNDING_BOX[i]) && ENTITY_ID[i] > -1) {
+                    if (ENTITY_BOUNDING_BOX[i] != null && camera.getFov().touchesRect(ENTITY_BOUNDING_BOX[i]) && ENTITY_ID[i] > -1) {
                         snapshot.addSpriteToRender(ENTITY_SPRITE_DTO[i]);
                     }
             }
@@ -197,9 +240,9 @@ public class Update implements Runnable {
 
     private void updateCamera() {
         // Camera logic
-        System.out.println("FPS: " + fps);
+//        System.out.println("FPS: " + fps);
 
-        snapshot.cameraFov = new Rect(HelloWorld.getCameraFov());
+        snapshot.setCameraToRender(camera);
     }
 }
 

@@ -1,6 +1,7 @@
 package org.dmarshaq.app;
 
 import org.dmarshaq.graphics.Anim;
+import org.dmarshaq.graphics.Camera;
 import org.dmarshaq.graphics.SpriteDTO;
 import org.dmarshaq.graphics.Texture;
 import org.dmarshaq.mathj.*;
@@ -42,8 +43,7 @@ public class GameContext {
 
     // RENDER
     public static final class Render {
-        // TODO fix bug of even division of elements by quads when rendered
-        public static final int MAX_QUADS_PER_BATCH = 16385;
+        public static final int MAX_QUADS_PER_BATCH = 512;
     }
 
     // TIMERS ALL IN MILLISECONDS
@@ -78,10 +78,11 @@ public class GameContext {
         }
 
         // CAMERA
-        private static final Rect cameraFov = new Rect(0f, 0f, 40f, 34f);
+        public static final Camera camera = new Camera(0f, 0f, 4f, 3f);
 
         // ENVIRONMENT
         public static final String GROUND_TEXTURE_PATH = "environment/ground.png";
+        public static final String TILESET_TEXTURE_PATH = "tileset/tileset.png";
 
         // PLAYER
         public static class Player {
@@ -167,19 +168,6 @@ public class GameContext {
             Arrays.fill(ENTITY_ID, -2);
         }
 
-        public static void setCameraCenter(Vector2f pos) {
-            cameraFov.setCenter(pos);
-        }
-
-        public void setCameraFov(float width, float height) {
-            cameraFov.width = width;
-            cameraFov.height = height;
-        }
-
-        public static Rect getCameraFov() {
-            return cameraFov;
-        }
-
         private static void instantiateEntities() {
             System.out.println(Layer.BACKGROUND.zOrder());
             System.out.println(Layer.DEFAULT.zOrder());
@@ -190,7 +178,6 @@ public class GameContext {
             System.out.println(Layer.L4.zOrder());
             System.out.println(Layer.L5.zOrder());
             System.out.println(Layer.UI.zOrder());
-
         }
     }
 

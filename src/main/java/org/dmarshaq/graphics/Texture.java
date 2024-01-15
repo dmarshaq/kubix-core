@@ -12,30 +12,36 @@ import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
 import java.io.IOException;
 
+import static org.dmarshaq.app.GameContext.HelloWorld.TILESET_TEXTURE_PATH;
 import static org.dmarshaq.utils.FileUtils.getResourcePath;
 import static org.lwjgl.opengl.GL11.*;
 
 public class Texture {
     private int width, height;
     private int textureID;
+    private SubTexture[] subTextures;
 
-    public static Texture SLIME_TEXTURE;
+    public static Texture SLIME_TEXTURE, TILESET_TEXTURE;
 
     public static void loadTextures() {
         SLIME_TEXTURE = new Texture(Slime.SLIME_TEXTURE_PATH);
+        TILESET_TEXTURE = new Texture(TILESET_TEXTURE_PATH, 6, 4);
     }
 
     private Texture(String Path) {
-        textureID = load(Path, null);
+        textureID = load(Path);
     }
 
-    private int load(String path, Rect cropRegion) {
+    private Texture(String Path, int xSlices, int ySlices) {
+        textureID = load(Path);
+        sliceTexture(xSlices, ySlices);
+    }
+
+
+    private int load(String path) {
         int[] pixels = null;
         try {
             BufferedImage image = ImageIO.read(new FileInputStream(getResourcePath(path)));
-            if (cropRegion != null) {
-                image = cropImage(image, cropRegion);
-            }
             width = image.getWidth();
             height = image.getHeight();
             pixels = new int[width * height];
@@ -65,23 +71,20 @@ public class Texture {
         return result;
     }
 
-    private BufferedImage cropImage(BufferedImage img, Rect cropRegion) {
-        BufferedImage image = img.getSubimage((int)cropRegion.x(), (int)cropRegion.y(), (int)cropRegion.width, (int)cropRegion.height);
-
-        BufferedImage copyOfImage = new BufferedImage(image.getWidth(), image.getHeight(), image.getType());
-        Graphics g = copyOfImage.getGraphics();
-        g.drawImage(image, 0, 0, null);
-        g.dispose();
-
-        return copyOfImage;
-    }
-
-    public void bind() {
-        glBindTexture(GL_TEXTURE_2D, textureID);
-    }
-
-    public void unbind() {
-        glBindTexture(GL_TEXTURE_2D, 0);
+    /**
+     * Slices Texture <p>
+     * Precondition: xSlices > 0 <p>
+     * Precondition: ySlices > 0 <p>
+     */
+    private void sliceTexture(int xSlices, int ySlices) {
+        float sliceWidth = (float) (1.00 / xSlices);
+        float sliceHeight = (float) (1.00 / ySlices);
+        subTextures = new SubTexture[xSlices * ySlices];
+        for (int y = 0; y < ySlices; y++) {
+            for (int x = 0; x < xSlices; x++) {
+                subTextures[x + y * xSlices] = new SubTexture(x * sliceWidth, y * sliceHeight, sliceWidth, sliceHeight);
+            }
+        }
     }
 
     public int getWidth() {
@@ -96,5 +99,7 @@ public class Texture {
         return textureID;
     }
 
-
+    public SubTexture[] getSubTextures() {
+        return subTextures;
+    }
 }

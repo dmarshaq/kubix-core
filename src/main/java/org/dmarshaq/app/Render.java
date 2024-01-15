@@ -2,6 +2,7 @@ package org.dmarshaq.app;
 
 import org.dmarshaq.graphics.Shader;
 import org.dmarshaq.graphics.Sprite;
+import org.dmarshaq.graphics.SubTexture;
 import org.dmarshaq.graphics.Texture;
 import org.dmarshaq.input.Input;
 import org.dmarshaq.mathj.*;
@@ -36,6 +37,7 @@ public class Render implements Runnable {
     // Render data
     static class Renderer {
         public static int drawcalls = 0;
+        public static int quadsRenderedInBatch = 0;
         public static final int FLOATS_PER_VERTEX = 10;
         public static final int VERTICES_PER_SPRITE = 4;
         public static final int SPRITE_STRIDE_IN_ARRAY = FLOATS_PER_VERTEX * VERTICES_PER_SPRITE; // floats allocated per each sprite (quad its storing)
@@ -240,14 +242,14 @@ public class Render implements Runnable {
             // Actually loading vertices into graphics memory
             glBufferSubData(GL_ARRAY_BUFFER, 0, VERTICES);
             // Drawing
-            // TODO select precise number of indices to render, not render every indices each time
-            glDrawElements(GL_TRIANGLES, INDICES.length, GL_UNSIGNED_INT, 0);
+//            System.out.println("Quads rendered in Batch: " + quadsRenderedInBatch);
+            glDrawElements(GL_TRIANGLES, quadsRenderedInBatch * 6, GL_UNSIGNED_INT, 0);
             drawcalls++;
             // Cleaning up
             flush();
         }
 
-        System.out.println("Drawcalls per render: "  + drawcalls);
+//        System.out.println("Drawcalls per render: "  + drawcalls);
         drawcalls = 0;
     }
 
@@ -255,11 +257,10 @@ public class Render implements Runnable {
     private int nextBatch(int startIndex, Sprite[] spriteArray) {
         int spriteGlobalIndex = 0;
         int nextBatchStartIndex = 0;
-        int spritesLoaded = 0;
         int offsetToStartIndex = 0;
         int currentLayerIndex = -1;
 
-        while (spritesLoaded < MAX_QUADS_PER_BATCH) {
+        while (quadsRenderedInBatch < MAX_QUADS_PER_BATCH) {
             spriteGlobalIndex = startIndex + offsetToStartIndex;
             offsetToStartIndex++;
 
@@ -281,7 +282,8 @@ public class Render implements Runnable {
             currentLayerIndex = sprite.getLayer().getIndex();
 
             // manage texture
-            if (!tryAllocateTextureSlot( sprite.getTexture().getID() )) {
+            int slot = allocateTextureSlot( sprite.getTexture().getID() );
+            if (slot == -1) {
                 if (nextBatchStartIndex == 0) {
                     nextBatchStartIndex = spriteGlobalIndex;
                 }
@@ -289,8 +291,8 @@ public class Render implements Runnable {
             }
 
             // if every check before is good, load sprite data into actual vertices used
-            loadSpriteVertices(spritesLoaded, spriteArray[spriteGlobalIndex]);
-            spritesLoaded++;
+            loadSpriteVertices(quadsRenderedInBatch, spriteArray[spriteGlobalIndex], slot);
+            quadsRenderedInBatch++;
 
             // little clean up, plus it will ensure our nextBatch doesn't go twice for any sprite
             spriteArray[spriteGlobalIndex] = null;
@@ -298,105 +300,118 @@ public class Render implements Runnable {
         }
 
         if (nextBatchStartIndex == 0) {
-            nextBatchStartIndex = spriteGlobalIndex;
+            nextBatchStartIndex = spriteGlobalIndex + 1;
         }
 
         return nextBatchStartIndex;
     }
 
-    private void loadSpriteVertices(int spriteIndex, Sprite sprite) {
+    private void loadSpriteVertices(int spriteIndex, Sprite sprite, int textureSlot) {
         int vertexArraySpriteStart = spriteIndex * SPRITE_STRIDE_IN_ARRAY;
         int offset;
         // ORDER: BOTTOM LEFT -> BOTTOM RIGHT -> TOP LEFT -> TOP RIGHT
 
-        Vector3f position = Matrix4f.getTransformPosition(sprite.getTransform());
+        SubTexture subTexture;
+        if (sprite.getTexture().getSubTextures() == null) {
+            subTexture = new SubTexture(0, 0, 1, 1);
+        }
+        else {
+            subTexture = sprite.getTexture().getSubTextures()[4];
+        }
+
+        Vector2f position = sprite.getTransform().multiply(new Vector2f(), 1f);
+        float zIndex = sprite.getLayer().zOrder();
+
+        Vector2f localXVector = new Vector2f( MathJ.pixelToWorld( (int) (sprite.getTexture().getWidth() * subTexture.width()) ), 0);
+        Vector2f localYVector = new Vector2f( 0, MathJ.pixelToWorld( (int) (sprite.getTexture().getHeight() * subTexture.height()) ) );
+        localXVector = sprite.getTransform().multiply(localXVector, 0);
+        localYVector = sprite.getTransform().multiply(localYVector, 0);
 
         // BOTTOM LEFT
         offset = 0;
         VERTICES[vertexArraySpriteStart + 0 + offset] = position.x;
         VERTICES[vertexArraySpriteStart + 1 + offset] = position.y;
-        VERTICES[vertexArraySpriteStart + 2 + offset] = position.z;
+        VERTICES[vertexArraySpriteStart + 2 + offset] = zIndex;
 
         VERTICES[vertexArraySpriteStart + 3 + offset] = 1.0f;
         VERTICES[vertexArraySpriteStart + 4 + offset] = 1.0f;
         VERTICES[vertexArraySpriteStart + 5 + offset] = 1.0f;
         VERTICES[vertexArraySpriteStart + 6 + offset] = 1.0f;
 
-        VERTICES[vertexArraySpriteStart + 7 + offset] = 0.0f;
-        VERTICES[vertexArraySpriteStart + 8 + offset] = 0.0f;
+        VERTICES[vertexArraySpriteStart + 7 + offset] = subTexture.x();
+        VERTICES[vertexArraySpriteStart + 8 + offset] = subTexture.y();
 
-        VERTICES[vertexArraySpriteStart + 9 + offset] = 0.0f;
+        VERTICES[vertexArraySpriteStart + 9 + offset] = textureSlot;
 
         // BOTTOM RIGHT
         offset += 10;
-        VERTICES[vertexArraySpriteStart + 0 + offset] = position.x + MathJ.pixelToWorld(sprite.getTexture().getWidth());
-        VERTICES[vertexArraySpriteStart + 1 + offset] = position.y;
-        VERTICES[vertexArraySpriteStart + 2 + offset] = position.z;
+        VERTICES[vertexArraySpriteStart + 0 + offset] = position.x + localXVector.x;
+        VERTICES[vertexArraySpriteStart + 1 + offset] = position.y + localXVector.y;
+        VERTICES[vertexArraySpriteStart + 2 + offset] = zIndex;
 
         VERTICES[vertexArraySpriteStart + 3 + offset] = 1.0f;
         VERTICES[vertexArraySpriteStart + 4 + offset] = 1.0f;
         VERTICES[vertexArraySpriteStart + 5 + offset] = 1.0f;
         VERTICES[vertexArraySpriteStart + 6 + offset] = 1.0f;
 
-        VERTICES[vertexArraySpriteStart + 7 + offset] = 1.0f;
-        VERTICES[vertexArraySpriteStart + 8 + offset] = 0.0f;
+        VERTICES[vertexArraySpriteStart + 7 + offset] = subTexture.x() + subTexture.width();
+        VERTICES[vertexArraySpriteStart + 8 + offset] = subTexture.y();
 
-        VERTICES[vertexArraySpriteStart + 9 + offset] = 0.0f;
+        VERTICES[vertexArraySpriteStart + 9 + offset] = textureSlot;
 
         // TOP LEFT
         offset += 10;
-        VERTICES[vertexArraySpriteStart + 0 + offset] = position.x;
-        VERTICES[vertexArraySpriteStart + 1 + offset] = position.y + MathJ.pixelToWorld(sprite.getTexture().getHeight());
-        VERTICES[vertexArraySpriteStart + 2 + offset] = position.z;
+        VERTICES[vertexArraySpriteStart + 0 + offset] = position.x + localYVector.x;
+        VERTICES[vertexArraySpriteStart + 1 + offset] = position.y + localYVector.y;
+        VERTICES[vertexArraySpriteStart + 2 + offset] = zIndex;
 
         VERTICES[vertexArraySpriteStart + 3 + offset] = 1.0f;
         VERTICES[vertexArraySpriteStart + 4 + offset] = 1.0f;
         VERTICES[vertexArraySpriteStart + 5 + offset] = 1.0f;
         VERTICES[vertexArraySpriteStart + 6 + offset] = 1.0f;
 
-        VERTICES[vertexArraySpriteStart + 7 + offset] = 0.0f;
-        VERTICES[vertexArraySpriteStart + 8 + offset] = 1.0f;
+        VERTICES[vertexArraySpriteStart + 7 + offset] = subTexture.x();
+        VERTICES[vertexArraySpriteStart + 8 + offset] = subTexture.y() + subTexture.height();
 
-        VERTICES[vertexArraySpriteStart + 9 + offset] = 0.0f;
+        VERTICES[vertexArraySpriteStart + 9 + offset] = textureSlot;
 
         // TOP RIGHT
         offset += 10;
-        VERTICES[vertexArraySpriteStart + 0 + offset] = position.x + MathJ.pixelToWorld(sprite.getTexture().getWidth());
-        VERTICES[vertexArraySpriteStart + 1 + offset] = position.y + MathJ.pixelToWorld(sprite.getTexture().getHeight());
-        VERTICES[vertexArraySpriteStart + 2 + offset] = position.z;
+        VERTICES[vertexArraySpriteStart + 0 + offset] = position.x + localXVector.x + localYVector.x;
+        VERTICES[vertexArraySpriteStart + 1 + offset] = position.y + localXVector.y + localYVector.y;
+        VERTICES[vertexArraySpriteStart + 2 + offset] = zIndex;
 
         VERTICES[vertexArraySpriteStart + 3 + offset] = 1.0f;
         VERTICES[vertexArraySpriteStart + 4 + offset] = 1.0f;
         VERTICES[vertexArraySpriteStart + 5 + offset] = 1.0f;
         VERTICES[vertexArraySpriteStart + 6 + offset] = 1.0f;
 
-        VERTICES[vertexArraySpriteStart + 7 + offset] = 1.0f;
-        VERTICES[vertexArraySpriteStart + 8 + offset] = 1.0f;
+        VERTICES[vertexArraySpriteStart + 7 + offset] = subTexture.x() + subTexture.width();
+        VERTICES[vertexArraySpriteStart + 8 + offset] = subTexture.y() + subTexture.height();
 
-        VERTICES[vertexArraySpriteStart + 9 + offset] = 0.0f;
-
+        VERTICES[vertexArraySpriteStart + 9 + offset] = textureSlot;
 
     }
 
-    private boolean tryAllocateTextureSlot(int textureID) {
+    private int allocateTextureSlot(int textureID) {
         for (int i = 0; i < TEXTURES_USED.length; i++) {
             if (textureID == TEXTURES_USED[i]) {
                 // Use existing one for sprite
-                return true;
+                return i;
             }
             if (TEXTURES_USED[i] == 0) {
                 // Allocate another texture slot for sprite
                 TEXTURES_USED[i] = textureID;
-                return true;
+                return i;
             }
             if (i == TEXTURES_USED.length - 1) {
                 // Not enough space skip sprite
-                return false;
+                return -1;
             }
         }
         // Failed in allocation
         System.out.println("Failed in allocation of texture slot.");
-        return false;
+        return -1;
     }
 
     private void loadTexturesUsedIntoSlots() {
@@ -408,7 +423,7 @@ public class Render implements Runnable {
 
     private void flush() {
         unbindUsedTextures();
-
+        quadsRenderedInBatch = 0;
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         Shader.BASIC.disable();
     }
@@ -421,6 +436,7 @@ public class Render implements Runnable {
         }
     }
 
+
     private void loadCameraMatrix() {
         /*
          *   ------------------------------------------------------------------------------
@@ -428,10 +444,7 @@ public class Render implements Runnable {
          *   assigns it to pr_matrix which applies to Sprites with Basic shader.
          *   ------------------------------------------------------------------------------
          * */
-
-        Rect fov = data.cameraFov;
-        Vector2f camPos = fov.getCenter();
-        pr_matrix = Matrix4f.orthographic((fov.width / -2f) + camPos.x, (fov.width / 2f) + camPos.x, (fov.height/ -2f) + camPos.y, (fov.height / 2f) + camPos.y, -1f, 1f);
+        pr_matrix = data.getCamera().projectionMatrix();
         Shader.BASIC.setUniformMatrix4f("pr_matrix", pr_matrix);
         Shader.BASIC.disable();
     }
