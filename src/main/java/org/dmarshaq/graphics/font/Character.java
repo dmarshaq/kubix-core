@@ -2,14 +2,14 @@ package org.dmarshaq.graphics.font;
 
 public class Character {
 
-	private int id;
-	private int x;
-	private int y;
-	private int width;
-	private int height;
-	private int xoffset;
-	private int yoffset;
-	private int xadvance;
+	private final int id;
+	private final int x;
+	private final int y;
+	private final int width;
+	private final int height;
+	private final int xoffset;
+	private final int yoffset;
+	private final int xadvance;
 
 	public int getId() {
 		return id;

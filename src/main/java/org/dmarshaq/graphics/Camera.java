@@ -3,7 +3,6 @@ package org.dmarshaq.graphics;
 import org.dmarshaq.mathj.Matrix4f;
 import org.dmarshaq.mathj.Rect;
 import org.dmarshaq.mathj.Vector2f;
-import org.dmarshaq.mathj.Vector3f;
 
 public class Camera {
 
@@ -28,11 +27,11 @@ public class Camera {
     }
 
     public Vector2f getCameraCenter() {
-        return fov.getCenter();
+        return fov.center();
     }
 
     public Matrix4f projectionMatrix() {
-        Vector2f center = fov.getCenter();
+        Vector2f center = fov.center();
         return Matrix4f.orthographic((fov.width / -2f) + center.x, (fov.width / 2f) + center.x, (fov.height/ -2f) + center.y, (fov.height / 2f) + center.y, -1f, 1f);
     }
 

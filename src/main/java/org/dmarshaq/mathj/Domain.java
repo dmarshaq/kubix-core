@@ -5,13 +5,25 @@ public final class Domain {
 	private final float a, b;
 
 	public Domain(float a, float b) {
-		this.a = a;
-		this.b = b;
+		if (a > b) {
+			this.a = b;
+			this.b = a;
+		}
+		else {
+			this.a = a;
+			this.b = b;
+		}
 	}
 
 	public Domain(Domain domain) {
-		this.a = domain.a;
-		this.b = domain.b;
+		if (domain.a > domain.b) {
+			this.a = domain.b;
+			this.b = domain.a;
+		}
+		else {
+			this.a = domain.a;
+			this.b = domain.b;
+		}
 	}
 	
 	public int isInDomain(float value) {

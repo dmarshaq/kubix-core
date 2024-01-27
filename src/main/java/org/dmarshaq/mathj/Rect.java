@@ -3,7 +3,7 @@ package org.dmarshaq.mathj;
 import static org.dmarshaq.mathj.MathJ.Math2D;
 
 public class Rect {
-	private Vector2f position;
+	private final Vector2f position;
 	public float width;
 	public float height;
 	
@@ -26,7 +26,7 @@ public class Rect {
 	}
 
 	public Rect(Rect rect) {
-		position = rect.getPosition();
+		position = rect.position();
 		this.width = rect.width;
 		this.height = rect.height;
 	}
@@ -35,15 +35,15 @@ public class Rect {
 		return "at: " + position + " width: " + width + " height: " + height;
 	}
 
-	public Domain getXDomain() {
+	public Domain xDomain() {
 		return new Domain(position.x, position.x + width);
 	}
 
-	public Domain getYDomain() {
+	public Domain yDomain() {
 		return new Domain(position.y, position.y + height);
 	}
 	
-	public Vector2f getCenter() {
+	public Vector2f center() {
 		return Math2D.sum(position, new Vector2f(width/2, height/2));
 	}
 
@@ -51,12 +51,8 @@ public class Rect {
 		position.copyValues(Math2D.sum(pos, new Vector2f(width/-2, height/-2)));
 	}
 
-	public Vector2f getPosition() {
+	public Vector2f position() {
 		return new Vector2f(position.x, position.y);
-	}
-
-	protected Vector2f getPositionObject() {
-		return position;
 	}
 
 	public float x() {
@@ -72,13 +68,13 @@ public class Rect {
 	}
 
 	public boolean touchesRect(Vector2f point) {
-		return getXDomain().isInDomain(point.x) == 0 && getYDomain().isInDomain(point.y) == 0;
+		return xDomain().isInDomain(point.x) == 0 && yDomain().isInDomain(point.y) == 0;
 	}
 
 	public boolean touchesRect(Rect rect) {
 		for (int i = 0; i < 4; i++) {
 			Vector2f corner = rect.getRectCorner(i);
-			if (getXDomain().isInDomain(corner.x) == 0 && getYDomain().isInDomain(corner.y) == 0) {
+			if (xDomain().isInDomain(corner.x) == 0 && yDomain().isInDomain(corner.y) == 0) {
 				return true;
 			}
 		}
@@ -87,10 +83,10 @@ public class Rect {
 
 	public Vector2f getRectCorner(int cornerId) {
 		return switch (cornerId) {
-			case (0) -> getPosition();
-			case (1) -> Math2D.sum(getPosition(), new Vector2f(0, height));
-			case (2) -> Math2D.sum(getPosition(), new Vector2f(width, 0));
-			case (3) -> Math2D.sum(getPosition(), new Vector2f(width, height));
+			case (0) -> position();
+			case (1) -> Math2D.sum(position(), new Vector2f(0, height));
+			case (2) -> Math2D.sum(position(), new Vector2f(width, 0));
+			case (3) -> Math2D.sum(position(), new Vector2f(width, height));
 			default -> null;
 		};
 	}

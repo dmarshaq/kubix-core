@@ -1,12 +1,16 @@
 package org.dmarshaq.app;
 
-import org.dmarshaq.graphics.Anim;
-import org.dmarshaq.graphics.SpriteDTO;
-import org.dmarshaq.graphics.Texture;
+import org.dmarshaq.audio.Sound;
+import org.dmarshaq.graphics.*;
+import org.dmarshaq.graphics.font.Font;
+import org.dmarshaq.graphics.particles.ParticleSystem;
 import org.dmarshaq.input.Input;
 import org.dmarshaq.input.KeyCode;
 import org.dmarshaq.mathj.*;
 import org.dmarshaq.mathj.MathJ.Math2D;
+import org.dmarshaq.physics.Physics2D;
+import org.dmarshaq.physics.RayCast2D;
+import org.dmarshaq.physics.RigidBody2D;
 import org.dmarshaq.time.Time;
 
 
@@ -19,8 +23,8 @@ public class Update implements Runnable {
     private GameContext context;
     private Render render;
     private Snapshot snapshot;
-    private float fps;
-
+    private static float fps;
+    private boolean start = true;
 
     public Update(final GameContext context, final Render render) {
         this.context = context;
@@ -45,12 +49,21 @@ public class Update implements Runnable {
             if (render.getWindow() != 0 && glfwWindowShouldClose(render.getWindow())) {
                 GameContext.stopRunning();
             }
-            // do some job
 
+            // New snapshot
             snapshot = new Snapshot();
+            // Layers Clean Up
+            Layer.clearRenderSpritesCount();
+            // only in first update
+            if (start) {
+                start();
+                start = false;
+            }
+            // update itself
             update();
+            // snapshot packing up
             snapshot.closeSpriteInputStream();
-
+            // loading snapshot into render
             render.loadData(snapshot);
 
             synchronized (render) {
@@ -59,6 +72,7 @@ public class Update implements Runnable {
             try {
                 double remainingTime = nextUpdateTime - System.nanoTime();
                 remainingTime /= 1000000;
+//                System.out.println("Remaining time: " + remainingTime);
                 if (remainingTime < 0) {
                     remainingTime = 0;
                 }
@@ -74,175 +88,176 @@ public class Update implements Runnable {
         }
     }
 
+    private Animation animation1, animation2, animation3;
+    private Sprite coloredSprite, origin, fire, explosion, pawn, particle, body;
+    private RigidBody2D rigidBody2D;
+    private Text text1, text2, text3;
+    private ParticleSystem particleSystem;
+    private Matrix4f transform = Matrix4f.identity();
+    private Matrix4f transform1 = Matrix4f.identity();
+    private Matrix4f transform2 = Matrix4f.identity();
+    private Matrix4f transform3 = Matrix4f.identity();
+    private Matrix4f localSpace = Matrix4f.identity();
+    private int counter = 1;
+    private Sound sound1;
+
+    private void start() {
+        sound1 = new Sound("sound/Innerbloom.ogg", true, 0.08f, 1.0f);
+
+        Vector4f color = new Vector4f(0.5f, 0.6f, 0.4f, 0.2f);
+        coloredSprite = new Sprite(transform, Layer.L1, color, Shader.S1);
+
+        transform = Matrix4f.TRS(new Vector2f(), 45f, 0.25f, 0.25f);
+        transform.multiply(Matrix4f.translateXY( new Vector2f(-0.5f, -0.5f) ));
+        color = new Vector4f(0.7f, 0.7f, 0.7f, 0.7f);
+        origin = new Sprite(transform, Layer.DEFAULT, color, Shader.BASIC);
+
+//        animation1 = new Animation(500, 0, Texture.FIRE);
+//        animation2 = new Animation(500, 0, Texture.EXPLOSION);
+//        animation3 = new Animation(800, 0, Texture.PAWN_BLUE);
+//
+//        transform = Matrix4f.scaleXY(0.5f, 0.5f);
+//        fire = new Sprite(transform, Layer.DEFAULT, animation1, Shader.BASIC);
+//
+//        transform = Matrix4f.scaleXY(0.5f, 0.5f);
+//        explosion = new Sprite(transform, Layer.DEFAULT, animation2, Shader.BASIC);
+//
+//        transform = Matrix4f.scaleXY(1.0f, 1.0f);
+//        pawn = new Sprite(transform, Layer.PLAYER, animation3, Shader.BASIC);
+//
+//        transform = Matrix4f.scaleXY(0.25f, 0.25f);
+//        Sprite particleSprite = new Sprite(transform, Layer.DEFAULT, Texture.FIRE, Texture.FIRE.getSubTextures()[0], Shader.BASIC);
+//
+//        transform1 = Matrix4f.TRS(new Vector2f(0, 0), 0f, 3.0f, 3.0f);
+//        text1 = new Text("white balls", transform1, Layer.UI, Font.BASIC_PUP_WHITE, Shader.BASIC);
+//
+//        transform2 = Matrix4f.TRS(new Vector2f(0, 0), 180f, 3.0f, 3.0f);
+//        text2 = new Text("black balls", transform2, Layer.UI, Font.BASIC_PUP_BLACK, Shader.BASIC);
+//
+//        transform3 = Matrix4f.TRS(new Vector2f(0, -2), 0, 2.0f, 2.0f);
+//        String paragraph = "In the bustling city of Eldoria, a grand procession was underway. Thousands of characters, from knights in shining armor to enchanting sorceresses, filled the cobblestone streets. As they marched in unison, the batch renderer seamlessly managed this diverse crowd, ensuring smooth and efficient rendering. The knights' armor gleamed in the sunlight, while the sorceresses' magical spells cast shimmering trails of light. Each character, unique in their appearance and animations, moved effortlessly through the cityscape, creating a vibrant and immersive world. Thanks to the powerful batch renderer, players could explore the rich tapestry of Eldoria without a hitch, experiencing the grandeur of this fantastical realm in all its glory.";
+//        text3 = new Text(paragraph, transform3, Layer.UI, Font.BASIC_PUP_BLACK, Shader.BASIC);
+//
+//        transform = Matrix4f.scaleXY(0.10f, 0.10f);
+//        color = new Vector4f(0.7f, 0.7f, 0.7f, 0.9f);
+//        particle = new Sprite(transform, Layer.DEFAULT, color, Shader.BASIC);
+//
+//        particleSystem = new ParticleSystem(new Vector2f(-5, 0), 500, 100, particle, true);
+//        particleSystem.setParticleLifetime(10f);
+//        particleSystem.setParticleSpeed(1.0f);
+//        particleSystem.stop();
+
+        transform = Matrix4f.TRS(new Vector2f(0.0f, 0.0f), 0f, 1f, 1f);
+        body = new Sprite(transform, Layer.DEFAULT, color, Shader.BASIC);
+        rigidBody2D = new RigidBody2D(body.getCenter(), 1.00f);
+//
+//        localSpace = Matrix4f.TRS( new Vector2f(0.0f, 0.0f), 0f, 2.0f, 1.0f );
+//        Vector2f worldPoint = localSpace.localToWorld( new Vector2f(1.0f, 5.0f) );
+//        System.out.println(worldPoint);
+//        Vector2f localPoint = localSpace.worldToLocal( worldPoint );
+//        System.out.println(localPoint);
+
+        Physics2D.createBoxCollider2D(localSpace, new Vector2f(1.0f, 1.0f), 1.0f, 4.0f, false, true);
+
+        RayCast2D rayCast2D = Physics2D.rayCast2D(new Vector2f(1.0f, 0.0f), new Vector2f(0.5f, 0.6f));
+        if (rayCast2D != null) {
+            Vector2f intersection = rayCast2D.getIntersection();
+            System.out.println("Ray hit: " + intersection);
+        }
+        else {
+            System.out.println("No ray intersection.");
+        }
+    }
+
+    private float angle = 0f;
+
     private void update() {
 
-        // Layers Clean Up
-        Layer.clearRenderSpritesCount();
+        // example sound
+        sound1.play();
 
-        // Entities
-        updateEntities();
+        // example sprites
+
+        snapshot.addSpriteToRender(origin);
+
+//        snapshot.addSpriteToRender(coloredSprite);
+
+//        // example sprites & animations
+//        fire.playAnimation(MathJ.Easing.LINEAR);
+//        snapshot.addSpriteToRender(fire);
+//
+//        explosion.playAnimation(MathJ.Easing.EASE_IN_OUT_SINE);
+//        snapshot.addSpriteToRender(explosion);
+//
+//        pawn.playAnimation(MathJ.Easing.LINEAR);
+//        snapshot.addSpriteToRender(pawn);
+//
+//        if ( (timer_test = Time.Timer.countTimer(timer_test)) == 0 ) {
+//            fire.setAnimation(animation2);
+//
+//            animation3.setAnimationRow(counter);
+//
+//            counter++;
+//            if (counter > 5) {
+//                counter = 0;
+//            }
+//            particleSystem.resume();
+//            timer_test = 4000;
+//        }
+//
+//        // example text's & their transformations
+//        transform1.multiply(Matrix4f.rotateXY(30 * Time.DeltaTime.getSeconds()));
+//        text1.update(snapshot);
+//
+//        transform2.multiply(Matrix4f.rotateXY(30 * Time.DeltaTime.getSeconds()));
+//        text2.update(snapshot);
+//
+//        text3.update(snapshot);
+//
+//        // example simple particle system
+//        particleSystem.update(snapshot);
+
+
+
+        // Physics 2D demonstration
+        if ( (timer_physics_test = Time.Timer.countTimer(timer_physics_test)) == 0 ) {
+            float randomX = (float) Math.random();
+            float randomY = (float) Math.random();
+            Physics2D.applyImpulse(new Vector2f(randomX * 1000f, randomY * 1000f), 0.01f, rigidBody2D);
+
+//            Physics2D.applyImpulse(new Vector2f(-randomX * 10f, -randomY * 10f), 1.00f, rigidBody2D);
+
+            timer_physics_test = 4000;
+        }
+
+        Physics2D.updatePhysics(snapshot);
+        rigidBody2D.update();
+        body.getTransform().setPositionXY( Math2D.diffrence( rigidBody2D.getPosition(), new Vector2f(0.5f, 0.5f))  );
+        snapshot.addSpriteToRender(body);
 
         // No clip primitive 2D movement
         Vector2f camCenter = camera.getCameraCenter();
         Vector2f velocity = new Vector2f();
         if (Input.keysHold[ KeyCode.getKeyCode(KeyCode.D) ]) {
-            velocity.x += 0.02f;
+            velocity.x += 18 * Time.DeltaTime.getSeconds();
         }
         if (Input.keysHold[ KeyCode.getKeyCode(KeyCode.A) ]) {
-            velocity.x -= 0.02f;
+            velocity.x -= 18 * Time.DeltaTime.getSeconds();
         }
         if (Input.keysHold[ KeyCode.getKeyCode(KeyCode.W) ]) {
-            velocity.y += 0.02f;
+            velocity.y += 18 * Time.DeltaTime.getSeconds();
         }
         if (Input.keysHold[ KeyCode.getKeyCode(KeyCode.S) ]) {
-            velocity.y -= 0.02f;
+            velocity.y -= 18 * Time.DeltaTime.getSeconds();
         }
         camera.setCameraCenter(Math2D.sum(camCenter, velocity));
 
-        // Camera
-        updateCamera();
-
-    }
-
-    private int angle = 45;
-
-    private void updateEntities() {
-//        Matrix4f rotationAnchor = Matrix4f.TRS(new Vector2f(0f, 0f), Layer.DEFAULT.zOrder(), angle, 0.25f, 0.25f);
-//        Matrix4f transform = Matrix4f.TRS(new Vector2f(-0.5f, -0.5f), Layer.DEFAULT.zOrder(), 0f, 1f, 1f );
-//
-//        rotationAnchor.multiply(transform);
-//
-//        snapshot.addSpriteToRender( new SpriteDTO(rotationAnchor, Texture.TILESET_TEXTURE, Layer.DEFAULT) );
-
-        for (int x = 0; x < 16; x++) {
-            for (int y = 0; y < 12; y++) {
-
-                Matrix4f rotationAnchor = Matrix4f.TRS(new Vector2f(x / 2f, y / 2f), Layer.DEFAULT.zOrder(), angle, 0.25f, 0.25f);
-                Matrix4f transform = Matrix4f.TRS(new Vector2f(-0.5f, -0.5f), Layer.DEFAULT.zOrder(), 0f, 1f, 1f );
-
-                rotationAnchor.multiply(transform);
-
-                snapshot.addSpriteToRender( new SpriteDTO(rotationAnchor, Texture.TILESET_TEXTURE, Layer.DEFAULT) );
-
-            }
-        }
-        angle++;
-        if (angle >= 360) {
-            angle = 0;
-        }
-//        for (int x = 0; x < 16; x++) {
-//            for (int y = 0; y < 12; y++) {
-//
-//                Matrix4f transform = Matrix4f.TRS(new Vector2f((float) x / 4, (float) y / 4), Layer.L1.zOrder(), -angle, 1f, 1f );
-//
-//                snapshot.addSpriteToRender( new SpriteDTO(transform, Texture.SLIME_TEXTURE, Layer.L1) );
-//
-//            }
-//        }
-        // entities to render
-        for (int i = 0; i < ENTITY_ID.length; i++) {
-
-            switch (ENTITY_ID[i]) {
-                case -1:
-                    ENTITY_ID[i] = -2;
-                    ENTITY_TRANSFORM[i] = null;
-                    ENTITY_BOUNDING_BOX[i] = null;
-                    ENTITY_TYPE[i] = null;
-                    ENTITY_SPRITE_DTO[i].getLayer().decrementSpriteCount();
-                    ENTITY_SPRITE_DTO[i] = null;
-                    ENTITY_CURRENT_ANIM[i] = null;
-                    break;
-                case -2:
-                    break;
-
-                default:
-
-                    Vector3f initialPosition = ENTITY_TRANSFORM[i].getTransformPosition();
-
-                    if (initialPosition.y > 0) {
-                        if (initialPosition.y < 2f * Time.DeltaTime.getSeconds())
-                            ENTITY_TRANSFORM[i].setTransformPosition(new Vector2f(initialPosition.x, 0f), initialPosition.z);
-                        else
-                            ENTITY_TRANSFORM[i].multiply(Matrix4f.translate( new Vector2f(0f, -2f * Time.DeltaTime.getSeconds() ) ));
-                    }
-
-                    switch (ENTITY_TYPE[i]) {
-
-                        /*
-                         *   ------------------------------------------------------------------------------
-                         *   PLAYER CASE
-                         *   ------------------------------------------------------------------------------
-                         * */
-                        case PLAYER:
-                            // Timer demonstration.
-                            if ((timer_player = Time.Timer.countTimer(timer_player)) == 0) {
-                                System.out.println("5 second past");
-                                System.out.println("Slime is destroyed");
-                                HelloWorld.Destroy(1);
-                                timer_player = -1;
-                            }
-
-                            // Simple movement and animation switcher based on key press.
-                            Vector2f velocity = new Vector2f();
-
-                            if (Input.keysHold[ KeyCode.getKeyCode(KeyCode.D) ]) {
-//                                if (ENTITY_FLIP[i])
-//                                    ENTITY_FLIP[i] = false;
-                                ENTITY_CURRENT_ANIM[i] = Anim.PLAYER_RUN;
-                                velocity.x = Player.PLAYER_SPEED * Time.DeltaTime.getSeconds();
-                            }
-                            else if (Input.keysHold[ KeyCode.getKeyCode(KeyCode.A) ]) {
-//                                if (!ENTITY_FLIP[i])
-//                                    ENTITY_FLIP[i] = true;
-                                ENTITY_CURRENT_ANIM[i] = Anim.PLAYER_RUN;
-                                velocity.x = -Player.PLAYER_SPEED * Time.DeltaTime.getSeconds();
-                            }
-                            else {
-                                ENTITY_CURRENT_ANIM[i] = Anim.PLAYER_IDLE;
-                            }
-
-                            ENTITY_TRANSFORM[i].multiply( Matrix4f.translate(velocity) );
-
-                            camera.setCameraCenter( new Vector2f( ENTITY_TRANSFORM[i].getTransformPosition().x + 0.08f, 0.5f ) );
-                            break;
-
-                        /*
-                         *   ------------------------------------------------------------------------------
-                         *   SLIME CASE
-                         *   ------------------------------------------------------------------------------
-                         * */
-                        case SLIME:
-
-                            break;
-
-                        /*
-                         *   ------------------------------------------------------------------------------
-                         *   DEFAULT ENTITY CASE
-                         *   ------------------------------------------------------------------------------
-                         * */
-                        default:
-
-                            break;
-                    }
-
-                    /*
-                     *   ------------------------------------------------------------------------------
-                     *   ALL ENTITIES: Following if statement checks, if entity is in camera fov, if it is,
-                     *   sends it to this update snapshot.
-                     *   ------------------------------------------------------------------------------
-                     * */
-                    if (ENTITY_BOUNDING_BOX[i] != null && camera.getFov().touchesRect(ENTITY_BOUNDING_BOX[i]) && ENTITY_ID[i] > -1) {
-                        snapshot.addSpriteToRender(ENTITY_SPRITE_DTO[i]);
-                    }
-            }
-        }
-    }
-
-    private void updateCamera() {
-        // Camera logic
 //        System.out.println("FPS: " + fps);
-
         snapshot.setCameraToRender(camera);
+    }
+
+    public static float getCurrentFPS() {
+        return fps;
     }
 }
 

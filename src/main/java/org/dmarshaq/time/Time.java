@@ -22,7 +22,7 @@ public class Time {
                 return -1;
             }
 
-            timer_time -= 1f * DeltaTime.getMiliSeconds();
+            timer_time -= DeltaTime.getMiliSeconds();
             if (timer_time <= 0) {
                 return 0;
             }

@@ -1,7 +1,10 @@
 package org.dmarshaq.graphics;
 
 public class SubTexture {
-    private float x, y, width, height;
+    private final float x;
+    private final float y;
+    private final float width;
+    private final float height;
 
 
     public SubTexture(float x, float y, float width, float height) {

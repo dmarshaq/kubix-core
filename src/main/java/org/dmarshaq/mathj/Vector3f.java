@@ -27,6 +27,13 @@ public final class Vector3f {
         this.z = v.z;
     }
 
+    public static Vector3f duplicate(Vector3f v) {
+        if (v == null) {
+            return null;
+        }
+        return new Vector3f(v.x, v.y, v.z);
+    }
+
     public String toString() {
         return "( " + x + " , " + y + ", " + z + " )";
     }

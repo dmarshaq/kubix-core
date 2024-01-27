@@ -8,7 +8,7 @@ import static org.dmarshaq.utils.FileUtils.loadAsString;
 public interface FontReader {
 
 
-    public static Character[] constructFontData(String filePath)  {
+    static Character[] constructFontData(String filePath)  {
         Character[] result = null;
 
         int fontCharacterIndex = 0;
@@ -43,10 +43,5 @@ public interface FontReader {
         fileReader.close();
 
         return result;
-    }
-
-    private static StringBuilder assign(StringBuilder sb, String s) {
-        sb.replace(0, sb.length(), s);
-        return sb;
     }
 }

@@ -9,8 +9,8 @@ public enum KeyCode {
     D (GLFW.GLFW_KEY_D, 3),
     SPACE (GLFW.GLFW_KEY_SPACE, 4);
 
-    private int old;
-    private int kubix;
+    private final int old;
+    private final int kubix;
 
     KeyCode(int old, int kubix) {
         this.old = old;

@@ -5,44 +5,85 @@ import org.dmarshaq.app.GameContext;
 public interface MathJ {
 
 	final class Math2D {
+
+		// Vector 2 & 3 operations in 2D
 		public static float dot(Vector2f a, Vector2f b) {
 			return a.x * b.x + a.y * b.y;
+		}
+
+		public static Vector2f multiply(Vector2f v, float value) {
+			return new Vector2f(v.x * value, v.y * value);
+		}
+
+		public static Vector2f divide(Vector2f v, float value) {
+			return new Vector2f(v.x / value, v.y / value);
 		}
 
 		public static Vector2f sum(Vector2f a, Vector2f b) {
 			return new Vector2f(a.x + b.x, a.y + b.y);
 		}
 
-		public static Vector3f sum(Vector3f a, Vector3f b, float layer) {
-			return new Vector3f(a.x + b.x, a.y + b.y, layer);
+		public static Vector3f sum(Vector3f a, Vector3f b) {
+			return new Vector3f(a.x + b.x, a.y + b.y, a.z);
 		}
 
-		public static void negate(Vector2f v) {
-			v.x = -v.x;
-			v.y = -v.y;
+		public static Vector2f negate(Vector2f v) {
+			return new Vector2f(-v.x, -v.y);
 		}
 
-		public static void negate(Vector3f v) {
-			v.x = -v.x;
-			v.y = -v.y;
+		public static Vector3f negate(Vector3f v) {
+			return new Vector3f(-v.x, -v.y, v.z);
 		}
 
 		public static Vector2f diffrence(Vector2f a, Vector2f b) {
-			negate(b);
-			return sum(a, b);
+			return sum(a, negate(b));
 		}
 
-		public static Vector3f diffrence(Vector3f a, Vector3f b, float layer) {
-			negate(b);
-			return sum(a, b, layer);
+		public static Vector3f diffrence(Vector3f a, Vector3f b) {
+			return sum(a, negate(b));
 		}
 
 		public static Vector2f toVector2f(Vector3f v) {
 			return new Vector2f(v.x, v.y);
 		}
 
-		public static Vector3f toVector3f(Vector2f v, float layer) {
-			return new Vector3f(v.x, v.y, layer);
+		public static Vector3f toVector3f(Vector2f v, float z) {
+			return new Vector3f(v.x, v.y, z);
+		}
+
+		public static float magnitude(Vector2f v) {
+			return v.magnitude();
+		}
+
+		public static Vector2f normalize(Vector2f v) {
+			Vector2f result = new Vector2f();
+			result.copyValues(v);
+			result.normalize();
+			return result;
+		}
+
+		// Matrix4x4 operations in 2D
+		public static Matrix4f multiply(Matrix4f first, Matrix4f second) {
+			Matrix4f product = new Matrix4f();
+
+			for (int i = 0; i < 16; i += 4) {
+				for (int j = 0; j < 4; j++) {
+					product.elements[i + j] = 0.0f;
+					for (int k = 0; k < 4; k++)
+						product.elements[i + j] += first.elements[i + k] * second.elements[k * 4 + j];
+				}
+			}
+
+			return product;
+		}
+
+		public static Vector2f multiply(Matrix4f matrix, Vector2f vector, float w) {
+			Vector2f result = new Vector2f();
+
+			result.x = matrix.elements[0 + 0 * 4] * vector.x + matrix.elements[1 + 0 * 4] * vector.y + matrix.elements[3 + 0 * 4] * w;
+			result.y = matrix.elements[0 + 1 * 4] * vector.x + matrix.elements[1 + 1 * 4] * vector.y + matrix.elements[3 + 1 * 4] * w;
+
+			return result;
 		}
 	}
 
@@ -93,12 +134,11 @@ public interface MathJ {
 		}
 	}
 
-
 	static int worldToPixel(float size) {
-		return (int) (size * GameContext.TILE_SIZE); // 64 is tile size
+		return (int) (size * GameContext.UNIT_SIZE);
 	}
 
 	static float pixelToWorld(int size) {
-		return (float) size / GameContext.TILE_SIZE; // 64 is tile size
+		return (float) size / GameContext.UNIT_SIZE;
 	}
 }

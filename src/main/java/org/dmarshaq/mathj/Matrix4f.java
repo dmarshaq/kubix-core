@@ -1,6 +1,7 @@
 package org.dmarshaq.mathj;
 
 import org.dmarshaq.utils.BufferUtils;
+import static org.dmarshaq.mathj.MathJ.Math2D;
 
 import java.nio.FloatBuffer;
 
@@ -8,9 +9,7 @@ public class Matrix4f {
     private static final int SIZE = 4 * 4;
     public float[] elements = new float[4 * 4];
 
-    public Matrix4f() {
-
-    }
+    public Matrix4f() {}
 
     public static Matrix4f identity() {
         Matrix4f result = new Matrix4f();
@@ -39,7 +38,7 @@ public class Matrix4f {
         return result;
     }
 
-    public static Matrix4f translate(Vector2f vector) {
+    public static Matrix4f translateXY(Vector2f vector) {
         Matrix4f result = identity();
 
         result.elements[3 + 0 * 4] = vector.x;
@@ -50,7 +49,7 @@ public class Matrix4f {
         return result;
     }
 
-    public static Matrix4f rotate(float angle) {
+    public static Matrix4f rotateXY(float angle) {
         Matrix4f result = identity();
 
         float r = (float) Math.toRadians(angle);
@@ -65,7 +64,7 @@ public class Matrix4f {
         return result;
     }
 
-    public static Matrix4f scale(float xScale, float yScale) {
+    public static Matrix4f scaleXY(float xScale, float yScale) {
         Matrix4f result = identity();
 
         result.elements[0 + 0 * 4] = xScale;
@@ -74,10 +73,10 @@ public class Matrix4f {
         return result;
     }
 
-    public static Matrix4f TRS(Vector2f position, float layer, float angle, float xScale, float yScale) {
-        Matrix4f translate = Matrix4f.translate(position);
-        Matrix4f rotation = Matrix4f.rotate(angle);
-        Matrix4f scale = Matrix4f.scale(xScale, yScale);
+    public static Matrix4f TRS(Vector2f position, float angle, float xScale, float yScale) {
+        Matrix4f translate = Matrix4f.translateXY(position);
+        Matrix4f rotation = Matrix4f.rotateXY(angle);
+        Matrix4f scale = Matrix4f.scaleXY(xScale, yScale);
         // operation: T * R * S = ?
         // T * R -> T
         // T * S -> T
@@ -102,29 +101,80 @@ public class Matrix4f {
     }
 
     public Vector2f multiply(Vector2f vector, float w) {
-        Vector2f result = new Vector2f();
-        result.x = this.elements[0 + 0 * 4] * vector.x + this.elements[1 + 0 * 4] * vector.y + this.elements[3 + 0 * 4] * w;
-        result.y = this.elements[0 + 1 * 4] * vector.x + this.elements[1 + 1 * 4] * vector.y + this.elements[3 + 1 * 4] * w;
-        return result;
+        float x = this.elements[0 + 0 * 4] * vector.x + this.elements[1 + 0 * 4] * vector.y + this.elements[3 + 0 * 4] * w;
+        float y = this.elements[0 + 1 * 4] * vector.x + this.elements[1 + 1 * 4] * vector.y + this.elements[3 + 1 * 4] * w;
+        vector.x = x;
+        vector.y = y;
+        return vector;
     }
 
-    public Vector3f getTransformPosition() {
-        return new Vector3f(elements[0 + 3 * 4], elements[1 + 3 * 4], elements[2 + 3 * 4]);
+    public Vector2f getPositionXY() {
+        return new Vector2f(elements[3 + 0 * 4], elements[3 + 1 * 4]);
     }
 
-    public void setTransformPosition(Vector2f vector, float layer) {
+    public Vector2f getXAxisVector2() {
+        return new Vector2f(elements[0 + 0 * 4], elements[0 + 1 * 4]);
+    }
+
+    public Vector2f right() {
+        Vector2f right = getXAxisVector2();
+        right.normalize();
+        return right;
+    }
+
+    public Vector2f getYAxisVector2() {
+        return new Vector2f(elements[1 + 0 * 4], elements[1 + 1 * 4]);
+    }
+
+    public Vector2f up() {
+        Vector2f up = getYAxisVector2();
+        up.normalize();
+        return up;
+    }
+
+    public Vector2f localToWorld(Vector2f localPoint) {
+        Vector2f xVector = getXAxisVector2();
+        Vector2f yVector = getYAxisVector2();
+
+        xVector.multiply(localPoint.x);
+        yVector.multiply(localPoint.y);
+
+        xVector.add(yVector);
+        xVector.add( getPositionXY() );
+
+        return xVector;
+    }
+
+    public Vector2f worldToLocal(Vector2f worldPoint) {
+        Vector2f relPoint = getPositionXY();
+        relPoint.negate();
+        relPoint.add( worldPoint );
+
+        Vector2f right = right();
+        Vector2f up = up();
+
+        float x = Math2D.dot( relPoint, right ) / Math2D.magnitude(getXAxisVector2());
+        float y = Math2D.dot( relPoint, up ) / Math2D.magnitude(getYAxisVector2());
+
+        return new Vector2f(x, y);
+    }
+
+    public void setPositionXY(Vector2f vector) {
         this.elements[3 + 0 * 4] = vector.x;
         this.elements[3 + 1 * 4] = vector.y;
-        this.elements[3 + 3 * 4] = 1f;
-        setTransformLayer(layer);
-    }
-
-    public void setTransformLayer(float layer) {
-        this.elements[3 + 2 * 4] = layer;
     }
 
     public void copy(Matrix4f matrix) {
         this.elements = matrix.elements.clone();
+    }
+
+    public static Matrix4f duplicate(Matrix4f matrix) {
+        if (matrix == null) {
+            return null;
+        }
+        Matrix4f result = new Matrix4f();
+        result.copy(matrix);
+        return result;
     }
 
     public FloatBuffer toFloatBuffer() {

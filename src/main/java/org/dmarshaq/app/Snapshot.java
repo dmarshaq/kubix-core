@@ -1,43 +1,73 @@
 package org.dmarshaq.app;
 
 import org.dmarshaq.graphics.Camera;
-import org.dmarshaq.graphics.Sprite;
+import org.dmarshaq.graphics.Shader;
 import org.dmarshaq.graphics.SpriteDTO;
-import org.dmarshaq.mathj.*;
+import org.dmarshaq.graphics.Sprite;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Snapshot {
-    private final List<Sprite> spriteList = new ArrayList<>();
-    private Sprite[] spriteArray;
+    private final List<SpriteDTO> spriteDTOList = new ArrayList<>();
+    private SpriteDTO[] spriteDTOArray;
+    private Shader currentShaderLoaded;
+
     // CAMERA DATA
     private Camera camera;
 
-    public void addSpriteToRender(SpriteDTO spriteDTO) {
-        Sprite sprite = new Sprite(spriteDTO);
+    public void addSpriteToRender(Sprite sprite) {
+        SpriteDTO spriteDTO = new SpriteDTO(sprite);
 
-        sprite.getLayer().incrementRenderSpriteCount();
-        spriteList.add(sprite);
+        spriteDTO.getLayer().incrementRenderSpriteCount();
+        spriteDTOList.add(spriteDTO);
+    }
+
+    public void addSpriteToRender(Sprite[] sprites) {
+        for (Sprite sprite : sprites) {
+            addSpriteToRender(sprite);
+        }
+    }
+
+    public void addSpriteToRender(List<Sprite> sprites) {
+        for (Sprite sprite : sprites) {
+            addSpriteToRender(sprite);
+        }
     }
 
     public void closeSpriteInputStream() {
-        int[] startIndexes = new int[Layer.values().length];
-        for (int i = 1; i < startIndexes.length; i++) {
-            startIndexes[i] = Layer.values()[i - 1].countRenderSprites() + startIndexes[i - 1];
-        }
-        spriteArray = new Sprite[spriteList.size()];
+        int[] startIndexesLayer = new int[Layer.values().length];
 
-        for (Sprite sprite : spriteList) {
-            int layerIndex = sprite.getLayer().getIndex();
-            spriteArray[startIndexes[layerIndex]] = sprite;
-            startIndexes[layerIndex]++;
+        for (int i = 1; i < startIndexesLayer.length; i++) {
+            startIndexesLayer[i] = Layer.values()[i - 1].countRenderSprites() + startIndexesLayer[i - 1];
         }
 
+
+        spriteDTOArray = new SpriteDTO[spriteDTOList.size()];
+        // Layers l1 > l2 > l3
+        // Shaders s1
+        while (!spriteDTOList.isEmpty()) {
+            currentShaderLoaded = spriteDTOList.get(0).getShader();
+            for (int i = 0; i < spriteDTOList.size();) {
+                SpriteDTO spriteDTO = spriteDTOList.get(i);
+
+                if (currentShaderLoaded == spriteDTO.getShader()) {
+                    int layerIndex = spriteDTO.getLayer().getIndex();
+                    spriteDTOArray[ startIndexesLayer[layerIndex] ] = spriteDTO;
+                    startIndexesLayer[layerIndex]++;
+
+                    spriteDTOList.remove(i);
+                }
+                else {
+                    i++;
+                }
+            }
+        }
     }
 
-    public Sprite[] getSpriteDataArray() {
-        return spriteArray;
+    public SpriteDTO[] getSpriteDataArray() {
+        return spriteDTOArray;
     }
 
     public void setCameraToRender(Camera camera) {

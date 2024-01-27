@@ -10,6 +10,7 @@ public enum Layer {
     L4,
     L5,
     UI,
+    GIZMOS,
     ;
 
     private float zOrder;

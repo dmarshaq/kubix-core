@@ -1,29 +1,29 @@
 package org.dmarshaq.graphics;
 
 
-import org.dmarshaq.app.GameContext.HelloWorld.*;
 import org.dmarshaq.utils.BufferUtils;
 
 import java.awt.image.BufferedImage;
-
-import static org.dmarshaq.app.GameContext.HelloWorld.TILESET_TEXTURE_PATH;
 import static org.dmarshaq.utils.FileUtils.loadAsImage;
 
 import static org.lwjgl.opengl.GL11.*;
 
 public class Texture {
     private int width, height;
-    private int textureID;
+    private final int textureID;
     private SubTexture[] subTextures;
 
-    public static Texture SLIME_TEXTURE, TILESET_TEXTURE;
+    public static Texture FIRE, EXPLOSION, FONT_BASIC_PUP_BLACK, FONT_BASIC_PUP_WHITE, PAWN_BLUE;
 
     public static void loadTextures() {
-        SLIME_TEXTURE = new Texture(Slime.SLIME_TEXTURE_PATH);
-        TILESET_TEXTURE = new Texture(TILESET_TEXTURE_PATH, 6, 4);
+        FIRE = new Texture("Effects/Fire/Fire.png", 7, 1);
+        EXPLOSION = new Texture("Effects/Explosion/Explosions.png", 9, 1);
+        FONT_BASIC_PUP_BLACK = new Texture("font/BasicPupBlack.png");
+        FONT_BASIC_PUP_WHITE = new Texture("font/BasicPupWhite.png");
+        PAWN_BLUE = new Texture("Factions/Knights/Troops/Pawn_Blue.png", 6, 6);
     }
 
-    private Texture(String Path) {
+    public Texture(String Path) {
         textureID = load(Path);
     }
 
@@ -31,7 +31,6 @@ public class Texture {
         textureID = load(Path);
         sliceTexture(xSlices, ySlices);
     }
-
 
     private int load(String path) {
         int[] pixels = null;
@@ -77,6 +76,13 @@ public class Texture {
                 subTextures[x + y * xSlices] = new SubTexture(x * sliceWidth, y * sliceHeight, sliceWidth, sliceHeight);
             }
         }
+    }
+    /**
+     * Slices Texture Custom<p>
+     * Intended to be used when texture is created first time <p>
+     */
+    public void sliceTexture(SubTexture[] customSlices) {
+        subTextures = customSlices;
     }
 
     public int getWidth() {

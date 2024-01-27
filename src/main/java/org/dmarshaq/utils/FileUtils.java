@@ -4,7 +4,11 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.URLClassLoader;
+import java.nio.ByteBuffer;
+import java.nio.channels.Channels;
 import java.nio.charset.StandardCharsets;
+
+import static org.dmarshaq.utils.BufferUtils.createByteBuffer;
 
 public interface FileUtils {
 
@@ -34,5 +38,16 @@ public interface FileUtils {
         }
 
         return result;
+    }
+
+    static ByteBuffer loadAsByteBuffer(String filePath) {
+        try {
+            InputStream inputStream = URLClassLoader.getSystemResourceAsStream(filePath);
+            return createByteBuffer(inputStream.readAllBytes());
+        } catch (IOException e) {
+            System.out.println("Could not read resource file " + filePath + " due to: " + e.toString());
+            throw new RuntimeException(e);
+        }
+
     }
 }
