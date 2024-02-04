@@ -15,7 +15,6 @@ public enum Layer {
 
     private float zOrder;
     private int index;
-    private int spritesCount;
     private int renderedSpritesCount;
 
     Layer() {
@@ -23,10 +22,6 @@ public enum Layer {
 
     public float zOrder() {
         return zOrder;
-    }
-
-    public int countSprites() {
-        return spritesCount;
     }
 
     public int countRenderSprites() {
@@ -50,14 +45,6 @@ public enum Layer {
         for (Layer l : Layer.values()) {
             l.renderedSpritesCount = 0;
         }
-    }
-
-    public void incrementSpriteCount() {
-        spritesCount++;
-    }
-
-    public void decrementSpriteCount() {
-        spritesCount--;
     }
 
     public void incrementRenderSpriteCount() {

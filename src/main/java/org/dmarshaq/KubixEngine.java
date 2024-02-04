@@ -1,16 +1,16 @@
 package org.dmarshaq;
 
-import org.dmarshaq.app.GameContext;
+import org.dmarshaq.app.Context;
 import org.dmarshaq.app.Render;
 import org.dmarshaq.app.Update;
-import org.lwjgl.opengl.GL;
 
 public class KubixEngine {
-    public static void main(String[] args){
-
-        Render renderTask = new Render();
+    public static void initialize(Context context, Update updateTask, Render renderTask) {
+        context.initContextProperties();
+        renderTask.setUpdateTask(updateTask);
+        renderTask.setContext(context);
+        updateTask.setRenderTask(renderTask);
         Thread render = new Thread(renderTask);
         render.start();
-
     }
 }

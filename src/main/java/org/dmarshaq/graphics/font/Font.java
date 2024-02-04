@@ -1,35 +1,20 @@
 package org.dmarshaq.graphics.font;
 
-
-import org.dmarshaq.app.Layer;
-import org.dmarshaq.graphics.Shader;
-import org.dmarshaq.graphics.Sprite;
 import org.dmarshaq.graphics.SubTexture;
 import org.dmarshaq.graphics.Texture;
-import org.dmarshaq.mathj.Matrix4f;
-import org.dmarshaq.mathj.Vector3f;
-
-import java.util.Arrays;
 
 
 public class Font {
-
-
-    public static Font BASIC_PUP_BLACK, BASIC_PUP_WHITE;
     private final Character[] characters;
     private final Texture fontTexture;
     private final String font;
 
-    public static void loadFonts() {
-        BASIC_PUP_BLACK = new Font("font/BasicPupBlack.txt", Texture.FONT_BASIC_PUP_BLACK);
-        BASIC_PUP_WHITE = new Font("font/BasicPupWhite.txt", Texture.FONT_BASIC_PUP_WHITE);
-    }
 
     public Texture getFontTexture() {
         return fontTexture;
     }
 
-    private Font(String fontDataPath, Texture fontAtlas) {
+    public Font(String fontDataPath, Texture fontAtlas) {
         characters = FontReader.constructFontData(fontDataPath);
         fontTexture = fontAtlas;
 

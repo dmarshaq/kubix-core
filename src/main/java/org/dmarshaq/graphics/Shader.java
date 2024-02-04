@@ -15,20 +15,19 @@ public class Shader {
     public static final int TCOORDS_ATTRIBUTE = 2;
     public static final int TINDEX_ATTRIBUTE = 3;
 
-    public static Shader BASIC, S1;
+    public static Shader BASIC;
 
     private boolean enabled = false;
 
     private final int ID;
     private final HashMap<String, Integer> locationCache = new HashMap<>();
 
-    private Shader(String vertex, String fragment) {
+    public Shader(String vertex, String fragment) {
         ID = ShaderUtils.load(vertex, fragment);
     }
 
-    public static void loadAll() {
+    public static void loadEngineShaders() {
         BASIC = new Shader("shader/basic.vert", "shader/basic.frag");
-        S1 = new Shader("shader/example.vert", "shader/example.frag");
     }
 
     public int getUniform(String name) {

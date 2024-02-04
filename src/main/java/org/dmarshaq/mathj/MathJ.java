@@ -1,6 +1,6 @@
 package org.dmarshaq.mathj;
 
-import org.dmarshaq.app.GameContext;
+import org.dmarshaq.app.Context;
 
 public interface MathJ {
 
@@ -45,6 +45,14 @@ public interface MathJ {
 
 		public static Vector2f toVector2f(Vector3f v) {
 			return new Vector2f(v.x, v.y);
+		}
+
+		public static Vector2f toVector2f(Vector2i v) {
+			return new Vector2f(v.x, v.y);
+		}
+
+		public static Vector2i toVector2i(Vector2f v) {
+			return new Vector2i((int) v.x, (int) v.y);
 		}
 
 		public static Vector3f toVector3f(Vector2f v, float z) {
@@ -135,10 +143,10 @@ public interface MathJ {
 	}
 
 	static int worldToPixel(float size) {
-		return (int) (size * GameContext.UNIT_SIZE);
+		return (int) (size * Context.getUnitSize());
 	}
 
 	static float pixelToWorld(int size) {
-		return (float) size / GameContext.UNIT_SIZE;
+		return (float) size / Context.getUnitSize();
 	}
 }

@@ -1,16 +1,11 @@
 package org.dmarshaq.app;
 
-import org.dmarshaq.audio.Sound;
-import org.dmarshaq.graphics.Shader;
-import org.dmarshaq.graphics.SpriteDTO;
-import org.dmarshaq.graphics.SubTexture;
-import org.dmarshaq.graphics.Texture;
-import org.dmarshaq.graphics.font.Font;
+import org.dmarshaq.graphics.*;
+import org.dmarshaq.input.CursorInputPos;
 import org.dmarshaq.input.Input;
+import org.dmarshaq.input.KeyCode;
 import org.dmarshaq.mathj.*;
-import org.dmarshaq.time.Time;
 import org.dmarshaq.utils.BufferUtils;
-import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.glfw.GLFWWindowSizeCallback;
 import org.lwjgl.openal.AL;
@@ -22,19 +17,16 @@ import org.lwjgl.system.MemoryStack;
 
 import java.awt.*;
 import java.nio.IntBuffer;
+import java.util.Arrays;
 
-import static org.dmarshaq.app.GameContext.Render.*;
-import static org.dmarshaq.app.GameContext.SCREEN_HEIGHT;
-import static org.dmarshaq.app.GameContext.SCREEN_WIDTH;
-import static org.dmarshaq.app.GameContext.FULLSCREEN;
-import static org.dmarshaq.app.GameContext.RATIO;
-import static org.dmarshaq.app.Render.Renderer.*;
+import static org.dmarshaq.app.Context.*;
+import static org.dmarshaq.app.Render.BatchRenderer.*;
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.openal.AL10.*;
-import static org.lwjgl.openal.AL11.AL_LINEAR_DISTANCE_CLAMPED;
 import static org.lwjgl.openal.ALC10.*;
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.glViewport;
 import static org.lwjgl.opengl.GL13.*;
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
@@ -44,22 +36,35 @@ import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.system.MemoryUtil.*;
 
-public class Render implements Runnable {
+public abstract class Render implements Runnable {
 
     private Snapshot data;
     private long window, audioContext, audioDevice;
     private Matrix4f pr_matrix;
+    private Update updateTask;
+    private Context context;
+    private static CursorInputPos cursorInputPos;
+    private static int screenWidth, screenHeight;
+    private static float aspectRatio;
+
+    public void setUpdateTask(Update updateTask) {
+        this.updateTask = updateTask;
+    }
+
+    public void setContext(Context context) {
+        this.context = context;
+    }
 
     // Render data
-    public static class Renderer {
+    public static class BatchRenderer {
         public static int drawcalls = 0;
         public static int quadsRenderedInBatch = 0;
         public static final int FLOATS_PER_VERTEX = 10;
         public static final int VERTICES_PER_SPRITE = 4;
         public static final int SPRITE_STRIDE_IN_ARRAY = FLOATS_PER_VERTEX * VERTICES_PER_SPRITE; // floats allocated per each sprite (quad its storing)
 
-        public static final float[] VERTICES = new float[MAX_QUADS_PER_BATCH * SPRITE_STRIDE_IN_ARRAY]; // 3D array compacted in single dimension array
-        public static final int[] INDICES = new int[MAX_QUADS_PER_BATCH * 6];
+        public static final float[] VERTICES = new float[getMaxQuadsPerBatch() * SPRITE_STRIDE_IN_ARRAY]; // 3D array compacted in single dimension array
+        public static final int[] INDICES = new int[getMaxQuadsPerBatch() * 6];
         public static final int[] TEXTURES_USED = new int[32]; // 32 textures where texture at index 0 is a reserved space for color only
         public static int vao, vbo, ibo;
         public static Shader currentShader;
@@ -72,14 +77,13 @@ public class Render implements Runnable {
 
         renderInit();
 
-        GameContext gameContext = new GameContext();
+        KeyCode.initKeyCodes();
 
-        Update updateTask = new Update(gameContext, this);
         Thread update = new Thread(updateTask);
         update.start();
 
 
-        while(GameContext.isRunning()) {
+        while(Context.isRunning()) {
             // do some render
             synchronized (this) {
                 try {
@@ -117,11 +121,21 @@ public class Render implements Runnable {
         // Configure GLFW
         glfwDefaultWindowHints(); // optional, the current window hints are already the default
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE); // the window will stay hidden after creation
-        glfwWindowHint(GLFW_RESIZABLE, FULLSCREEN ? GLFW_FALSE : GLFW_TRUE); // the window will be resizable
+        glfwWindowHint(GLFW_RESIZABLE, isFullScreen() ? GLFW_FALSE : GLFW_TRUE); // the window will be resizable
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         // Create the window
-        window = glfwCreateWindow(FULLSCREEN ? (int) screenSize.getWidth() : SCREEN_WIDTH, FULLSCREEN ? (int) screenSize.getHeight() : SCREEN_HEIGHT, GameContext.TITLE, FULLSCREEN ? glfwGetPrimaryMonitor() : 0, 0);
+        if (isFullScreen()) {
+            screenWidth = (int) screenSize.getWidth();
+            screenHeight = (int) screenSize.getHeight();
+        }
+        else {
+            screenWidth = 1280;
+            screenHeight = 720;
+
+        }
+        aspectRatio = (float) screenWidth / screenHeight;
+        window = glfwCreateWindow(screenWidth, screenHeight, getTitle(), isFullScreen() ? glfwGetPrimaryMonitor() : 0, 0);
 
         if ( window == NULL )
             throw new RuntimeException("Failed to create the GLFW window");
@@ -139,11 +153,11 @@ public class Render implements Runnable {
             GLFWVidMode vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 
 //            // Center the window
-            if (!FULLSCREEN) {
+            if (!isFullScreen()) {
                 glfwSetWindowPos(
                         window,
-                        (vidmode.width() - SCREEN_WIDTH) / 2,
-                        (vidmode.height() - SCREEN_HEIGHT) / 2
+                        (vidmode.width() - screenWidth) / 2,
+                        (vidmode.height() - screenHeight) / 2
                 );
             }
         } // the stack frame is popped automatically
@@ -174,27 +188,45 @@ public class Render implements Runnable {
             System.out.println("Audio library not supported.");
         }
 
-        // Set call back
+        // Set call backs
+        cursorInputPos = new CursorInputPos();
+        glfwSetCursorPosCallback(window, cursorInputPos);
+
         glfwSetWindowSizeCallback(window, new GLFWWindowSizeCallback(){
             @Override
             public void invoke(long window, int width, int height){
-                int newWidth = 0;
-                int newHeight = 0;
-                int diffrenceW = 0;
-                int diffrenceH = 0;
+//                int newWidth = 0;
+//                int newHeight = 0;
+//                int diffrenceW = 0;
+//                int diffrenceH = 0;
+//
+//
+//                if (height > width || width - (int) (height * aspectRatio) < 0) {
+//                    newHeight = (int) (width / aspectRatio);
+//                    diffrenceH = height - newHeight;
+//                    newWidth = width;
+//                }
+//                else if (height < width) {
+//                    newWidth = (int) (height * aspectRatio);
+//                    diffrenceW = width - newWidth;
+//                    newHeight = height;
+//                }
 
-                if (height > width || width - (int) (height * RATIO) < 0) {
-                    newHeight = (int) (width / RATIO);
-                    diffrenceH = height - newHeight;
-                    newWidth = width;
-                }
-                else if (height < width) {
-                    newWidth = (int) (height * RATIO);
-                    diffrenceW = width - newWidth;
-                    newHeight = height;
-                }
+//                glViewport(diffrenceW / 2, diffrenceH / 2, newWidth, newHeight);
 
-                glViewport(diffrenceW / 2, diffrenceH / 2, newWidth, newHeight);
+                screenWidth = width;
+                screenHeight = height;
+                aspectRatio = (float) screenWidth / screenHeight;
+                glViewport(0, 0, screenWidth, screenHeight);
+                Camera cam = getMainCamera();
+                if (cam != null) {
+                    float unitWidth = getMinScreenUnitWidth();
+                    float unitHeight = getMinScreenUnitHeight();
+                    cam.setCameraFov(Math.max((float) width / getUnitSize(), unitWidth), Math.max((float) height / getUnitSize(), unitHeight));
+                }
+                else {
+                    System.out.println("No Main Camera found.");
+                }
             }
         });
     }
@@ -231,15 +263,16 @@ public class Render implements Runnable {
         alListener3f(AL_VELOCITY, 0.0f, 0.0f, 0.0f);
 
         // Setup textures
-        Texture.loadTextures();
+        context.loadTextures();
 
         int[] samplers = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
                 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
                 22, 23, 24, 25, 26, 27, 28, 29, 30, 31 };
 
         // Setup shader
-        Shader.loadAll();
+        context.loadShaders();
 
+        Shader.loadEngineShaders();
         pr_matrix = Matrix4f.orthographic(-2f, 2f, -1.5f, 1.5f, -1f, 1f); // basically camera matrix
 
         Shader.BASIC.setUniformMatrix4f("pr_matrix", pr_matrix);
@@ -247,14 +280,11 @@ public class Render implements Runnable {
         Shader.BASIC.setUniformMatrix4f("ml_matrix", Matrix4f.identity());
         Shader.BASIC.disable();
 
-        Shader.S1.setUniform1f("t", 0.5f);
-        Shader.S1.disable();
-
         // Setup fonts
-        Font.loadFonts();
+        context.loadFonts();
 
         // Build indices
-        for (int i = 0; i < MAX_QUADS_PER_BATCH; i++) {
+        for (int i = 0; i < getMaxQuadsPerBatch(); i++) {
             for (int j = 0; j < 6; j++) {
                 int val = j;
                 if (j > 2 && j < 5) {
@@ -300,11 +330,8 @@ public class Render implements Runnable {
 
     }
 
-    private float timePast;
     private void renderSnapshot() {
-        timePast += Time.DeltaTime.getSeconds();
-        Shader.S1.setUniform1f("t", timePast);
-        Shader.S1.disable();
+        modifyShaders();
         loadCameraMatrix();
 
         SpriteDTO[] spriteDTOArray = data.getSpriteDataArray();
@@ -314,12 +341,12 @@ public class Render implements Runnable {
         while (lastBatchIndexStopped < spriteDTOArray.length) {
             // Vertices loading
             lastBatchIndexStopped = nextBatch(lastBatchIndexStopped, spriteDTOArray);
+            // Enabling shader
+            currentShader.enable();
             // Textures loading
             loadTexturesUsedIntoSlots();
             // Binding dynamic draw vertex buffer
             glBindBuffer(GL_ARRAY_BUFFER, vbo);
-            // Enabling shader
-            currentShader.enable();
             // Actually loading vertices into graphics memory
             glBufferSubData(GL_ARRAY_BUFFER, 0, VERTICES);
             // Drawing
@@ -340,7 +367,7 @@ public class Render implements Runnable {
         int offsetToStartIndex = 0;
         int currentLayerIndex = -1;
 
-        while (quadsRenderedInBatch < MAX_QUADS_PER_BATCH) {
+        while (quadsRenderedInBatch < getMaxQuadsPerBatch()) {
             spriteGlobalIndex = startIndex + offsetToStartIndex;
             offsetToStartIndex++;
 
@@ -537,7 +564,6 @@ public class Render implements Runnable {
         }
     }
 
-
     private void loadCameraMatrix() {
         /*
          *   ------------------------------------------------------------------------------
@@ -548,5 +574,23 @@ public class Render implements Runnable {
         pr_matrix = data.getCamera().projectionMatrix();
         Shader.BASIC.setUniformMatrix4f("pr_matrix", pr_matrix);
         Shader.BASIC.disable();
+    }
+
+    protected abstract void modifyShaders();
+
+    public static float getAspectRatio() {
+        return aspectRatio;
+    }
+
+    public static float getScreenWidth() {
+        return screenWidth;
+    }
+
+    public static float getScreenHeight() {
+        return screenHeight;
+    }
+
+    public static Vector2i getCursorPos() {
+        return new Vector2i(cursorInputPos.x(), cursorInputPos.y());
     }
 }

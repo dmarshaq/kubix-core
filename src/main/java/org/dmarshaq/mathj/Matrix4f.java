@@ -164,6 +164,29 @@ public class Matrix4f {
         this.elements[3 + 1 * 4] = vector.y;
     }
 
+    public void setPositionXY(Vector2i vector) {
+        this.elements[3 + 0 * 4] = vector.x;
+        this.elements[3 + 1 * 4] = vector.y;
+    }
+
+    /**
+     * Use carefully it sets scale to already rotated matrix
+     * if you want to scale and then rotate use TRS or
+     * Matrix multiplication
+     */
+    public void setScaleX(float x) {
+        this.elements[0 + 0 * 4] = x;
+    }
+
+    /**
+     * Use carefully it sets scale to already rotated matrix
+     * if you want to scale and then rotate use TRS or
+     * Matrix multiplication
+     */
+    public void setScaleY(float y) {
+        this.elements[1 + 1 * 4] = y;
+    }
+
     public void copy(Matrix4f matrix) {
         this.elements = matrix.elements.clone();
     }

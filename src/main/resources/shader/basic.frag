@@ -17,6 +17,4 @@ void main() {
     else {
         color = texture(u_Textures[index], v_TexCoord);
     }
-
-//
 }

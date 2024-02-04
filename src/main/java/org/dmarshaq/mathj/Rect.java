@@ -35,11 +35,11 @@ public class Rect {
 		return "at: " + position + " width: " + width + " height: " + height;
 	}
 
-	public Domain xDomain() {
+	public Domain domain() {
 		return new Domain(position.x, position.x + width);
 	}
 
-	public Domain yDomain() {
+	public Domain range() {
 		return new Domain(position.y, position.y + height);
 	}
 	
@@ -68,13 +68,13 @@ public class Rect {
 	}
 
 	public boolean touchesRect(Vector2f point) {
-		return xDomain().isInDomain(point.x) == 0 && yDomain().isInDomain(point.y) == 0;
+		return domain().isInDomain(point.x) == 0 && range().isInDomain(point.y) == 0;
 	}
 
 	public boolean touchesRect(Rect rect) {
 		for (int i = 0; i < 4; i++) {
 			Vector2f corner = rect.getRectCorner(i);
-			if (xDomain().isInDomain(corner.x) == 0 && yDomain().isInDomain(corner.y) == 0) {
+			if (domain().isInDomain(corner.x) == 0 && range().isInDomain(corner.y) == 0) {
 				return true;
 			}
 		}

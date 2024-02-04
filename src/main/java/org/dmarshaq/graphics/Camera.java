@@ -1,5 +1,6 @@
 package org.dmarshaq.graphics;
 
+import org.dmarshaq.app.Context;
 import org.dmarshaq.mathj.Matrix4f;
 import org.dmarshaq.mathj.Rect;
 import org.dmarshaq.mathj.Vector2f;
@@ -11,6 +12,10 @@ public class Camera {
     public Camera(float x, float y, float width, float height) {
         this.fov = new Rect(0, 0, width, height);
         setCameraCenter(new Vector2f(x, y));
+
+        if (Context.getMainCamera() == null) {
+            Context.setMainCamera(this);
+        }
     }
 
     public void setCameraFov(float width, float height) {

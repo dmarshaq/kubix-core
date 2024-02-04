@@ -26,8 +26,6 @@ public class Sprite {
 
         width = 1.0f;
         height = 1.0f;
-
-        layer.incrementSpriteCount();
     }
 
     public Sprite(Matrix4f transform, Layer layer, Texture texture, Shader shader) {
@@ -42,8 +40,6 @@ public class Sprite {
 
         width = MathJ.pixelToWorld( texture.getWidth() );
         height = MathJ.pixelToWorld( texture.getHeight() );
-
-        layer.incrementSpriteCount();
     }
 
     public Sprite(Matrix4f transform, Layer layer,Texture texture, SubTexture subTexture, Shader shader) {
@@ -57,8 +53,6 @@ public class Sprite {
 
         width = MathJ.pixelToWorld( (int) (texture.getSubTextures()[0].width() * texture.getWidth()) );
         height = MathJ.pixelToWorld( (int) (texture.getSubTextures()[0].height() * texture.getHeight()) );
-
-        layer.incrementSpriteCount();
     }
 
     public Sprite(Matrix4f transform, Layer layer, Animation animation, Shader shader) {
@@ -74,10 +68,9 @@ public class Sprite {
 
         width = MathJ.pixelToWorld( (int) (texture.getSubTextures()[0].width() * texture.getWidth()) );
         height = MathJ.pixelToWorld( (int) (texture.getSubTextures()[0].height() * texture.getHeight()) );
-
-        layer.incrementSpriteCount();
     }
 
+    // Interaction methods
     public Matrix4f getTransform() {
         return transform;
     }

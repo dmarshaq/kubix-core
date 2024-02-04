@@ -5,6 +5,7 @@ import org.dmarshaq.app.Update;
 import org.dmarshaq.graphics.Sprite;
 import org.dmarshaq.mathj.MathJ;
 import org.dmarshaq.mathj.Vector2f;
+import org.dmarshaq.time.Time;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,8 +59,8 @@ public class ParticleSystem {
     }
 
     public void update(Snapshot snapshot) {
-        if (isOn && Update.getCurrentFPS() > 0 && particles.size() < maxParticles) {
-            counter += rate / Update.getCurrentFPS();
+        if (isOn && particles.size() < maxParticles) {
+            counter += rate * Time.DeltaTime.getSeconds();
 
             if (counter >= 1.0f) {
                 spawnParticle(origin);

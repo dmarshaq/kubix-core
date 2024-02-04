@@ -49,4 +49,12 @@ public class Text {
             cursor += MathJ.pixelToWorld(c.getXadvance());
         }
     }
+
+    public Matrix4f getTransform() {
+        return transform;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
 }

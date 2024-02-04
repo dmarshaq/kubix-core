@@ -1,5 +1,6 @@
 package org.dmarshaq.physics;
 
+import org.dmarshaq.app.Context;
 import org.dmarshaq.app.Layer;
 import org.dmarshaq.app.Snapshot;
 import org.dmarshaq.graphics.Shader;
@@ -11,7 +12,7 @@ import org.dmarshaq.mathj.Vector4f;
 import java.util.*;
 
 import static org.dmarshaq.mathj.MathJ.Math2D;
-import static org.dmarshaq.app.GameContext.gizmos;
+
 
 public interface Physics2D {
     Vector2f ACCELERATION_GRAVITY = new Vector2f(0.0f, -9.81f); // m/s^2
@@ -82,7 +83,7 @@ public interface Physics2D {
 
         }
 
-        if (gizmos) {
+        if (Context.isDrawGizmos()) {
             Sprite colliderGizmos = new Sprite(Matrix4f.identity(), Layer.GIZMOS, new Vector4f(1.0f, 0.5f, 1.0f, 1.0f), Shader.BASIC);
             for (BoxCollider2D boxCollider2D : BOX_COLLIDERS) {
                 colliderGizmos.setTransform(boxCollider2D.gizmosTransform());

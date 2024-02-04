@@ -6,13 +6,11 @@ import org.dmarshaq.graphics.SpriteDTO;
 import org.dmarshaq.graphics.Sprite;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class Snapshot {
     private final List<SpriteDTO> spriteDTOList = new ArrayList<>();
     private SpriteDTO[] spriteDTOArray;
-    private Shader currentShaderLoaded;
 
     // CAMERA DATA
     private Camera camera;
@@ -48,7 +46,7 @@ public class Snapshot {
         // Layers l1 > l2 > l3
         // Shaders s1
         while (!spriteDTOList.isEmpty()) {
-            currentShaderLoaded = spriteDTOList.get(0).getShader();
+            Shader currentShaderLoaded = spriteDTOList.get(0).getShader();
             for (int i = 0; i < spriteDTOList.size();) {
                 SpriteDTO spriteDTO = spriteDTOList.get(i);
 

@@ -3,14 +3,13 @@ package org.dmarshaq.input;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWKeyCallback;
 
-import static org.dmarshaq.app.GameContext.MAX_KEYS;
+import static org.dmarshaq.app.Context.*;
 
 public class Input extends GLFWKeyCallback {
 
 
-    public static boolean[] keysPress = new boolean[MAX_KEYS];
-    public static boolean[] keysHold = new boolean[MAX_KEYS];
-
+    public static boolean[] keysPress = new boolean[getMaxInputKeys()];
+    public static boolean[] keysHold = new boolean[getMaxInputKeys()];
 
     @Override
     public void invoke(long window, int key, int scancode, int action, int mods) {

@@ -3,28 +3,33 @@ package org.dmarshaq.input;
 import org.lwjgl.glfw.GLFW;
 
 public enum KeyCode {
-    W (GLFW.GLFW_KEY_W, 0),
-    A (GLFW.GLFW_KEY_A, 1),
-    S (GLFW.GLFW_KEY_S, 2),
-    D (GLFW.GLFW_KEY_D, 3),
-    SPACE (GLFW.GLFW_KEY_SPACE, 4);
+    W (GLFW.GLFW_KEY_W),
+    A (GLFW.GLFW_KEY_A),
+    S (GLFW.GLFW_KEY_S),
+    D (GLFW.GLFW_KEY_D),
+    SPACE (GLFW.GLFW_KEY_SPACE);
 
-    private final int old;
-    private final int kubix;
+    private final int glfw;
+    private int code;
 
-    KeyCode(int old, int kubix) {
-        this.old = old;
-        this.kubix = kubix;
+    KeyCode(int glfw) {
+        this.glfw = glfw;
+    }
+
+    public static void initKeyCodes() {
+        for (int i = 0; i < KeyCode.values().length; i++) {
+            KeyCode.values()[i].code = i;
+        }
     }
 
     public static int getKeyCode(int key) {
         for (KeyCode e : KeyCode.values()) {
-            if (e.old == key) return e.kubix;
+            if (e.glfw == key) return e.code;
         }
         return -1;
     }
 
     public static int getKeyCode(KeyCode e) {
-        return e.kubix;
+        return e.code;
     }
 }

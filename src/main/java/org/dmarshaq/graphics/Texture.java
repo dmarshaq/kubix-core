@@ -13,21 +13,11 @@ public class Texture {
     private final int textureID;
     private SubTexture[] subTextures;
 
-    public static Texture FIRE, EXPLOSION, FONT_BASIC_PUP_BLACK, FONT_BASIC_PUP_WHITE, PAWN_BLUE;
-
-    public static void loadTextures() {
-        FIRE = new Texture("Effects/Fire/Fire.png", 7, 1);
-        EXPLOSION = new Texture("Effects/Explosion/Explosions.png", 9, 1);
-        FONT_BASIC_PUP_BLACK = new Texture("font/BasicPupBlack.png");
-        FONT_BASIC_PUP_WHITE = new Texture("font/BasicPupWhite.png");
-        PAWN_BLUE = new Texture("Factions/Knights/Troops/Pawn_Blue.png", 6, 6);
-    }
-
     public Texture(String Path) {
         textureID = load(Path);
     }
 
-    private Texture(String Path, int xSlices, int ySlices) {
+    public Texture(String Path, int xSlices, int ySlices) {
         textureID = load(Path);
         sliceTexture(xSlices, ySlices);
     }
