@@ -4,23 +4,29 @@ import org.dmarshaq.app.Layer;
 import org.dmarshaq.app.Snapshot;
 import org.dmarshaq.graphics.font.Character;
 import org.dmarshaq.graphics.font.Font;
-import org.dmarshaq.mathj.MathJ;
 import org.dmarshaq.mathj.Matrix4f;
 import org.dmarshaq.mathj.Vector2f;
 
 public class Text {
+    private float maxLength, maxHeight, maxLineLength;
+    private int lines, lineSpacing;
+
     private String text;
     private Matrix4f transform;
     private Font font;
+
 
     // following are changing for each character to allow more dynamic text rendering
     private Matrix4f charTransform;
     private Sprite charSprite;
 
-    public Text(String text, Matrix4f transform, Layer layer, Font font, Shader shader) {
+    public Text(String text, Matrix4f transform, Font font, float maxLineLength, int lineSpacing, Layer layer, Shader shader) {
         this.text = text;
         this.transform = transform;
         this.font = font;
+        this.maxLineLength = maxLineLength;
+        this.lineSpacing = lineSpacing;
+
 
         charTransform = new Matrix4f();
         charSprite = new Sprite(charTransform, layer, font.getFontTexture(), font.getFontTexture().getSubTextures()[0], shader);
@@ -28,26 +34,75 @@ public class Text {
 
     public void update(Snapshot snapshot) {
         float cursor = 0;
+        float line = 0;
 
         charTransform.copy(transform);
+        lines = 1;
         for(int i = 0; i < text.length(); i++) {
-            Character c = font.getCharacterData(text.charAt(i));
+            char cChar = text.charAt(i);
+            Character c = font.getCharacterData(cChar);
 
-            float xOffset, yOffset, width, height;
-            xOffset = MathJ.pixelToWorld(c.getXoffset());
-            yOffset = MathJ.pixelToWorld(c.getYoffset());
-            width = MathJ.pixelToWorld(c.getWidth());
-            height = MathJ.pixelToWorld(c.getHeight());
+            float xOffset, yOffset, height, width;
+            xOffset = c.getXoffset();
+            yOffset = c.getYoffset();
+            height = c.getHeight();
+            width = c.getWidth();
 
-            Vector2f characterPosition = new Vector2f(cursor + xOffset, -(yOffset + height));
+
+            Vector2f characterPosition = new Vector2f(cursor + xOffset, line - (yOffset + height));
             characterPosition = transform.multiply(characterPosition, 1);
 
             charTransform.setPositionXY(characterPosition);
             charSprite.setSubTexture( font.getSubTexture(text.charAt(i)) );
             snapshot.addSpriteToRender(charSprite);
 
-            cursor += MathJ.pixelToWorld(c.getXadvance());
+            cursor += c.getXadvance();
+
+            if (cChar == ' ' && i < text.length() - 1) {
+                String word = text.substring(i + 1);
+                int end = word.indexOf(' ');
+                if (end != -1) {
+                    word = word.substring(0, end);
+                    int nextWordLength = getWordLength(word);
+                    if (cursor + nextWordLength > maxLineLength) {
+                        lines += 1;
+                        cursor = 0;
+                        line -= font.getMaxCharacterHeight() + lineSpacing;
+                    }
+                }
+            }
+
+            if (i == text.length() - 1) {
+                maxLength = transform.multiply(new Vector2f(cursor, 0), 0).magnitude();
+                maxHeight = lines * font.getMaxCharacterHeight() + (lines - 1) * lineSpacing;
+            }
         }
+    }
+
+    private int getWordLength(String word) {
+        int length = word.length();
+        int result = 0;
+        for (int i = 0; i < length; i++) {
+            Character c = font.getCharacterData(word.charAt(i));
+            result += c.getXadvance();
+        }
+        return result;
+    }
+
+    public void setLineSpacing(int spacing) {
+        lineSpacing = spacing;
+    }
+
+    public void setMaxLineLength(float length) {
+        maxLineLength = length;
+    }
+
+    public float getMaxLength() {
+        return maxLength;
+    }
+
+    public float getMaxHeight() {
+        return maxHeight;
     }
 
     public Matrix4f getTransform() {

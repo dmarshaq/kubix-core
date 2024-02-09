@@ -8,6 +8,8 @@ public class Font {
     private final Character[] characters;
     private final Texture fontTexture;
     private final String font;
+    private int maxCharacterHeight;
+    private int maxCharacterWidth;
 
 
     public Texture getFontTexture() {
@@ -17,11 +19,13 @@ public class Font {
     public Font(String fontDataPath, Texture fontAtlas) {
         characters = FontReader.constructFontData(fontDataPath);
         fontTexture = fontAtlas;
+        fontTexture.setPixelsPerUnit(1);
+        maxCharacterHeight = 0;
 
         StringBuilder fontBuilder = new StringBuilder();
         SubTexture[] slices = new SubTexture[characters.length];
-        int textureWidth = fontAtlas.getWidth();
-        int textureHeight = fontAtlas.getHeight();
+        int textureWidth = fontAtlas.getPixelWidth();
+        int textureHeight = fontAtlas.getPixelHeight();
 
         int i = 0;
         for (Character c : characters) {
@@ -35,6 +39,13 @@ public class Font {
 
             slices[i] = new SubTexture(x, y, width, height);
 
+            if (maxCharacterHeight < c.getHeight()) {
+                maxCharacterHeight = c.getHeight();
+            }
+            if (maxCharacterWidth < c.getWidth()) {
+                maxCharacterWidth = c.getWidth();
+            }
+
             i++;
         }
 
@@ -44,6 +55,13 @@ public class Font {
 
     public Character getCharacterData(char character) {
         return characters[font.indexOf(character)];
+    }
+
+    public int getMaxCharacterHeight() {
+        return maxCharacterHeight;
+    }
+    public int getMaxCharacterWidth() {
+        return maxCharacterWidth;
     }
 
     public SubTexture getSubTexture(char character) {

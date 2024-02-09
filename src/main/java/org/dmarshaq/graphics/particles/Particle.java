@@ -20,8 +20,8 @@ public class Particle {
         this.scale = scale;
         this.speed = speed;
         this.position.copyValues(position);
-        this.position.x -= sprite.getWidth() / 2;
-        this.position.y -= sprite.getHeight() / 2;
+        this.position.x -= sprite.getScaledWidth() / 2;
+        this.position.y -= sprite.getScaledHeight() / 2;
     }
 
     public boolean move(Vector2f direction) {

@@ -141,12 +141,4 @@ public interface MathJ {
 			}
 		}
 	}
-
-	static int worldToPixel(float size) {
-		return (int) (size * Context.getUnitSize());
-	}
-
-	static float pixelToWorld(int size) {
-		return (float) size / Context.getUnitSize();
-	}
 }

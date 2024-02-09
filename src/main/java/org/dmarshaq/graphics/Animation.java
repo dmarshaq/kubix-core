@@ -17,7 +17,7 @@ public class Animation {
         this.texture = texture;
 
         // width of each subtexture if always a percent length from 1, therefor proportional to number of slices in each row
-        this.frames = (int) ( 1 / this.texture.getSubTextures()[0].width() );
+        this.frames = (int) ( 1 / this.texture.getSubTextures()[0].percentWidth() );
 
         // default duration for unsigned Animations
         float duration = (float) frames / 30;
@@ -33,7 +33,7 @@ public class Animation {
         this.texture = texture;
 
         // width of each subtexture if always a percent length from 1, therefor proportional to number of slices in each row
-        this.frames = (int) ( 1 / this.texture.getSubTextures()[0].width() );
+        this.frames = (int) ( 1 / this.texture.getSubTextures()[0].percentWidth() );
     }
 
     /*

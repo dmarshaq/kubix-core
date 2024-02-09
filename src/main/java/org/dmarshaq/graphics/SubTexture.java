@@ -22,11 +22,11 @@ public class SubTexture {
         return y;
     }
 
-    public float width() {
+    public float percentWidth() {
         return width;
     }
 
-    public float height() {
+    public float percentHeight() {
         return height;
     }
 }

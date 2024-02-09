@@ -24,8 +24,8 @@ public class Sprite {
         this.animation = null;
         this.shader = shader;
 
-        width = 1.0f;
-        height = 1.0f;
+        this.width = 1.0f;
+        this.height = 1.0f;
     }
 
     public Sprite(Matrix4f transform, Layer layer, Texture texture, Shader shader) {
@@ -38,11 +38,11 @@ public class Sprite {
         this.shader = shader;
 
 
-        width = MathJ.pixelToWorld( texture.getWidth() );
-        height = MathJ.pixelToWorld( texture.getHeight() );
+        width = texture.getUnitWidth();
+        height = texture.getUnitHeight();
     }
 
-    public Sprite(Matrix4f transform, Layer layer,Texture texture, SubTexture subTexture, Shader shader) {
+    public Sprite(Matrix4f transform, Layer layer, Texture texture, SubTexture subTexture, Shader shader) {
         this.transform = transform;
         this.layer = layer;
         this.texture = texture;
@@ -51,8 +51,8 @@ public class Sprite {
         this.animation = null;
         this.shader = shader;
 
-        width = MathJ.pixelToWorld( (int) (texture.getSubTextures()[0].width() * texture.getWidth()) );
-        height = MathJ.pixelToWorld( (int) (texture.getSubTextures()[0].height() * texture.getHeight()) );
+        width = texture.getUnitWidth();
+        height = texture.getUnitHeight();
     }
 
     public Sprite(Matrix4f transform, Layer layer, Animation animation, Shader shader) {
@@ -66,11 +66,18 @@ public class Sprite {
 
         this.shader = shader;
 
-        width = MathJ.pixelToWorld( (int) (texture.getSubTextures()[0].width() * texture.getWidth()) );
-        height = MathJ.pixelToWorld( (int) (texture.getSubTextures()[0].height() * texture.getHeight()) );
+        width = texture.getUnitWidth();
+        height = texture.getUnitHeight();
     }
 
     // Interaction methods
+    public void setWidth(float unitWidth) {
+        width = unitWidth;
+    }
+    public void setHeight(float unitHeight) {
+        height = unitHeight;
+    }
+
     public Matrix4f getTransform() {
         return transform;
     }
@@ -95,16 +102,16 @@ public class Sprite {
         return shader;
     }
 
-    public float getWidth() {
+    public float getScaledWidth() {
         return width * MathJ.Math2D.magnitude(transform.getXAxisVector2());
     }
 
-    public float getHeight() {
+    public float getScaledHeight() {
         return height * MathJ.Math2D.magnitude(transform.getYAxisVector2());
     }
 
     public Vector2f getCenter() {
-        return MathJ.Math2D.sum(transform.getPositionXY(), new Vector2f(getWidth() / 2, getHeight() / 2));
+        return MathJ.Math2D.sum(transform.getPositionXY(), new Vector2f(getScaledWidth() / 2, getScaledHeight() / 2));
     }
 
     public void setSubTexture(SubTexture sub) {

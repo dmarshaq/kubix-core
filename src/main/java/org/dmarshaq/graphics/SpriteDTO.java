@@ -7,6 +7,8 @@ import org.dmarshaq.mathj.Vector4f;
 public class SpriteDTO {
 
     private final Matrix4f transform;
+    private final float width;
+    private final float height;
     private final Texture texture;
     private final SubTexture subTexture;
     private final Layer layer;
@@ -20,6 +22,8 @@ public class SpriteDTO {
         this.subTexture = sprite.getSubTexture();
         this.color = Vector4f.duplicate(sprite.getColor());
         this.shader = sprite.getShader();
+        this.width = sprite.getScaledWidth();
+        this.height = sprite.getScaledHeight();
     }
 
     public Matrix4f getTransform() {
@@ -39,6 +43,12 @@ public class SpriteDTO {
     }
     public Shader getShader() {
         return shader;
+    }
+    public float getWidth() {
+        return width;
+    }
+    public float getHeight() {
+        return height;
     }
 
 }

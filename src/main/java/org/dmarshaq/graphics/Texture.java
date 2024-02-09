@@ -1,6 +1,7 @@
 package org.dmarshaq.graphics;
 
 
+import org.dmarshaq.app.Context;
 import org.dmarshaq.utils.BufferUtils;
 
 import java.awt.image.BufferedImage;
@@ -9,16 +10,18 @@ import static org.dmarshaq.utils.FileUtils.loadAsImage;
 import static org.lwjgl.opengl.GL11.*;
 
 public class Texture {
-    private int width, height;
+    private int width, height, pixelsPerUnit;
     private final int textureID;
     private SubTexture[] subTextures;
 
     public Texture(String Path) {
         textureID = load(Path);
+        pixelsPerUnit = Context.getUnitSize();
     }
 
     public Texture(String Path, int xSlices, int ySlices) {
         textureID = load(Path);
+        pixelsPerUnit = Context.getUnitSize();
         sliceTexture(xSlices, ySlices);
     }
 
@@ -55,7 +58,7 @@ public class Texture {
     /**
      * Slices Texture <p>
      * Precondition: xSlices > 0 <p>
-     * Precondition: ySlices > 0 <p>
+     * Precondition: ySlices > 0
      */
     private void sliceTexture(int xSlices, int ySlices) {
         float sliceWidth = (float) (1.00 / xSlices);
@@ -69,18 +72,30 @@ public class Texture {
     }
     /**
      * Slices Texture Custom<p>
-     * Intended to be used when texture is created first time <p>
+     * Intended to be used when texture is created first time
      */
     public void sliceTexture(SubTexture[] customSlices) {
         subTextures = customSlices;
     }
 
-    public int getWidth() {
+    public int getPixelWidth() {
         return width;
     }
 
-    public int getHeight() {
+    public int getPixelHeight() {
         return height;
+    }
+
+    public float getUnitWidth() {
+        return (float) width / pixelsPerUnit;
+    }
+
+    public float getUnitHeight() {
+        return (float) height / pixelsPerUnit;
+    }
+
+    public void setPixelsPerUnit(int pixels) {
+        pixelsPerUnit = pixels;
     }
 
     public int getID() {
