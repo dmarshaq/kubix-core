@@ -1,5 +1,6 @@
 package org.dmarshaq.app;
 
+import org.dmarshaq.input.MouseInput;
 import org.dmarshaq.time.Time;
 
 
@@ -43,6 +44,8 @@ public abstract class Update implements Runnable {
                 start = false;
             }
             // update itself
+            Render.getMouseInput().input();
+            Time.updateTimers();
             update();
             // snapshot packing up
             snapshot.closeSpriteInputStream();

@@ -42,11 +42,10 @@ public class Text {
             char cChar = text.charAt(i);
             Character c = font.getCharacterData(cChar);
 
-            float xOffset, yOffset, height, width;
+            float xOffset, yOffset, height;
             xOffset = c.getXoffset();
             yOffset = c.getYoffset();
             height = c.getHeight();
-            width = c.getWidth();
 
 
             Vector2f characterPosition = new Vector2f(cursor + xOffset, line - (yOffset + height));
@@ -63,7 +62,7 @@ public class Text {
                 int end = word.indexOf(' ');
                 if (end != -1) {
                     word = word.substring(0, end);
-                    int nextWordLength = getWordLength(word);
+                    int nextWordLength = font.getWordLength(word);
                     if (cursor + nextWordLength > maxLineLength) {
                         lines += 1;
                         cursor = 0;
@@ -79,22 +78,16 @@ public class Text {
         }
     }
 
-    private int getWordLength(String word) {
-        int length = word.length();
-        int result = 0;
-        for (int i = 0; i < length; i++) {
-            Character c = font.getCharacterData(word.charAt(i));
-            result += c.getXadvance();
-        }
-        return result;
-    }
-
     public void setLineSpacing(int spacing) {
         lineSpacing = spacing;
     }
 
     public void setMaxLineLength(float length) {
         maxLineLength = length;
+    }
+
+    public void setText(String text) {
+        this.text = text;
     }
 
     public float getMaxLength() {
@@ -109,7 +102,5 @@ public class Text {
         return transform;
     }
 
-    public void setText(String text) {
-        this.text = text;
-    }
+
 }

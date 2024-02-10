@@ -22,8 +22,8 @@ public class SpriteDTO {
         this.subTexture = sprite.getSubTexture();
         this.color = Vector4f.duplicate(sprite.getColor());
         this.shader = sprite.getShader();
-        this.width = sprite.getScaledWidth();
-        this.height = sprite.getScaledHeight();
+        this.width = sprite.getWidth();
+        this.height = sprite.getHeight();
     }
 
     public Matrix4f getTransform() {

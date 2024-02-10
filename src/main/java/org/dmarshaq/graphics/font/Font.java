@@ -64,6 +64,16 @@ public class Font {
         return maxCharacterWidth;
     }
 
+    public int getWordLength(String word) {
+        int length = word.length();
+        int result = 0;
+        for (int i = 0; i < length; i++) {
+            Character c = getCharacterData(word.charAt(i));
+            result += c.getXadvance();
+        }
+        return result;
+    }
+
     public SubTexture getSubTexture(char character) {
         return fontTexture.getSubTextures()[ font.indexOf(character) ];
     }

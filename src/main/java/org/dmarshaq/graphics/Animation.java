@@ -40,7 +40,7 @@ public class Animation {
     Returns subtexture index
      */
     public int playCycle(MathJ.Easing easing) {
-        timer -= Time.DeltaTime.getMiliSeconds();
+        timer -= Time.DeltaTime.getMilliseconds();
 
         int index = 0;
 

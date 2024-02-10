@@ -1,9 +1,9 @@
 package org.dmarshaq.app;
 
 import org.dmarshaq.graphics.*;
-import org.dmarshaq.input.CursorInputPos;
 import org.dmarshaq.input.Input;
 import org.dmarshaq.input.KeyCode;
+import org.dmarshaq.input.MouseInput;
 import org.dmarshaq.mathj.*;
 import org.dmarshaq.utils.BufferUtils;
 import org.lwjgl.glfw.GLFWVidMode;
@@ -42,7 +42,7 @@ public abstract class Render implements Runnable {
     private Matrix4f pr_matrix;
     private Update updateTask;
     private Context context;
-    private static CursorInputPos cursorInputPos;
+    private static MouseInput mouseInput;
     private static int screenWidth, screenHeight;
     private static float aspectRatio;
 
@@ -188,8 +188,8 @@ public abstract class Render implements Runnable {
         }
 
         // Set call backs
-        cursorInputPos = new CursorInputPos();
-        glfwSetCursorPosCallback(window, cursorInputPos);
+        mouseInput = new MouseInput();
+        mouseInput.init(window);
 
         glfwSetWindowSizeCallback(window, new GLFWWindowSizeCallback(){
             @Override
@@ -446,7 +446,6 @@ public abstract class Render implements Runnable {
         localYVector = new Vector2f( 0, spriteDTO.getHeight() * subTexture.percentHeight() );
 
 
-
         localXVector = spriteDTO.getTransform().multiply(localXVector, 0);
         localYVector = spriteDTO.getTransform().multiply(localYVector, 0);
 
@@ -585,7 +584,7 @@ public abstract class Render implements Runnable {
         return screenHeight;
     }
 
-    public static Vector2i getCursorPos() {
-        return new Vector2i(cursorInputPos.x(), cursorInputPos.y());
+    public static MouseInput getMouseInput() {
+        return mouseInput;
     }
 }

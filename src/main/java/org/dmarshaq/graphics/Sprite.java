@@ -110,6 +110,14 @@ public class Sprite {
         return height * MathJ.Math2D.magnitude(transform.getYAxisVector2());
     }
 
+    public float getWidth() {
+        return width;
+    }
+
+    public float getHeight() {
+        return height;
+    }
+
     public Vector2f getCenter() {
         return MathJ.Math2D.sum(transform.getPositionXY(), new Vector2f(getScaledWidth() / 2, getScaledHeight() / 2));
     }
