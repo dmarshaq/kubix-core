@@ -23,6 +23,10 @@ public interface MathJ {
 			return new Vector2f(a.x + b.x, a.y + b.y);
 		}
 
+		public static Vector2i sum(Vector2i a, Vector2i b) {
+			return new Vector2i(a.x + b.x, a.y + b.y);
+		}
+
 		public static Vector3f sum(Vector3f a, Vector3f b) {
 			return new Vector3f(a.x + b.x, a.y + b.y, a.z);
 		}

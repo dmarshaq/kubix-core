@@ -32,30 +32,55 @@ public class Time {
     }
 
     public abstract static class Timer {
-        private boolean repeatable;
+        private boolean repeatable, freezed;
         private float totalTime;
         private float currentTime;
 
-        public Timer(float milliseconds) {
+        public Timer(float milliseconds, boolean freezed) {
             timerList.add(this);
             totalTime = milliseconds;
             currentTime = milliseconds;
-            repeatable = false;
+            this.freezed = freezed;
         }
 
         boolean iterateTimer() {
-            if ((currentTime = countTimer(currentTime)) == 0) {
-                timerOut();
+            if (!freezed) {
+                if ((currentTime = countTimer(currentTime)) == 0) {
+                    timerOut();
 
-                if (!repeatable) {
-                    return false;
+                    return repeatable;
                 }
             }
             return true;
         }
 
-        public float getCurrentTime() {
+        public float getTimeSinceStart() {
             return totalTime - currentTime;
+        }
+
+        public float getCurrentTime() {
+            return currentTime;
+        }
+
+        public void setCurrentTime(float milliseconds) {
+            currentTime = milliseconds;
+        }
+
+        public void resetTimer() {
+            currentTime = totalTime;
+        }
+
+        public void resetTimer(float milliseconds) {
+            totalTime = milliseconds;
+            currentTime = milliseconds;
+        }
+
+        public void freeze() {
+            freezed = true;
+        }
+
+        public void unfreeze() {
+            freezed = false;
         }
 
         private float countTimer(float timer_time) {
