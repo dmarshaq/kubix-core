@@ -3,6 +3,7 @@ package org.dmarshaq.physics;
 import org.dmarshaq.app.Context;
 import org.dmarshaq.app.Layer;
 import org.dmarshaq.app.Snapshot;
+import org.dmarshaq.graphics.Color;
 import org.dmarshaq.graphics.Shader;
 import org.dmarshaq.graphics.Sprite;
 import org.dmarshaq.mathj.Matrix4f;
@@ -84,7 +85,7 @@ public interface Physics2D {
         }
 
         if (Context.isDrawGizmos()) {
-            Sprite colliderGizmos = new Sprite(Matrix4f.identity(), Layer.GIZMOS, new Vector4f(1.0f, 0.5f, 1.0f, 1.0f), Shader.BASIC);
+            Sprite colliderGizmos = new Sprite(Matrix4f.identity(), Layer.GIZMOS, new Color(255, 200, 255, 1.0f), Shader.BASIC);
             for (BoxCollider2D boxCollider2D : BOX_COLLIDERS) {
                 colliderGizmos.setTransform(boxCollider2D.gizmosTransform());
                 snapshot.addSpriteToRender(colliderGizmos);

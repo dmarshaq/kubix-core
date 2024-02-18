@@ -9,13 +9,13 @@ public class Sprite {
     private Layer layer;
     private Texture texture;
     private SubTexture subTexture;
-    private Vector4f color;
+    private Color color;
     private Shader shader;
     private Animation animation;
 
     private float width, height;
 
-    public Sprite(Matrix4f transform, Layer layer, Vector4f color, Shader shader) {
+    public Sprite(Matrix4f transform, Layer layer, Color color, Shader shader) {
         this.transform = transform;
         this.layer = layer;
         this.texture = null;
@@ -94,7 +94,7 @@ public class Sprite {
         return layer;
     }
 
-    public Vector4f getColor() {
+    public Color getColor() {
         return color;
     }
 

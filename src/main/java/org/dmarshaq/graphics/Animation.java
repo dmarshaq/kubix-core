@@ -36,8 +36,8 @@ public class Animation {
         this.frames = (int) ( 1 / this.texture.getSubTextures()[0].percentWidth() );
     }
 
-    /*
-    Returns subtexture index
+    /**
+     * Returns subtexture index
      */
     public int playCycle(MathJ.Easing easing) {
         timer -= Time.DeltaTime.getMilliseconds();

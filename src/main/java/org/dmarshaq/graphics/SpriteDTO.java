@@ -20,7 +20,7 @@ public class SpriteDTO {
         this.texture = sprite.getTexture();
         this.layer = sprite.getLayer();
         this.subTexture = sprite.getSubTexture();
-        this.color = Vector4f.duplicate(sprite.getColor());
+        this.color = Color.toVector4f(sprite.getColor());
         this.shader = sprite.getShader();
         this.width = sprite.getWidth();
         this.height = sprite.getHeight();
