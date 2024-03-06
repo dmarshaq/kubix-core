@@ -68,13 +68,13 @@ public class Rect {
 	}
 
 	public boolean touchesRect(Vector2f point) {
-		return domain().isInDomain(point.x) == 0 && range().isInDomain(point.y) == 0;
+		return domain().isInDomainInclusive(point.x) == 0 && range().isInDomainInclusive(point.y) == 0;
 	}
 
 	public boolean touchesRect(Rect rect) {
 		for (int i = 0; i < 4; i++) {
 			Vector2f corner = rect.getRectCorner(i);
-			if (domain().isInDomain(corner.x) == 0 && range().isInDomain(corner.y) == 0) {
+			if (domain().isInDomainInclusive(corner.x) == 0 && range().isInDomainInclusive(corner.y) == 0) {
 				return true;
 			}
 		}

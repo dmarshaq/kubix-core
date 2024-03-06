@@ -26,7 +26,13 @@ public class Time {
         for (int i = 0; i < timerList.size(); i++) {
             state = timerList.get(i).iterateTimer();
             if (!state) {
-                timerList.remove(i);
+                if (timerList.get(i).repeatable) {
+                    timerList.get(i).resetTimer();
+                }
+                else {
+                    timerList.remove(i);
+                    i--;
+                }
             }
         }
     }
@@ -47,8 +53,7 @@ public class Time {
             if (!freezed) {
                 if ((currentTime = countTimer(currentTime)) == 0) {
                     timerOut();
-
-                    return repeatable;
+                    return false;
                 }
             }
             return true;

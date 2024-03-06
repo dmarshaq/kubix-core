@@ -35,7 +35,7 @@ public class LineSegment {
     }
 
     public Vector2f zero() { // zero
-        if (getRange().isInDomain(0.0f) != 0) {
+        if (getRange().isInDomainInclusive(0.0f) != 0) {
             return null;
         }
         if (Float.isNaN(slope()) ) {

@@ -10,6 +10,7 @@ import org.dmarshaq.mathj.Vector2f;
 public class Text {
     private float maxLength, maxHeight, maxLineLength;
     private int lines, lineSpacing;
+    public boolean enabledDrawing;
 
     private String text;
     private Matrix4f transform;
@@ -30,6 +31,7 @@ public class Text {
 
         charTransform = new Matrix4f();
         charSprite = new Sprite(charTransform, layer, font.getFontTexture(), font.getFontTexture().getSubTextures()[0], shader);
+        enabledDrawing = false;
     }
 
     public void update(Snapshot snapshot) {
@@ -51,9 +53,13 @@ public class Text {
             Vector2f characterPosition = new Vector2f(cursor + xOffset, line - (yOffset + height));
             characterPosition = transform.multiply(characterPosition, 1);
 
+
             charTransform.setPositionXY(characterPosition);
-            charSprite.setSubTexture( font.getSubTexture(text.charAt(i)) );
-            snapshot.addSpriteToRender(charSprite);
+
+            if (enabledDrawing) {
+                charSprite.setSubTexture(font.getSubTexture(text.charAt(i)));
+                snapshot.addSpriteToRender(charSprite);
+            }
 
             cursor += c.getXadvance();
 
@@ -65,6 +71,10 @@ public class Text {
                     int nextWordLength = font.getWordLength(word);
                     if (cursor + nextWordLength > maxLineLength) {
                         lines += 1;
+                        float temp = transform.multiply(new Vector2f(cursor, 0), 0).magnitude();
+                        if (temp > maxLength) {
+                            maxLength = temp;
+                        }
                         cursor = 0;
                         line -= font.getMaxCharacterHeight() + lineSpacing;
                     }
@@ -72,7 +82,10 @@ public class Text {
             }
 
             if (i == text.length() - 1) {
-                maxLength = transform.multiply(new Vector2f(cursor, 0), 0).magnitude();
+                float temp = transform.multiply(new Vector2f(cursor, 0), 0).magnitude();
+                if (temp > maxLength) {
+                    maxLength = temp;
+                }
                 maxHeight = lines * font.getMaxCharacterHeight() + (lines - 1) * lineSpacing;
             }
         }

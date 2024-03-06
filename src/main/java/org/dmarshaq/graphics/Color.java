@@ -41,4 +41,7 @@ public class Color {
         return null;
     }
 
+    public String toString() {
+        return "( " + r + " , " + g + ", " + b + ", " + a + " )";
+    }
 }

@@ -66,4 +66,8 @@ public class Vector2i {
         }
         return new Vector2i(v.x, v.y);
     }
+
+    public String toString() {
+        return "( " + x + " , " + y + " )";
+    }
 }
