@@ -1,6 +1,7 @@
 package org.dmarshaq.app;
 
 import org.dmarshaq.graphics.Camera;
+import org.dmarshaq.graphics.Color;
 
 public abstract class Context {
     // SCREEN & TILE SETTINGS
@@ -93,6 +94,9 @@ public abstract class Context {
     }
     protected static void setMinScreenUnitHeight(int minScreenUnitHeight) {
         MIN_SCREEN_UNIT_HEIGHT = minScreenUnitHeight;
+    }
+    protected static void setClearColor(Color color) {
+        Render.setClearScreenColor(color);
     }
 
     public abstract void initContextProperties();

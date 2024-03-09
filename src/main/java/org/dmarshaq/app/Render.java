@@ -1,6 +1,7 @@
 package org.dmarshaq.app;
 
 import org.dmarshaq.graphics.*;
+import org.dmarshaq.graphics.Color;
 import org.dmarshaq.input.Input;
 import org.dmarshaq.input.KeyCode;
 import org.dmarshaq.input.MouseInput;
@@ -45,6 +46,7 @@ public abstract class Render implements Runnable {
     private static MouseInput mouseInput;
     private static int screenWidth, screenHeight;
     private static float aspectRatio;
+    private static Color color = new Color(150, 150, 150, 1.0f);
 
     public void setUpdateTask(Update updateTask) {
         this.updateTask = updateTask;
@@ -255,7 +257,8 @@ public abstract class Render implements Runnable {
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         // Background
-        glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
+        Vector4f color4f = Color.toVector4f(color);
+        glClearColor(color4f.x, color4f.y, color4f.z, color4f.w);
 
         // Setup audio
         alListener3f(AL_POSITION, 0.0f, 0.0f, 0.0f);
@@ -586,5 +589,9 @@ public abstract class Render implements Runnable {
 
     public static MouseInput getMouseInput() {
         return mouseInput;
+    }
+
+    public static void setClearScreenColor(Color c) {
+        color = c;
     }
 }
