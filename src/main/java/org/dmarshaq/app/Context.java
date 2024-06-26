@@ -1,9 +1,11 @@
 package org.dmarshaq.app;
 
 import org.dmarshaq.graphics.Camera;
-import org.dmarshaq.graphics.Color;
+
+import java.awt.*;
 
 public abstract class Context {
+
     // SCREEN & TILE SETTINGS
     private static String TITLE = "";
     private static int UNIT_SIZE = 64; // 64 x 64 unit size
@@ -21,7 +23,7 @@ public abstract class Context {
     private static boolean running = true;
 
     // KEYS
-    private static int MAX_KEYS = 5;
+    private static int MAX_KEYS = 11;
 
     // RENDER
     private static boolean DRAW_GIZMOS = true;

@@ -10,25 +10,11 @@ public final class Vector4f {
         this.w = 0f;
     }
 
-    public Vector4f(float x, float y, float z) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
-        this.w = 0f;
-    }
-
     public Vector4f(float x, float y, float z, float w) {
         this.x = x;
         this.y = y;
         this.z = z;
         this.w = w;
-    }
-
-    public Vector4f(int r, int g, int b, float a) {
-        this.x = r / 255f;
-        this.y = g / 255f;
-        this.z = b / 255f;
-        this.w = a;
     }
 
     public void copyValues(Vector4f v) {

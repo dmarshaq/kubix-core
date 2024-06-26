@@ -1,6 +1,6 @@
 package org.dmarshaq.app;
 
-import org.dmarshaq.input.MouseInput;
+import org.dmarshaq.graphics.Layer;
 import org.dmarshaq.time.Time;
 
 
@@ -23,12 +23,14 @@ public abstract class Update implements Runnable {
         double nextUpdateTime = System.nanoTime() + updateInterval;
         double lastFrameTime = 0;
         while (Context.isRunning()) {
+            // delta time is collected
             double time = System.nanoTime();
             if (lastFrameTime != 0) {
                 Time.DeltaTime.setTime((float) (time - lastFrameTime)); // time diffrence between 2 frames, deltaTime
             }
             lastFrameTime = time;
 
+            // check if user closed the window
             if (render.getWindow() != 0 && glfwWindowShouldClose(render.getWindow())) {
                 Context.stopRunning();
             }
@@ -37,13 +39,13 @@ public abstract class Update implements Runnable {
             snapshot = new Snapshot();
             // layers Clean Up
             Layer.clearRenderSpritesCount();
-            // only in first update
+            // only in before first update (start method is called)
             if (start) {
                 Layer.loadIndexes();
                 start();
                 start = false;
             }
-            // update itself
+            // update method called, as well as inputs and time
             Render.getMouseInput().input();
             Time.updateTimers();
             update();

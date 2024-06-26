@@ -1,7 +1,6 @@
 package org.dmarshaq.app;
 
 import org.dmarshaq.graphics.*;
-import org.dmarshaq.graphics.Color;
 import org.dmarshaq.input.Input;
 import org.dmarshaq.input.KeyCode;
 import org.dmarshaq.input.MouseInput;
@@ -219,7 +218,7 @@ public abstract class Render implements Runnable {
                 screenHeight = height;
                 aspectRatio = (float) screenWidth / screenHeight;
                 glViewport(0, 0, screenWidth, screenHeight);
-                Camera cam = getMainCamera();
+                Camera cam = data.getCamera();
                 if (cam != null) {
                     float unitWidth = getMinScreenUnitWidth();
                     float unitHeight = getMinScreenUnitHeight();
@@ -257,7 +256,7 @@ public abstract class Render implements Runnable {
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         // Background
-        Vector4f color4f = Color.toVector4f(color);
+        Vector4f color4f = MathJ.Math2D.toVector4f(color);
         glClearColor(color4f.x, color4f.y, color4f.z, color4f.w);
 
         // Setup audio

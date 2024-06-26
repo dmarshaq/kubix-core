@@ -1,9 +1,6 @@
 package org.dmarshaq.app;
 
-import org.dmarshaq.graphics.Camera;
-import org.dmarshaq.graphics.Shader;
-import org.dmarshaq.graphics.SpriteDTO;
-import org.dmarshaq.graphics.Sprite;
+import org.dmarshaq.graphics.*;
 
 import java.util.ArrayList;
 import java.util.List;

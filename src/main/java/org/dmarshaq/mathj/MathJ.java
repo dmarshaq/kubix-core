@@ -1,6 +1,6 @@
 package org.dmarshaq.mathj;
 
-import org.dmarshaq.app.Context;
+import java.awt.*;
 
 public interface MathJ {
 
@@ -61,6 +61,10 @@ public interface MathJ {
 
 		public static Vector3f toVector3f(Vector2f v, float z) {
 			return new Vector3f(v.x, v.y, z);
+		}
+
+		public static Vector4f toVector4f(Color color) {
+			return new Vector4f((float) color.getRed() / 255, (float) color.getGreen() / 255, (float) color.getBlue() / 255, (float) color.getAlpha() / 255);
 		}
 
 		public static float magnitude(Vector2f v) {

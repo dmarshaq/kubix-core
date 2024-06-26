@@ -1,4 +1,4 @@
-package org.dmarshaq.app;
+package org.dmarshaq.graphics;
 
 public enum Layer {
     BACKGROUND,

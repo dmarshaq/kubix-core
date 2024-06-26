@@ -7,7 +7,14 @@ public enum KeyCode {
     A (GLFW.GLFW_KEY_A),
     S (GLFW.GLFW_KEY_S),
     D (GLFW.GLFW_KEY_D),
-    SPACE (GLFW.GLFW_KEY_SPACE);
+    SPACE (GLFW.GLFW_KEY_SPACE),
+    LEFT_SHIFT (GLFW.GLFW_KEY_LEFT_SHIFT),
+    Q (GLFW.GLFW_KEY_Q),
+    E (GLFW.GLFW_KEY_E),
+    R (GLFW.GLFW_KEY_R),
+    F (GLFW.GLFW_KEY_F),
+    C (GLFW.GLFW_KEY_C),
+    ;
 
     private final int glfw;
     private int code;

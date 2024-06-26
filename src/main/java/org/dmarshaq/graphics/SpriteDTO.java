@@ -1,8 +1,9 @@
 package org.dmarshaq.graphics;
 
-import org.dmarshaq.app.Layer;
 import org.dmarshaq.mathj.Matrix4f;
 import org.dmarshaq.mathj.Vector4f;
+
+import static org.dmarshaq.mathj.MathJ.Math2D.toVector4f;
 
 public class SpriteDTO {
 
@@ -20,7 +21,7 @@ public class SpriteDTO {
         this.texture = sprite.getTexture();
         this.layer = sprite.getLayer();
         this.subTexture = sprite.getSubTexture();
-        this.color = Color.toVector4f(sprite.getColor());
+        this.color = toVector4f(sprite.getColor());
         this.shader = sprite.getShader();
         this.width = sprite.getWidth();
         this.height = sprite.getHeight();
