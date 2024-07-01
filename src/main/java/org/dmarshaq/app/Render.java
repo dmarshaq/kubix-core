@@ -45,7 +45,7 @@ public abstract class Render implements Runnable {
     private static MouseInput mouseInput;
     private static int screenWidth, screenHeight;
     private static float aspectRatio;
-    private static Color color = new Color(150, 150, 150, 1.0f);
+    private static Color color = new Color(150, 150, 150, 255);
 
     public void setUpdateTask(Update updateTask) {
         this.updateTask = updateTask;

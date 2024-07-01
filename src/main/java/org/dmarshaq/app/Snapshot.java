@@ -1,6 +1,8 @@
 package org.dmarshaq.app;
 
 import org.dmarshaq.graphics.*;
+import org.dmarshaq.mathj.MathJ;
+import org.dmarshaq.mathj.Matrix4f;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +15,16 @@ public class Snapshot {
     private Camera camera;
 
     public void addSpriteToRender(Sprite sprite) {
-        SpriteDTO spriteDTO = new SpriteDTO(sprite);
+        SpriteDTO spriteDTO = SpriteDTO.builder()
+                .color(MathJ.Math2D.toVector4f(sprite.getColor()))
+                .layer(sprite.getLayer())
+                .width(sprite.getWidth())
+                .height(sprite.getHeight())
+                .shader(sprite.getShader())
+                .subTexture(sprite.getSubTexture())
+                .texture(sprite.getTexture())
+                .transform(Matrix4f.duplicate(sprite.getTransform()))
+                .build();
 
         spriteDTO.getLayer().incrementRenderSpriteCount();
         spriteDTOList.add(spriteDTO);
