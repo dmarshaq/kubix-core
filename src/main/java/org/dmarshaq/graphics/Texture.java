@@ -1,6 +1,8 @@
 package org.dmarshaq.graphics;
 
 
+import lombok.Builder;
+import lombok.Getter;
 import org.dmarshaq.app.Context;
 import org.dmarshaq.utils.BufferUtils;
 
@@ -9,23 +11,24 @@ import static org.dmarshaq.utils.FileUtils.loadAsImage;
 
 import static org.lwjgl.opengl.GL11.*;
 
+@Getter
 public class Texture {
-    private int width, height, pixelsPerUnit;
-    private final int textureID;
-    private SubTexture[] subTextures;
+    private int width, height;
+    private int textureID;
 
-    public Texture(String Path) {
-        textureID = load(Path);
-        pixelsPerUnit = Context.getUnitSize();
+    public Texture(String path) {
+        textureID = generateID(loadDataFromImage(path));
     }
 
-    public Texture(String Path, int xSlices, int ySlices) {
-        textureID = load(Path);
-        pixelsPerUnit = Context.getUnitSize();
-        sliceTexture(xSlices, ySlices);
-    }
+//    public Texture deserializeFromFile(String path) {
+//        Texture texture = new Texture();
+//        texture.width = 1000;
+//        texture.height = 1000;
+//        texture.generateID(new int[] {1, 2, 3});
+//        return texture;
+//    }
 
-    private int load(String path) {
+    private int[] loadDataFromImage(String path) {
         int[] pixels = null;
 
         BufferedImage image = loadAsImage(path);
@@ -46,6 +49,10 @@ public class Texture {
             }
         }
 
+        return data;
+    }
+
+    private int generateID(int[] data) {
         int result = glGenTextures();
         glBindTexture(GL_TEXTURE_2D, result);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);  // make it sharp, disable antilising
@@ -55,54 +62,12 @@ public class Texture {
         return result;
     }
 
-    /**
-     * Slices Texture <p>
-     * Precondition: xSlices > 0 <p>
-     * Precondition: ySlices > 0
-     */
-    private void sliceTexture(int xSlices, int ySlices) {
-        float sliceWidth = (float) (1.00 / xSlices);
-        float sliceHeight = (float) (1.00 / ySlices);
-        subTextures = new SubTexture[xSlices * ySlices];
-        for (int y = 0; y < ySlices; y++) {
-            for (int x = 0; x < xSlices; x++) {
-                subTextures[x + y * xSlices] = new SubTexture(x * sliceWidth, y * sliceHeight, sliceWidth, sliceHeight);
-            }
-        }
-    }
-    /**
-     * Slices Texture Custom<p>
-     * Intended to be used when texture is created first time
-     */
-    public void sliceTexture(SubTexture[] customSlices) {
-        subTextures = customSlices;
-    }
-
-    public int getPixelWidth() {
-        return width;
-    }
-
-    public int getPixelHeight() {
-        return height;
-    }
-
     public float getUnitWidth() {
-        return (float) width / pixelsPerUnit;
+        return (float) width / Context.getUnitSize();
     }
 
     public float getUnitHeight() {
-        return (float) height / pixelsPerUnit;
+        return (float) height / Context.getUnitSize();
     }
 
-    public void setPixelsPerUnit(int pixels) {
-        pixelsPerUnit = pixels;
-    }
-
-    public int getID() {
-        return textureID;
-    }
-
-    public SubTexture[] getSubTextures() {
-        return subTextures;
-    }
 }

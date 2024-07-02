@@ -398,7 +398,7 @@ public abstract class Render implements Runnable {
             int slot = 0;
             Texture texture = spriteDTO.getTexture();
             if (texture != null) {
-                slot = allocateTextureSlot( texture.getID() );
+                slot = allocateTextureSlot( texture.getTextureID() );
                 if (slot == -1) {
                     if (nextBatchStartIndex == 0) {
                         nextBatchStartIndex = spriteGlobalIndex;
