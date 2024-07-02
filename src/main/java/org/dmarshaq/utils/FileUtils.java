@@ -31,9 +31,23 @@ public interface FileUtils {
 
         try {
             InputStream inputStream = URLClassLoader.getSystemResourceAsStream(filePath);
+
             result = ImageIO.read(inputStream);
         } catch (IOException e) {
             System.out.println("Could not read resource file " + filePath + " due to: " + e.toString());
+            throw new RuntimeException(e);
+        }
+
+        return result;
+    }
+
+    static BufferedImage loadAsImage(File file) {
+        BufferedImage result;
+
+        try {
+            result = ImageIO.read(file);
+        } catch (IOException e) {
+            System.out.println("Could not read resource file " + file + " due to: " + e.toString());
             throw new RuntimeException(e);
         }
 

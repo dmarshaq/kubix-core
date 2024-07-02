@@ -164,7 +164,7 @@ public class SerializationScanner {
         return src[pointer] != 0;
     }
 
-    public static void saveToFile(String path, byte[] data) {
+    protected static void saveToFile(String path, byte[] data) {
         try {
             BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(path));
             stream.write(data);
@@ -174,7 +174,7 @@ public class SerializationScanner {
         }
     }
 
-    public static byte[] readFromFile(String path) {
+    protected static byte[] readFromFile(String path) {
         byte[] buffer = null;
         try {
             BufferedInputStream stream = new BufferedInputStream(new FileInputStream(path));

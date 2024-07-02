@@ -13,43 +13,14 @@ import static org.lwjgl.opengl.GL11.*;
 
 @Getter
 public class Texture {
-    private int width, height;
-    private int textureID;
+    private final int width;
+    private final int height;
+    private final int textureID;
 
-    public Texture(String path) {
-        textureID = generateID(loadDataFromImage(path));
-    }
-
-//    public Texture deserializeFromFile(String path) {
-//        Texture texture = new Texture();
-//        texture.width = 1000;
-//        texture.height = 1000;
-//        texture.generateID(new int[] {1, 2, 3});
-//        return texture;
-//    }
-
-    private int[] loadDataFromImage(String path) {
-        int[] pixels = null;
-
-        BufferedImage image = loadAsImage(path);
-        width = image.getWidth();
-        height = image.getHeight();
-        pixels = new int[width * height];
-        image.getRGB(0 ,0, width, height, pixels, 0 , width);
-
-        int[] data = new int[width * height];
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                int index = x + y * width;
-                int a = (pixels[index] & 0xff000000) >> 24;
-                int r = (pixels[index] & 0xff0000) >> 16;
-                int g = (pixels[index] & 0xff00) >> 8;
-                int b = (pixels[index] & 0xff);
-                data[x + (height - 1 - y) * width] = a << 24 | b << 16 | g << 8 | r;
-            }
-        }
-
-        return data;
+    public Texture(int[] pixels, int width, int height) {
+        textureID = generateID(pixels);
+        this.width = width;
+        this.height = height;
     }
 
     private int generateID(int[] data) {
