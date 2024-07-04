@@ -259,19 +259,20 @@ public abstract class Render implements Runnable {
         Vector4f color4f = MathJ.Math2D.toVector4f(color);
         glClearColor(color4f.x, color4f.y, color4f.z, color4f.w);
 
+        // Load all resources
+        context.loadResources();
+
         // Setup audio
         alListener3f(AL_POSITION, 0.0f, 0.0f, 0.0f);
         alListener3f(AL_VELOCITY, 0.0f, 0.0f, 0.0f);
 
-        // Setup textures
-        context.loadTextures();
-
+        //  Texture Samplers
         int[] samplers = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
                 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
                 22, 23, 24, 25, 26, 27, 28, 29, 30, 31 };
 
         // Setup shader
-        context.loadShaders();
+//        context.loadShaders(); TODO: Shader loading / serialization
 
         Shader.loadEngineShaders();
         pr_matrix = Matrix4f.orthographic(-2f, 2f, -1.5f, 1.5f, -1f, 1f); // basically camera matrix
@@ -282,7 +283,7 @@ public abstract class Render implements Runnable {
         Shader.BASIC.disable();
 
         // Setup fonts
-        context.loadFonts();
+//        context.loadFonts(); TODO: Fonts?
 
         // Build indices
         for (int i = 0; i < getMaxQuadsPerBatch(); i++) {

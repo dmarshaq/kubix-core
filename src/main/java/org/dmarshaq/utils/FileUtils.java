@@ -3,10 +3,17 @@ package org.dmarshaq.utils;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.net.URISyntaxException;
 import java.net.URLClassLoader;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Stream;
 
 import static org.dmarshaq.utils.BufferUtils.createByteBuffer;
 
@@ -63,5 +70,30 @@ public interface FileUtils {
             throw new RuntimeException(e);
         }
 
+    }
+
+    static List<File> findAllFilesInResources(String path, String fileType)  {
+        List<File> files = new ArrayList<>();
+        // Search files tree
+        Path dir = null;
+        try {
+            dir = Paths.get(URLClassLoader.getSystemResource(path).toURI());
+        }
+        catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+        try (Stream<Path> filePathStream= Files.walk(dir)) {
+            filePathStream.forEach(filePath -> {
+                // Filter images with .png
+                if (Files.isRegularFile(filePath)) {
+                    if (filePath.toString().endsWith(fileType)) {
+                        files.add(filePath.toFile());
+                    }
+                }
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return files;
     }
 }

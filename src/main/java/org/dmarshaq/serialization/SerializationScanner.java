@@ -1,11 +1,30 @@
 package org.dmarshaq.serialization;
 
 import java.io.*;
+import java.util.List;
 
-public class SerializationScanner {
+public abstract class SerializationScanner {
 
-    protected static final byte[] HEADER = "KUB".getBytes();
-    protected static final short VERSION = 0x0100; // VERSION 1.0
+
+    public static Packet[] deserializeResourcesIntoPackets(List<File> files) {
+        Packet[] packets = new Packet[files.size()];
+
+        byte[] data = null;
+        int i = 0;
+        for (File file : files) {
+            data = readFromFile(file.getPath());
+            packets[i] = new Packet(readStringASCII(data, 0), data);
+            i++;
+        }
+
+        return packets;
+    }
+
+    public static void serializeResourcesIntoPackets(List<Packet> packets) {
+        for(int i = 1; i <= packets.size(); i++) {
+            saveToFile("src/main/resources/packets/packet" + i + ".kub", packets.get(i - 1).getData());
+        }
+    }
 
     protected static int writeBytes(byte[] dest, int pointer, byte[] src) {
         for (byte b : src) {
@@ -164,7 +183,20 @@ public class SerializationScanner {
         return src[pointer] != 0;
     }
 
-    protected static void saveToFile(String path, byte[] data) {
+    protected static String readStringASCII(byte[] src, int pointer) {
+        StringBuilder nameBuilder = new StringBuilder();
+
+        char nameLength = readChar(src, pointer);
+        pointer += 2;
+        for (char c = 0; c < nameLength; c++) {
+            nameBuilder.append((char) src[pointer]);
+            pointer++;
+        }
+
+        return nameBuilder.toString();
+    }
+
+    static void saveToFile(String path, byte[] data) {
         try {
             BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(path));
             stream.write(data);
@@ -174,7 +206,7 @@ public class SerializationScanner {
         }
     }
 
-    protected static byte[] readFromFile(String path) {
+    static byte[] readFromFile(String path) {
         byte[] buffer = null;
         try {
             BufferedInputStream stream = new BufferedInputStream(new FileInputStream(path));

@@ -1,8 +1,12 @@
 package org.dmarshaq.app;
 
 import org.dmarshaq.graphics.Camera;
+import org.dmarshaq.serialization.Packet;
+import org.dmarshaq.serialization.SerializationScanner;
+import org.dmarshaq.utils.FileUtils;
 
 import java.awt.*;
+import java.util.List;
 
 public abstract class Context {
 
@@ -103,11 +107,11 @@ public abstract class Context {
 
     public abstract void initContextProperties();
 
-    public abstract void loadTextures();
+    protected abstract List<Packet> loadResourcesFromPackets(Packet[] packets);
 
-    public abstract void loadShaders();
-
-    public abstract void loadFonts();
+    final void loadResources() {
+        SerializationScanner.serializeResourcesIntoPackets(loadResourcesFromPackets(SerializationScanner.deserializeResourcesIntoPackets(FileUtils.findAllFilesInResources("", ".kub"))));
+    }
 
 
 }
