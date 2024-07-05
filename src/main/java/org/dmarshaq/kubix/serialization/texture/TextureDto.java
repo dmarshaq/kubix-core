@@ -1,0 +1,33 @@
+package org.dmarshaq.kubix.serialization.texture;
+
+import lombok.*;
+import org.dmarshaq.kubix.core.graphics.Texture;
+
+import java.util.Objects;
+
+@Getter
+@Setter
+@NoArgsConstructor
+public class TextureDto {
+    private String name;
+    private long lastModified;
+    private int width;
+    private int height;
+    private int[] data;
+
+    static Texture toTexture(TextureDto textureDto) {
+        return new Texture(textureDto.getData(), textureDto.getWidth(), textureDto.getHeight());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof TextureDto that)) return false;
+        return Objects.equals(name, that.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name);
+    }
+}
