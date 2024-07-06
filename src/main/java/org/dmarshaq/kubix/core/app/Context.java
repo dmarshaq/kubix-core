@@ -4,8 +4,10 @@ import org.dmarshaq.kubix.core.graphics.Camera;
 import org.dmarshaq.kubix.core.serialization.Packet;
 import org.dmarshaq.kubix.core.serialization.SerializationScanner;
 import org.dmarshaq.kubix.core.utils.FileUtils;
+import org.dmarshaq.kubix.serialization.texture.TextureManager;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Context {
@@ -105,12 +107,20 @@ public abstract class Context {
         Render.setClearScreenColor(color);
     }
 
+    // Object methods
     public abstract void initContextProperties();
-
-    protected abstract List<Packet> loadResourcesFromPackets(Packet[] packets);
 
     final void loadResources() {
         SerializationScanner.serializeResourcesIntoPackets(loadResourcesFromPackets(SerializationScanner.deserializeResourcesIntoPackets(FileUtils.findAllFilesInResources("", ".kub"))));
+    }
+
+    final List<Packet> loadResourcesFromPackets(Packet[] packets) {
+        List<Packet> newPackets = new ArrayList<>();
+
+        // Manager / Loaders, loading respective packets one by one, adding their new packets to new packets list.
+        TextureManager.loadPackets(packets, newPackets);
+
+        return newPackets;
     }
 
 

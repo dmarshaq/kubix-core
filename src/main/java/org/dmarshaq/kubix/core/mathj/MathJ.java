@@ -103,6 +103,8 @@ public interface MathJ {
 		}
 	}
 
+
+
 	// EASING functions
 	enum Easing {
 		LINEAR,
