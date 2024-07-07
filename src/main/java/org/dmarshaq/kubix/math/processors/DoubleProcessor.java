@@ -1,9 +1,7 @@
 package org.dmarshaq.kubix.math.processors;
 
 import org.dmarshaq.kubix.math.Vector;
-import org.dmarshaq.kubix.math.operations.VectorDotProduct;
-import org.dmarshaq.kubix.math.operations.VectorNegation;
-import org.dmarshaq.kubix.math.operations.VectorSummation;
+import org.dmarshaq.kubix.math.operations.*;
 
 public class DoubleProcessor extends OperationProcessor {
     public DoubleProcessor(OperationProcessor nextProcessor) {
@@ -11,10 +9,10 @@ public class DoubleProcessor extends OperationProcessor {
     }
 
     /**
-     * Processes VectorSummation operation with Double's.
+     * Processes VectorAddition operation with Double's.
      */
     @Override
-    public <T extends Number> void processOperation(VectorSummation<T> operation) {
+    public <T extends Number> void processOperation(VectorAddition<T> operation) {
         if (Double.class.isAssignableFrom(operation.getClasType())) {
             Vector<T> large = operation.getVector1();
             Vector<T> small = operation.getVector2();
@@ -47,7 +45,7 @@ public class DoubleProcessor extends OperationProcessor {
     @Override
     public <T extends Number> void processOperation(VectorNegation<T> operation) {
         if (Double.class.isAssignableFrom(operation.getClasType())) {
-            Vector<T> vector = operation.getVector1();
+            Vector<T> vector = operation.getVector();
             Vector<T> resultant = new Vector<>(vector.getValues().length);
 
             for (int i = 0; i < resultant.getValues().length; i++) {
@@ -80,6 +78,73 @@ public class DoubleProcessor extends OperationProcessor {
             }
 
             operation.setProduct((T) product);
+        }
+        else if (getNextProcessor() != null) {
+            getNextProcessor().processOperation(operation);
+        }
+    }
+
+    /**
+     * Processes VectorMagnitude operation with Double's.
+     */
+    @Override
+    public <T extends Number> void processOperation(VectorMagnitude<T> operation) {
+        if (Double.class.isAssignableFrom(operation.getClasType())) {
+            Vector<T> vector1 = operation.getVector();
+
+            double sumOfSquares = 0;
+            for (int i = 0; i < vector1.getValues().length; i++) {
+                sumOfSquares += vector1.getValues()[i].doubleValue() * vector1.getValues()[i].doubleValue();
+            }
+
+            Double magnitude = Math.sqrt(sumOfSquares);
+            operation.setMagnitude((T) magnitude);
+        }
+        else if (getNextProcessor() != null) {
+            getNextProcessor().processOperation(operation);
+        }
+    }
+
+    /**
+     * Processes ScalarMultiplication operation with Double's.
+     */
+    @Override
+    public <T extends Number> void processOperation(ScalarMultiplication<T> operation) {
+        if (Double.class.isAssignableFrom(operation.getClasType())) {
+            Vector<T> vector = operation.getVector();
+            T scalar = operation.getScalar();
+
+            Vector<T> resultant = new Vector<>(vector.getValues().length);
+
+            for (int i = 0; i < resultant.getValues().length; i++) {
+                Double mul = vector.getValues()[i].doubleValue() * scalar.doubleValue();
+                resultant.getValues()[i] = (T) mul;
+            }
+
+            operation.setResultant(resultant);
+        }
+        else if (getNextProcessor() != null) {
+            getNextProcessor().processOperation(operation);
+        }
+    }
+
+    /**
+     * Processes ScalarDivision operation with Double's.
+     */
+    @Override
+    public <T extends Number> void processOperation(ScalarDivision<T> operation) {
+        if (Double.class.isAssignableFrom(operation.getClasType())) {
+            Vector<T> vector = operation.getVector();
+            T scalar = operation.getScalar();
+
+            Vector<T> resultant = new Vector<>(vector.getValues().length);
+
+            for (int i = 0; i < resultant.getValues().length; i++) {
+                Double div = vector.getValues()[i].doubleValue() / scalar.doubleValue();
+                resultant.getValues()[i] = (T) div;
+            }
+
+            operation.setResultant(resultant);
         }
         else if (getNextProcessor() != null) {
             getNextProcessor().processOperation(operation);

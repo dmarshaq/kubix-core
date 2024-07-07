@@ -1,9 +1,7 @@
 package org.dmarshaq.kubix.math.processors;
 
 import lombok.Getter;
-import org.dmarshaq.kubix.math.operations.VectorDotProduct;
-import org.dmarshaq.kubix.math.operations.VectorNegation;
-import org.dmarshaq.kubix.math.operations.VectorSummation;
+import org.dmarshaq.kubix.math.operations.*;
 
 @Getter
 public abstract class OperationProcessor {
@@ -13,7 +11,11 @@ public abstract class OperationProcessor {
         this.nextProcessor = nextProcessor;
     }
 
-    public abstract <T extends Number> void processOperation(VectorSummation<T> operation);
+    public abstract <T extends Number> void processOperation(VectorAddition<T> operation);
     public abstract <T extends Number> void processOperation(VectorNegation<T> operation);
     public abstract <T extends Number> void processOperation(VectorDotProduct<T> operation);
+    public abstract <T extends Number> void processOperation(VectorMagnitude<T> operation);
+    public abstract <T extends Number> void processOperation(ScalarMultiplication<T> operation);
+    public abstract <T extends Number> void processOperation(ScalarDivision<T> operation);
+
 }
