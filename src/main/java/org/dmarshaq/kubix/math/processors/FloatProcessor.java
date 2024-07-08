@@ -1,5 +1,6 @@
 package org.dmarshaq.kubix.math.processors;
 
+import org.dmarshaq.kubix.math.Matrix;
 import org.dmarshaq.kubix.math.Vector;
 import org.dmarshaq.kubix.math.operations.*;
 
@@ -149,5 +150,32 @@ public class FloatProcessor extends OperationProcessor {
         else if (getNextProcessor() != null) {
             getNextProcessor().processOperation(operation);
         }
+    }
+
+    /**
+     * Builds new Float identity Matrix.
+     */
+    @Override
+    public <T extends Number> Matrix<T> buildIdentityMatrix(Class<T> clas, int rows, int columns) {
+        if (Float.class.isAssignableFrom(clas)) {
+            Matrix<T> identity = new Matrix<>(rows, columns);
+            for (int row = 0; row < rows; row++) {
+                for (int col = 0; col < columns; col++) {
+                    Float element;
+                    if (row == col) {
+                        element = 1.0f;
+                    }
+                    else {
+                        element = 0.0f;
+                    }
+                    identity.getElements()[row][col] = (T) element;
+                }
+            }
+            return identity;
+        }
+        else if (getNextProcessor() != null) {
+            return getNextProcessor().buildIdentityMatrix(clas, rows, columns);
+        }
+        return null;
     }
 }

@@ -14,30 +14,26 @@ import static org.dmarshaq.kubix.math.MathCore.AXIS;
 public class Vector<T extends Number> {
     private final T[] values;
 
-
     /**
-     * Builds vector based on specified values.
+     * Builds vector based on the specified values.
      */
     public Vector(T[] values) {
         this.values = values;
     }
 
-
     /**
-     * Builds vector based on specified length.
+     * Builds vector based on the specified length.
      */
     public Vector(int length) {
         this.values = (T[]) new Number[length];
     }
 
-
     /**
-     * Gets value of any component in vector by index.
+     * Gets value of any component in the vector by the index.
      */
     public final T getComponent(int index) {
         return values[index];
     }
-
 
     /**
      * Used to get component vector based on axis specified, order matters, carefully "xy" doesn't equal "yx".

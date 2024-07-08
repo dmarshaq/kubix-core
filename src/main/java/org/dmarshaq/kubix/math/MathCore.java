@@ -97,4 +97,11 @@ public class MathCore {
         return division(vector, magnitude(vector));
     }
 
+    /**
+     * Returns new identity Matrix of the specified class, rows and columns.
+     */
+    public static <T extends Number> Matrix<T> identityMatrix(Class<T> clas, int rows, int columns) {
+        return OPERATION_PROCESSOR.buildIdentityMatrix(clas, rows, columns);
+    }
+
 }
