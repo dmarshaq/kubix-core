@@ -1,8 +1,8 @@
-package org.dmarshaq.kubix.math.processors;
+package org.dmarshaq.kubix.math.processor;
 
 import lombok.Getter;
-import org.dmarshaq.kubix.math.Matrix;
-import org.dmarshaq.kubix.math.operations.*;
+import org.dmarshaq.kubix.math.matrix.Matrix;
+import org.dmarshaq.kubix.math.operation.*;
 
 @Getter
 public abstract class OperationProcessor {
@@ -19,6 +19,8 @@ public abstract class OperationProcessor {
     public abstract <T extends Number> void processOperation(VectorMagnitude<T> operation);
     public abstract <T extends Number> void processOperation(ScalarMultiplication<T> operation);
     public abstract <T extends Number> void processOperation(ScalarDivision<T> operation);
+    public abstract <T extends Number> void processOperation(MatrixMultiplication<T> operation);
+    public abstract <T extends Number> void processOperation(MatrixVectorMultiplication<T> operation);
 
     // Methods
     public abstract <T extends Number> Matrix<T> buildIdentityMatrix(Class<T> clas, int rows, int columns);

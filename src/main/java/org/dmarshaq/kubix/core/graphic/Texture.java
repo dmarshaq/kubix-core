@@ -1,9 +1,9 @@
-package org.dmarshaq.kubix.core.graphics;
+package org.dmarshaq.kubix.core.graphic;
 
 
 import lombok.Getter;
 import org.dmarshaq.kubix.core.app.Context;
-import org.dmarshaq.kubix.core.utils.BufferUtils;
+import org.dmarshaq.kubix.core.util.BufferUtils;
 
 import static org.lwjgl.opengl.GL11.*;
 

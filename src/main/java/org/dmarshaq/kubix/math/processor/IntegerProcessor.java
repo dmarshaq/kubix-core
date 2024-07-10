@@ -1,20 +1,20 @@
-package org.dmarshaq.kubix.math.processors;
+package org.dmarshaq.kubix.math.processor;
 
-import org.dmarshaq.kubix.math.Matrix;
+import org.dmarshaq.kubix.math.matrix.Matrix;
 import org.dmarshaq.kubix.math.Vector;
-import org.dmarshaq.kubix.math.operations.*;
+import org.dmarshaq.kubix.math.operation.*;
 
-public class ByteProcessor extends OperationProcessor {
-    public ByteProcessor(OperationProcessor nextProcessor) {
+public class IntegerProcessor extends OperationProcessor {
+    public IntegerProcessor(OperationProcessor nextProcessor) {
         super(nextProcessor);
     }
 
     /**
-     * Processes VectorAddition operation with Byte's.
+     * Processes VectorAddition operation with Integer's.
      */
     @Override
     public <T extends Number> void processOperation(VectorAddition<T> operation) {
-        if (Byte.class.isAssignableFrom(operation.getClasType())) {
+        if (Integer.class.isAssignableFrom(operation.getClasType())) {
             Vector<T> large = operation.getVector1();
             Vector<T> small = operation.getVector2();
             if (small.getValues().length > large.getValues().length) {
@@ -25,11 +25,11 @@ public class ByteProcessor extends OperationProcessor {
             Vector<T> resultant = new Vector<>(large.getValues().length);
 
             for (int i = 0; i < small.getValues().length; i++) {
-                Byte sum = (byte) (small.getValues()[i].byteValue() + large.getValues()[i].byteValue());
+                Integer sum = small.getValues()[i].intValue() + large.getValues()[i].intValue();
                 resultant.getValues()[i] = (T) sum;
             }
             for (int i = small.getValues().length; i < large.getValues().length; i++) {
-                Byte sum = large.getValues()[i].byteValue();
+                Integer sum = large.getValues()[i].intValue();
                 resultant.getValues()[i] = (T) sum;
             }
 
@@ -41,16 +41,16 @@ public class ByteProcessor extends OperationProcessor {
     }
 
     /**
-     * Processes VectorNegation operation with Byte's.
+     * Processes VectorNegation operation with Integer's.
      */
     @Override
     public <T extends Number> void processOperation(VectorNegation<T> operation) {
-        if (Byte.class.isAssignableFrom(operation.getClasType())) {
+        if (Integer.class.isAssignableFrom(operation.getClasType())) {
             Vector<T> vector = operation.getVector();
             Vector<T> resultant = new Vector<>(vector.getValues().length);
 
             for (int i = 0; i < resultant.getValues().length; i++) {
-                Byte negativeNum = (byte) -vector.getValues()[i].byteValue();
+                Integer negativeNum = -vector.getValues()[i].intValue();
                 resultant.getValues()[i] = (T) negativeNum;
             }
 
@@ -62,20 +62,20 @@ public class ByteProcessor extends OperationProcessor {
     }
 
     /**
-     * Processes VectorDotProduct operation with Byte's.
+     * Processes VectorDotProduct operation with Integer's.
      */
     @Override
     public <T extends Number> void processOperation(VectorDotProduct<T> operation) {
-        if (Byte.class.isAssignableFrom(operation.getClasType())) {
+        if (Integer.class.isAssignableFrom(operation.getClasType())) {
             Vector<T> vector1 = operation.getVector1();
             Vector<T> vector2 = operation.getVector2();
 
             int minLength = Math.min(vector1.getValues().length, vector2.getValues().length);
 
-            Byte product = 0;
+            Integer product = 0;
 
             for (int i = 0; i < minLength; i++) {
-                product = (byte) ((vector1.getValues()[i].byteValue() * vector2.getValues()[i].byteValue()) + product.byteValue());
+                product += vector1.getValues()[i].intValue() * vector2.getValues()[i].intValue();
             }
 
             operation.setProduct((T) product);
@@ -86,19 +86,19 @@ public class ByteProcessor extends OperationProcessor {
     }
 
     /**
-     * Processes VectorMagnitude operation with Byte's.
+     * Processes VectorMagnitude operation with Integer's.
      */
     @Override
     public <T extends Number> void processOperation(VectorMagnitude<T> operation) {
-        if (Byte.class.isAssignableFrom(operation.getClasType())) {
+        if (Integer.class.isAssignableFrom(operation.getClasType())) {
             Vector<T> vector1 = operation.getVector();
 
-            byte sumOfSquares = 0;
+            int sumOfSquares = 0;
             for (int i = 0; i < vector1.getValues().length; i++) {
-                sumOfSquares += (byte) (vector1.getValues()[i].byteValue() * vector1.getValues()[i].byteValue());
+                sumOfSquares += vector1.getValues()[i].intValue() * vector1.getValues()[i].intValue();
             }
 
-            Byte magnitude = (byte) Math.sqrt(sumOfSquares);
+            Integer magnitude = (int) Math.sqrt(sumOfSquares);
             operation.setMagnitude((T) magnitude);
         }
         else if (getNextProcessor() != null) {
@@ -107,18 +107,18 @@ public class ByteProcessor extends OperationProcessor {
     }
 
     /**
-     * Processes ScalarMultiplication operation with Byte's.
+     * Processes ScalarMultiplication operation with Integer's.
      */
     @Override
     public <T extends Number> void processOperation(ScalarMultiplication<T> operation) {
-        if (Byte.class.isAssignableFrom(operation.getClasType())) {
+        if (Integer.class.isAssignableFrom(operation.getClasType())) {
             Vector<T> vector = operation.getVector();
             T scalar = operation.getScalar();
 
             Vector<T> resultant = new Vector<>(vector.getValues().length);
 
             for (int i = 0; i < resultant.getValues().length; i++) {
-                Byte mul = (byte) (vector.getValues()[i].byteValue() * scalar.byteValue());
+                Integer mul = vector.getValues()[i].intValue() * scalar.intValue();
                 resultant.getValues()[i] = (T) mul;
             }
 
@@ -130,18 +130,18 @@ public class ByteProcessor extends OperationProcessor {
     }
 
     /**
-     * Processes ScalarDivision operation with Byte's.
+     * Processes ScalarDivision operation with Integer's.
      */
     @Override
     public <T extends Number> void processOperation(ScalarDivision<T> operation) {
-        if (Byte.class.isAssignableFrom(operation.getClasType())) {
+        if (Integer.class.isAssignableFrom(operation.getClasType())) {
             Vector<T> vector = operation.getVector();
             T scalar = operation.getScalar();
 
             Vector<T> resultant = new Vector<>(vector.getValues().length);
 
             for (int i = 0; i < resultant.getValues().length; i++) {
-                Byte div = (byte) (vector.getValues()[i].byteValue() / scalar.byteValue());
+                Integer div = vector.getValues()[i].intValue() / scalar.intValue();
                 resultant.getValues()[i] = (T) div;
             }
 
@@ -153,20 +153,20 @@ public class ByteProcessor extends OperationProcessor {
     }
 
     /**
-     * Builds new Byte identity Matrix.
+     * Builds new Integer identity matrix.
      */
     @Override
     public <T extends Number> Matrix<T> buildIdentityMatrix(Class<T> clas, int rows, int columns) {
-        if (Byte.class.isAssignableFrom(clas)) {
+        if (Integer.class.isAssignableFrom(clas)) {
             Matrix<T> identity = new Matrix<>(rows, columns);
             for (int row = 0; row < rows; row++) {
                 for (int col = 0; col < columns; col++) {
-                    Byte element;
+                    Integer element;
                     if (row == col) {
-                        element = (byte) 1;
+                        element = 1;
                     }
                     else {
-                        element = (byte) 0;
+                        element = 0;
                     }
                     identity.getElements()[row][col] = (T) element;
                 }
@@ -177,5 +177,61 @@ public class ByteProcessor extends OperationProcessor {
             return getNextProcessor().buildIdentityMatrix(clas, rows, columns);
         }
         return null;
+    }
+
+    /**
+     * Processes MatrixMultiplication operation with Integer's.
+     */
+    @Override
+    public <T extends Number> void processOperation(MatrixMultiplication<T> operation) {
+        if (Integer.class.isAssignableFrom(operation.getClasType())) {
+            Matrix<T> first = operation.getFirst();
+            Matrix<T> second = operation.getSecond();
+
+            if (first.getColumns() == second.getRows()) {
+                Matrix<T> result = new Matrix<>(first.getRows(), second.getColumns());
+                for (int rCol = 0; rCol < result.getColumns(); rCol++) {
+                    for (int rRow = 0; rRow < result.getRows(); rRow++) {
+                        int res = 0;
+                        for (int col = 0; col < first.getColumns(); col++) {
+                            res += first.getElement(rRow, col).intValue() * second.getElement(col, rCol).intValue();
+                        }
+                        Integer element = res;
+                        result.getElements()[rRow][rCol] = (T) element;
+                    }
+                }
+                operation.setResult(result);
+            }
+        }
+        else if (getNextProcessor() != null) {
+            getNextProcessor().processOperation(operation);
+        }
+    }
+
+    /**
+     * Processes MatrixVectorMultiplication operation with Integer's.
+     */
+    @Override
+    public <T extends Number> void processOperation(MatrixVectorMultiplication<T> operation) {
+        if (Integer.class.isAssignableFrom(operation.getClasType())) {
+            Matrix<T> matrix = operation.getMatrix();
+            Vector<T> vector = operation.getVector();
+
+            if (matrix.getColumns() == vector.getValues().length) {
+                Vector<T> result = new Vector<>(vector.getValues().length);
+                for (int rRow = 0; rRow < result.getValues().length; rRow++) {
+                    int res = 0;
+                    for (int col = 0; col < matrix.getColumns(); col++) {
+                        res += matrix.getElement(rRow, col).intValue() * vector.getComponent(col).intValue();
+                    }
+                    Integer value = res;
+                    result.getValues()[rRow] = (T) value;
+                }
+                operation.setResultant(result);
+            }
+        }
+        else if (getNextProcessor() != null) {
+            getNextProcessor().processOperation(operation);
+        }
     }
 }

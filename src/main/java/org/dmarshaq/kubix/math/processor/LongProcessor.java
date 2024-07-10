@@ -1,8 +1,8 @@
-package org.dmarshaq.kubix.math.processors;
+package org.dmarshaq.kubix.math.processor;
 
-import org.dmarshaq.kubix.math.Matrix;
+import org.dmarshaq.kubix.math.matrix.Matrix;
 import org.dmarshaq.kubix.math.Vector;
-import org.dmarshaq.kubix.math.operations.*;
+import org.dmarshaq.kubix.math.operation.*;
 
 public class LongProcessor extends OperationProcessor {
     public LongProcessor(OperationProcessor nextProcessor) {
@@ -93,7 +93,7 @@ public class LongProcessor extends OperationProcessor {
         if (Long.class.isAssignableFrom(operation.getClasType())) {
             Vector<T> vector1 = operation.getVector();
 
-            long sumOfSquares = 0;
+            long sumOfSquares = 0L;
             for (int i = 0; i < vector1.getValues().length; i++) {
                 sumOfSquares += vector1.getValues()[i].longValue() * vector1.getValues()[i].longValue();
             }
@@ -153,7 +153,7 @@ public class LongProcessor extends OperationProcessor {
     }
 
     /**
-     * Builds new Long identity Matrix.
+     * Builds new Long identity matrix.
      */
     @Override
     public <T extends Number> Matrix<T> buildIdentityMatrix(Class<T> clas, int rows, int columns) {
@@ -177,5 +177,61 @@ public class LongProcessor extends OperationProcessor {
             return getNextProcessor().buildIdentityMatrix(clas, rows, columns);
         }
         return null;
+    }
+
+    /**
+     * Processes MatrixMultiplication operation with Long's.
+     */
+    @Override
+    public <T extends Number> void processOperation(MatrixMultiplication<T> operation) {
+        if (Long.class.isAssignableFrom(operation.getClasType())) {
+            Matrix<T> first = operation.getFirst();
+            Matrix<T> second = operation.getSecond();
+
+            if (first.getColumns() == second.getRows()) {
+                Matrix<T> result = new Matrix<>(first.getRows(), second.getColumns());
+                for (int rCol = 0; rCol < result.getColumns(); rCol++) {
+                    for (int rRow = 0; rRow < result.getRows(); rRow++) {
+                        long res = 0L;
+                        for (int col = 0; col < first.getColumns(); col++) {
+                            res += first.getElement(rRow, col).longValue() * second.getElement(col, rCol).longValue();
+                        }
+                        Long element = res;
+                        result.getElements()[rRow][rCol] = (T) element;
+                    }
+                }
+                operation.setResult(result);
+            }
+        }
+        else if (getNextProcessor() != null) {
+            getNextProcessor().processOperation(operation);
+        }
+    }
+
+    /**
+     * Processes MatrixVectorMultiplication operation with Long's.
+     */
+    @Override
+    public <T extends Number> void processOperation(MatrixVectorMultiplication<T> operation) {
+        if (Long.class.isAssignableFrom(operation.getClasType())) {
+            Matrix<T> matrix = operation.getMatrix();
+            Vector<T> vector = operation.getVector();
+
+            if (matrix.getColumns() == vector.getValues().length) {
+                Vector<T> result = new Vector<>(vector.getValues().length);
+                for (int rRow = 0; rRow < result.getValues().length; rRow++) {
+                    long res = 0L;
+                    for (int col = 0; col < matrix.getColumns(); col++) {
+                        res += matrix.getElement(rRow, col).longValue() * vector.getComponent(col).longValue();
+                    }
+                    Long value = res;
+                    result.getValues()[rRow] = (T) value;
+                }
+                operation.setResultant(result);
+            }
+        }
+        else if (getNextProcessor() != null) {
+            getNextProcessor().processOperation(operation);
+        }
     }
 }

@@ -1,7 +1,7 @@
 package org.dmarshaq.kubix.serialization.texture;
 
 import lombok.*;
-import org.dmarshaq.kubix.core.graphics.Texture;
+import org.dmarshaq.kubix.core.graphic.Texture;
 
 import java.util.Objects;
 

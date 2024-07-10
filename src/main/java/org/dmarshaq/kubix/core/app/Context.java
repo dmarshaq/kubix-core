@@ -1,9 +1,9 @@
 package org.dmarshaq.kubix.core.app;
 
-import org.dmarshaq.kubix.core.graphics.Camera;
+import org.dmarshaq.kubix.core.graphic.Camera;
 import org.dmarshaq.kubix.core.serialization.Packet;
 import org.dmarshaq.kubix.core.serialization.SerializationScanner;
-import org.dmarshaq.kubix.core.utils.FileUtils;
+import org.dmarshaq.kubix.core.util.FileUtils;
 import org.dmarshaq.kubix.serialization.texture.TextureManager;
 
 import java.awt.*;

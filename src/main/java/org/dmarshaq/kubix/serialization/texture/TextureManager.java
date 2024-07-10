@@ -1,8 +1,8 @@
 package org.dmarshaq.kubix.serialization.texture;
 
-import org.dmarshaq.kubix.core.graphics.Texture;
+import org.dmarshaq.kubix.core.graphic.Texture;
 import org.dmarshaq.kubix.core.serialization.Packet;
-import org.dmarshaq.kubix.core.utils.FileUtils;
+import org.dmarshaq.kubix.core.util.FileUtils;
 
 
 import java.io.File;

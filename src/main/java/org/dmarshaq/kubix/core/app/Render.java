@@ -1,11 +1,11 @@
 package org.dmarshaq.kubix.core.app;
 
-import org.dmarshaq.kubix.core.graphics.*;
+import org.dmarshaq.kubix.core.graphic.*;
 import org.dmarshaq.kubix.core.input.Input;
 import org.dmarshaq.kubix.core.input.KeyCode;
 import org.dmarshaq.kubix.core.input.MouseInput;
 import org.dmarshaq.kubix.core.mathj.*;
-import org.dmarshaq.kubix.core.utils.BufferUtils;
+import org.dmarshaq.kubix.core.util.BufferUtils;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.glfw.GLFWWindowSizeCallback;
 import org.lwjgl.openal.AL;

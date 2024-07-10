@@ -1,4 +1,4 @@
-package org.dmarshaq.kubix.math.operations;
+package org.dmarshaq.kubix.math.operation;
 
 import lombok.Getter;
 import lombok.Setter;

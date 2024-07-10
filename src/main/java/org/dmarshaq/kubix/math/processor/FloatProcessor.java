@@ -1,8 +1,8 @@
-package org.dmarshaq.kubix.math.processors;
+package org.dmarshaq.kubix.math.processor;
 
-import org.dmarshaq.kubix.math.Matrix;
+import org.dmarshaq.kubix.math.matrix.Matrix;
 import org.dmarshaq.kubix.math.Vector;
-import org.dmarshaq.kubix.math.operations.*;
+import org.dmarshaq.kubix.math.operation.*;
 
 public class FloatProcessor extends OperationProcessor {
     public FloatProcessor(OperationProcessor nextProcessor) {
@@ -72,7 +72,7 @@ public class FloatProcessor extends OperationProcessor {
 
             int minLength = Math.min(vector1.getValues().length, vector2.getValues().length);
 
-            Float product = 0f;
+            Float product = 0.0f;
 
             for (int i = 0; i < minLength; i++) {
                 product += vector1.getValues()[i].floatValue() * vector2.getValues()[i].floatValue();
@@ -93,7 +93,7 @@ public class FloatProcessor extends OperationProcessor {
         if (Float.class.isAssignableFrom(operation.getClasType())) {
             Vector<T> vector1 = operation.getVector();
 
-            float sumOfSquares = 0f;
+            float sumOfSquares = 0.0f;
             for (int i = 0; i < vector1.getValues().length; i++) {
                 sumOfSquares += vector1.getValues()[i].floatValue() * vector1.getValues()[i].floatValue();
             }
@@ -153,7 +153,7 @@ public class FloatProcessor extends OperationProcessor {
     }
 
     /**
-     * Builds new Float identity Matrix.
+     * Builds new Float identity matrix.
      */
     @Override
     public <T extends Number> Matrix<T> buildIdentityMatrix(Class<T> clas, int rows, int columns) {
@@ -177,5 +177,61 @@ public class FloatProcessor extends OperationProcessor {
             return getNextProcessor().buildIdentityMatrix(clas, rows, columns);
         }
         return null;
+    }
+
+    /**
+     * Processes MatrixMultiplication operation with Float's.
+     */
+    @Override
+    public <T extends Number> void processOperation(MatrixMultiplication<T> operation) {
+        if (Float.class.isAssignableFrom(operation.getClasType())) {
+            Matrix<T> first = operation.getFirst();
+            Matrix<T> second = operation.getSecond();
+
+            if (first.getColumns() == second.getRows()) {
+                Matrix<T> result = new Matrix<>(first.getRows(), second.getColumns());
+                for (int rCol = 0; rCol < result.getColumns(); rCol++) {
+                    for (int rRow = 0; rRow < result.getRows(); rRow++) {
+                        float res = 0.0f;
+                        for (int col = 0; col < first.getColumns(); col++) {
+                            res += first.getElement(rRow, col).floatValue() * second.getElement(col, rCol).floatValue();
+                        }
+                        Float element = res;
+                        result.getElements()[rRow][rCol] = (T) element;
+                    }
+                }
+                operation.setResult(result);
+            }
+        }
+        else if (getNextProcessor() != null) {
+            getNextProcessor().processOperation(operation);
+        }
+    }
+
+    /**
+     * Processes MatrixVectorMultiplication operation with Float's.
+     */
+    @Override
+    public <T extends Number> void processOperation(MatrixVectorMultiplication<T> operation) {
+        if (Float.class.isAssignableFrom(operation.getClasType())) {
+            Matrix<T> matrix = operation.getMatrix();
+            Vector<T> vector = operation.getVector();
+
+            if (matrix.getColumns() == vector.getValues().length) {
+                Vector<T> result = new Vector<>(vector.getValues().length);
+                for (int rRow = 0; rRow < result.getValues().length; rRow++) {
+                    float res = 0.0f;
+                    for (int col = 0; col < matrix.getColumns(); col++) {
+                        res += matrix.getElement(rRow, col).floatValue() * vector.getComponent(col).floatValue();
+                    }
+                    Float value = res;
+                    result.getValues()[rRow] = (T) value;
+                }
+                operation.setResultant(result);
+            }
+        }
+        else if (getNextProcessor() != null) {
+            getNextProcessor().processOperation(operation);
+        }
     }
 }

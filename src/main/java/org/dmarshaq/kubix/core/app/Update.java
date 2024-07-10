@@ -1,6 +1,6 @@
 package org.dmarshaq.kubix.core.app;
 
-import org.dmarshaq.kubix.core.graphics.Layer;
+import org.dmarshaq.kubix.core.graphic.Layer;
 import org.dmarshaq.kubix.core.time.Time;
 
 

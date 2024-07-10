@@ -7,7 +7,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.*;
 
-import static org.dmarshaq.kubix.core.utils.FileUtils.loadAsImage;
+import static org.dmarshaq.kubix.core.util.FileUtils.loadAsImage;
 
 public class TextureScanner extends SerializationScanner {
 

@@ -1,6 +1,5 @@
 package org.dmarshaq.kubix.math;
 
-import org.dmarshaq.kubix.math.MathCore.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;

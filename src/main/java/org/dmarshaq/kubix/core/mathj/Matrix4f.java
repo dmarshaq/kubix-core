@@ -1,6 +1,7 @@
 package org.dmarshaq.kubix.core.mathj;
 
-import org.dmarshaq.kubix.core.utils.BufferUtils;
+import org.dmarshaq.kubix.core.util.BufferUtils;
+
 import static org.dmarshaq.kubix.core.mathj.MathJ.Math2D;
 
 import java.nio.FloatBuffer;

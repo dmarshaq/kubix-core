@@ -1,4 +1,4 @@
-package org.dmarshaq.kubix.core.graphics;
+package org.dmarshaq.kubix.core.graphic;
 
 public class SubTexture {
     private final float x;

@@ -1,8 +1,8 @@
-package org.dmarshaq.kubix.core.graphics;
+package org.dmarshaq.kubix.core.graphic;
 
 import org.dmarshaq.kubix.core.mathj.Matrix4f;
 import org.dmarshaq.kubix.core.mathj.Vector3f;
-import org.dmarshaq.kubix.core.utils.ShaderUtils;
+import org.dmarshaq.kubix.core.util.ShaderUtils;
 
 import java.util.HashMap;
 

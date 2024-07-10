@@ -1,8 +1,7 @@
-package org.dmarshaq.kubix.math;
+package org.dmarshaq.kubix.math.matrix;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.ToString;
 
 import java.util.Arrays;
 
@@ -31,6 +30,21 @@ public class Matrix<T extends Number> {
     public final T getElement(int row, int col) {
         return elements[row][col];
     }
+
+    /**
+     * Gets number of Rows in matrix.
+     */
+    public final int getRows() {
+        return elements.length;
+    }
+
+    /**
+     * Gets number of Columns in matrix.
+     */
+    public final int getColumns() {
+        return elements[0].length;
+    }
+
 
     @Override
     public String toString() {

@@ -3,7 +3,7 @@ package org.dmarshaq.kubix.core.audio;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
 
-import static org.dmarshaq.kubix.core.utils.FileUtils.*;
+import static org.dmarshaq.kubix.core.util.FileUtils.*;
 import static org.lwjgl.openal.AL10.*;
 import static org.lwjgl.stb.STBVorbis.stb_vorbis_decode_memory;
 import static org.lwjgl.system.MemoryStack.*;

@@ -1,20 +1,20 @@
-package org.dmarshaq.kubix.math.processors;
+package org.dmarshaq.kubix.math.processor;
 
-import org.dmarshaq.kubix.math.Matrix;
+import org.dmarshaq.kubix.math.matrix.Matrix;
 import org.dmarshaq.kubix.math.Vector;
-import org.dmarshaq.kubix.math.operations.*;
+import org.dmarshaq.kubix.math.operation.*;
 
-public class ShortProcessor extends OperationProcessor {
-    public ShortProcessor(OperationProcessor nextProcessor) {
+public class DoubleProcessor extends OperationProcessor {
+    public DoubleProcessor(OperationProcessor nextProcessor) {
         super(nextProcessor);
     }
 
     /**
-     * Processes VectorAddition operation with Short's.
+     * Processes VectorAddition operation with Double's.
      */
     @Override
     public <T extends Number> void processOperation(VectorAddition<T> operation) {
-        if (Short.class.isAssignableFrom(operation.getClasType())) {
+        if (Double.class.isAssignableFrom(operation.getClasType())) {
             Vector<T> large = operation.getVector1();
             Vector<T> small = operation.getVector2();
             if (small.getValues().length > large.getValues().length) {
@@ -25,11 +25,11 @@ public class ShortProcessor extends OperationProcessor {
             Vector<T> resultant = new Vector<>(large.getValues().length);
 
             for (int i = 0; i < small.getValues().length; i++) {
-                Short sum = (short) (small.getValues()[i].shortValue() + large.getValues()[i].shortValue());
+                Double sum = small.getValues()[i].doubleValue() + large.getValues()[i].doubleValue();
                 resultant.getValues()[i] = (T) sum;
             }
             for (int i = small.getValues().length; i < large.getValues().length; i++) {
-                Short sum = large.getValues()[i].shortValue();
+                Double sum = large.getValues()[i].doubleValue();
                 resultant.getValues()[i] = (T) sum;
             }
 
@@ -41,16 +41,16 @@ public class ShortProcessor extends OperationProcessor {
     }
 
     /**
-     * Processes VectorNegation operation with Short's.
+     * Processes VectorNegation operation with Double's.
      */
     @Override
     public <T extends Number> void processOperation(VectorNegation<T> operation) {
-        if (Short.class.isAssignableFrom(operation.getClasType())) {
+        if (Double.class.isAssignableFrom(operation.getClasType())) {
             Vector<T> vector = operation.getVector();
             Vector<T> resultant = new Vector<>(vector.getValues().length);
 
             for (int i = 0; i < resultant.getValues().length; i++) {
-                Short negativeNum = (short) -vector.getValues()[i].shortValue();
+                Double negativeNum = -vector.getValues()[i].doubleValue();
                 resultant.getValues()[i] = (T) negativeNum;
             }
 
@@ -62,20 +62,20 @@ public class ShortProcessor extends OperationProcessor {
     }
 
     /**
-     * Processes VectorDotProduct operation with Short's.
+     * Processes VectorDotProduct operation with Double's.
      */
     @Override
     public <T extends Number> void processOperation(VectorDotProduct<T> operation) {
-        if (Short.class.isAssignableFrom(operation.getClasType())) {
+        if (Double.class.isAssignableFrom(operation.getClasType())) {
             Vector<T> vector1 = operation.getVector1();
             Vector<T> vector2 = operation.getVector2();
 
             int minLength = Math.min(vector1.getValues().length, vector2.getValues().length);
 
-            Short product = 0;
+            Double product = 0.0D;
 
             for (int i = 0; i < minLength; i++) {
-                product = (short) ((vector1.getValues()[i].shortValue() * vector2.getValues()[i].shortValue()) + product);
+                product += vector1.getValues()[i].doubleValue() * vector2.getValues()[i].doubleValue();
             }
 
             operation.setProduct((T) product);
@@ -86,19 +86,19 @@ public class ShortProcessor extends OperationProcessor {
     }
 
     /**
-     * Processes VectorMagnitude operation with Short's.
+     * Processes VectorMagnitude operation with Double's.
      */
     @Override
     public <T extends Number> void processOperation(VectorMagnitude<T> operation) {
-        if (Short.class.isAssignableFrom(operation.getClasType())) {
+        if (Double.class.isAssignableFrom(operation.getClasType())) {
             Vector<T> vector1 = operation.getVector();
 
-            short sumOfSquares = 0;
+            double sumOfSquares = 0.0D;
             for (int i = 0; i < vector1.getValues().length; i++) {
-                sumOfSquares += (short) (vector1.getValues()[i].shortValue() * vector1.getValues()[i].shortValue());
+                sumOfSquares += vector1.getValues()[i].doubleValue() * vector1.getValues()[i].doubleValue();
             }
 
-            Short magnitude = (short) Math.sqrt(sumOfSquares);
+            Double magnitude = Math.sqrt(sumOfSquares);
             operation.setMagnitude((T) magnitude);
         }
         else if (getNextProcessor() != null) {
@@ -107,18 +107,18 @@ public class ShortProcessor extends OperationProcessor {
     }
 
     /**
-     * Processes ScalarMultiplication operation with Short's.
+     * Processes ScalarMultiplication operation with Double's.
      */
     @Override
     public <T extends Number> void processOperation(ScalarMultiplication<T> operation) {
-        if (Short.class.isAssignableFrom(operation.getClasType())) {
+        if (Double.class.isAssignableFrom(operation.getClasType())) {
             Vector<T> vector = operation.getVector();
             T scalar = operation.getScalar();
 
             Vector<T> resultant = new Vector<>(vector.getValues().length);
 
             for (int i = 0; i < resultant.getValues().length; i++) {
-                Short mul = (short) (vector.getValues()[i].shortValue() * scalar.shortValue());
+                Double mul = vector.getValues()[i].doubleValue() * scalar.doubleValue();
                 resultant.getValues()[i] = (T) mul;
             }
 
@@ -130,18 +130,18 @@ public class ShortProcessor extends OperationProcessor {
     }
 
     /**
-     * Processes ScalarDivision operation with Short's.
+     * Processes ScalarDivision operation with Double's.
      */
     @Override
     public <T extends Number> void processOperation(ScalarDivision<T> operation) {
-        if (Short.class.isAssignableFrom(operation.getClasType())) {
+        if (Double.class.isAssignableFrom(operation.getClasType())) {
             Vector<T> vector = operation.getVector();
             T scalar = operation.getScalar();
 
             Vector<T> resultant = new Vector<>(vector.getValues().length);
 
             for (int i = 0; i < resultant.getValues().length; i++) {
-                Short div = (short) (vector.getValues()[i].shortValue() / scalar.shortValue());
+                Double div = vector.getValues()[i].doubleValue() / scalar.doubleValue();
                 resultant.getValues()[i] = (T) div;
             }
 
@@ -153,20 +153,20 @@ public class ShortProcessor extends OperationProcessor {
     }
 
     /**
-     * Builds new Short identity Matrix.
+     * Builds new Double identity matrix.
      */
     @Override
     public <T extends Number> Matrix<T> buildIdentityMatrix(Class<T> clas, int rows, int columns) {
-        if (Short.class.isAssignableFrom(clas)) {
+        if (Double.class.isAssignableFrom(clas)) {
             Matrix<T> identity = new Matrix<>(rows, columns);
             for (int row = 0; row < rows; row++) {
                 for (int col = 0; col < columns; col++) {
-                    Short element;
+                    Double element;
                     if (row == col) {
-                        element = (short) 1;
+                        element = 1.0D;
                     }
                     else {
-                        element = (short) 0;
+                        element = 0.0D;
                     }
                     identity.getElements()[row][col] = (T) element;
                 }
@@ -177,5 +177,61 @@ public class ShortProcessor extends OperationProcessor {
             return getNextProcessor().buildIdentityMatrix(clas, rows, columns);
         }
         return null;
+    }
+
+    /**
+     * Processes MatrixMultiplication operation with Double's.
+     */
+    @Override
+    public <T extends Number> void processOperation(MatrixMultiplication<T> operation) {
+        if (Double.class.isAssignableFrom(operation.getClasType())) {
+            Matrix<T> first = operation.getFirst();
+            Matrix<T> second = operation.getSecond();
+
+            if (first.getColumns() == second.getRows()) {
+                Matrix<T> result = new Matrix<>(first.getRows(), second.getColumns());
+                for (int rCol = 0; rCol < result.getColumns(); rCol++) {
+                    for (int rRow = 0; rRow < result.getRows(); rRow++) {
+                        double res = 0.0D;
+                        for (int col = 0; col < first.getColumns(); col++) {
+                            res += first.getElement(rRow, col).doubleValue() * second.getElement(col, rCol).doubleValue();
+                        }
+                        Double element = res;
+                        result.getElements()[rRow][rCol] = (T) element;
+                    }
+                }
+                operation.setResult(result);
+            }
+        }
+        else if (getNextProcessor() != null) {
+            getNextProcessor().processOperation(operation);
+        }
+    }
+
+    /**
+     * Processes MatrixVectorMultiplication operation with Double's.
+     */
+    @Override
+    public <T extends Number> void processOperation(MatrixVectorMultiplication<T> operation) {
+        if (Double.class.isAssignableFrom(operation.getClasType())) {
+            Matrix<T> matrix = operation.getMatrix();
+            Vector<T> vector = operation.getVector();
+
+            if (matrix.getColumns() == vector.getValues().length) {
+                Vector<T> result = new Vector<>(vector.getValues().length);
+                for (int rRow = 0; rRow < result.getValues().length; rRow++) {
+                    double res = 0.0D;
+                    for (int col = 0; col < matrix.getColumns(); col++) {
+                        res += matrix.getElement(rRow, col).doubleValue() * vector.getComponent(col).doubleValue();
+                    }
+                    Double value = res;
+                    result.getValues()[rRow] = (T) value;
+                }
+                operation.setResultant(result);
+            }
+        }
+        else if (getNextProcessor() != null) {
+            getNextProcessor().processOperation(operation);
+        }
     }
 }

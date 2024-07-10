@@ -1,4 +1,4 @@
-package org.dmarshaq.kubix.core.utils;
+package org.dmarshaq.kubix.core.util;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static org.dmarshaq.kubix.core.utils.BufferUtils.createByteBuffer;
+import static org.dmarshaq.kubix.core.util.BufferUtils.createByteBuffer;
 
 public interface FileUtils {
 

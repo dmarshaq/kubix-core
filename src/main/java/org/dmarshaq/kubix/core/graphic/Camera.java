@@ -1,4 +1,4 @@
-package org.dmarshaq.kubix.core.graphics;
+package org.dmarshaq.kubix.core.graphic;
 
 import org.dmarshaq.kubix.core.app.Context;
 import org.dmarshaq.kubix.core.mathj.Matrix4f;

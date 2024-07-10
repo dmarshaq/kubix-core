@@ -1,4 +1,4 @@
-package org.dmarshaq.kubix.core.utils;
+package org.dmarshaq.kubix.core.util;
 
 import static org.lwjgl.opengl.GL20.*;
 
