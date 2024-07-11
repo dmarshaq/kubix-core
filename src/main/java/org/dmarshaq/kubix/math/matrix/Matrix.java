@@ -25,21 +25,4 @@ public class Matrix<T extends Number> {
     public String toString() {
         return "Matrix(" + "elements=" + elements.arrayToString(rows, columns) + ')';
     }
-
-// TODO: make methods below work, hint: through processor solution.
-//    /**
-//     * Builds matrix based on the specified number of rows and columns.
-//     */
-//    public Matrix(int rows, int columns) {
-//        this.elements = (T[][]) new Number[rows][columns];
-//    }
-//
-//    /**
-//     * Gets value of any element in the matrix by the row and column number.
-//     */
-//    public final T getElement(int row, int col) {
-//        return elements[row][col];
-//    }
-
-
 }

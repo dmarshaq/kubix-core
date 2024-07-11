@@ -1,8 +1,8 @@
 package org.dmarshaq.kubix.math;
 
-import org.dmarshaq.kubix.math.matrix.Matrix;
+import org.dmarshaq.kubix.math.matrix.*;
 import org.dmarshaq.kubix.math.processor.*;
-import org.dmarshaq.kubix.math.vector.Vector;
+import org.dmarshaq.kubix.math.vector.*;
 
 import java.util.Arrays;
 
@@ -16,13 +16,12 @@ public class MathCore {
     /**
      * OPERATION_PROCESSOR used to process generic operations.
      */
-    private static final FloatProcessor OPERATION_PROCESSOR = new FloatProcessor(null);
+    private static final FloatProcessor OPERATION_PROCESSOR = new FloatProcessor(new IntegerProcessor(new DoubleProcessor(new LongProcessor(new ByteProcessor(new ShortProcessor(null))))));
 
     /**
      * Returns new Vector of desired type and any length.
      */
-    public static <T extends Number> Vector<T> vector2(Class<T> clas, int length) {
-
+    public static <T extends Number> Vector<T> vector(Class<T> clas, int length) {
         return OPERATION_PROCESSOR.buildVector(clas, length);
     }
 
@@ -123,86 +122,97 @@ public class MathCore {
     public static <T extends Number> Vector<T> multiplication(Matrix<T> matrix, Vector<T> vector) {
         return OPERATION_PROCESSOR.matrixVectorMultiplication(matrix, vector);
     }
-//
-//    /**
-//     * Returns new orthographic projection based on the specified prism plane position values.
-//     */
-//    public static Matrix4x4 orthographic(float left, float right, float bottom, float top, float near, float far) {
-//        Matrix4x4 result = new Matrix4x4();
-//
-//        result.getElements()[0][0] = 2f / (right - left);
-//        result.getElements()[1][1] = 2f / (top - bottom);
-//        result.getElements()[2][2] = 2f / (near - far);
-//
-//        result.getElements()[3][0] = (left + right) / (left - right);
-//        result.getElements()[3][1] = (bottom + top) / (bottom - top);
-//        result.getElements()[3][2] = (near + far) / (near - far);
-//
-//        return result;
-//    }
-//
-//    /**
-//     * Returns new 2D transform based on the specified vector, rotation and scale values.
-//     */
-//    public static Matrix2x3 TRS(Vector2 vector, float angle, float scaleX, float scaleY) {
-//        Matrix2x3 matrix2x3 = new Matrix2x3();
-//
-////        matrix2x3.getElements()[0][2] = vector.getComponent(0);
-////        matrix2x3.getElements()[1][2] = vector.getComponent(1);
-//
-//        float r = (float) Math.toRadians(angle);
-//        float cos = (float) Math.cos(r);
-//        float sin = (float) Math.sin(r);
-//
-//        matrix2x3.getElements()[0][0] = cos * scaleX;
-//        matrix2x3.getElements()[1][1] = cos * scaleY;
-//        matrix2x3.getElements()[0][1] = -sin * scaleY;
-//        matrix2x3.getElements()[1][0] = sin * scaleX;
-//
-//        return matrix2x3;
-//    }
-//
-//    /**
-//     * Returns new 2D translate transform based on the specified vector2 value.
-//     */
-//    public static Matrix2x3 translate(Vector2 vector) {
-//        Matrix2x3 matrix2x3 = new Matrix2x3();
-//
-////        matrix2x3.getElements()[0][2] = vector.getComponent(0);
-////        matrix2x3.getElements()[1][2] = vector.getComponent(1);
-//
-//        return matrix2x3;
-//    }
-//
-//    /**
-//     * Returns new 2D rotation transform based on the specified rotation value.
-//     */
-//    public static Matrix2x3 rotation(float angle) {
-//        Matrix2x3 matrix2x3 = new Matrix2x3();
-//
-//        float r = (float) Math.toRadians(angle);
-//        float cos = (float) Math.cos(r);
-//        float sin = (float) Math.sin(r);
-//
-//        matrix2x3.getElements()[0][0] = cos;
-//        matrix2x3.getElements()[1][1] = cos;
-//        matrix2x3.getElements()[0][1] = -sin;
-//        matrix2x3.getElements()[1][0] = sin;
-//
-//        return matrix2x3;
-//    }
-//
-//    /**
-//     * Returns new 2D scale transform based on the specified scale values.
-//     */
-//    public static Matrix2x3 scale(float scaleX, float scaleY) {
-//        Matrix2x3 matrix2x3 = new Matrix2x3();
-//
-//        matrix2x3.getElements()[0][0] = scaleX;
-//        matrix2x3.getElements()[1][1] = scaleY;
-//
-//        return matrix2x3;
-//    }
+
+    /**
+     * Returns new orthographic projection based on the specified prism plane position values.
+     */
+    public static Matrix4x4 orthographic(float left, float right, float bottom, float top, float near, float far) {
+        Matrix4x4 matrix4x4 = new Matrix4x4();
+        float[] elements = matrix4x4.getElements().floatArray();
+
+        elements[0 + 0 * 4] = 2f / (right - left);
+        elements[1 + 1 * 4] = 2f / (top - bottom);
+        elements[2 + 2 * 4] = 2f / (near - far);
+
+        elements[0 + 3 * 4] = (left + right) / (left - right);
+        elements[1 + 3 * 4] = (bottom + top) / (bottom - top);
+        elements[2 + 3 * 4] = (near + far) / (near - far);
+
+        return matrix4x4;
+    }
+
+    /**
+     * Returns new 2D transform based on the specified vector, rotation and scale values.
+     */
+    public static Matrix2x3 TRS(Vector2 vector, float angle, float scaleX, float scaleY) {
+        Matrix2x3 matrix2x3 = new Matrix2x3();
+        float[] elements = matrix2x3.getElements().floatArray();
+        float[] arr = vector.getValues().floatArray();
+
+        elements[2 + 0 * 3] = arr[0];
+        elements[2 + 1 * 3] = arr[1];
+
+        float r = (float) Math.toRadians(angle);
+        float cos = (float) Math.cos(r);
+        float sin = (float) Math.sin(r);
+
+
+        elements[0 + 0 * 3] = cos * scaleX;
+        elements[1 + 0 * 3] = -sin * scaleY;
+        elements[0 + 1 * 3] = sin * scaleX;
+        elements[1 + 1 * 3] = cos * scaleY;
+
+        return matrix2x3;
+    }
+
+    /**
+     * Returns new 2D translate transform based on the specified vector2 value.
+     */
+    public static Matrix2x3 translate(Vector2 vector) {
+        Matrix2x3 matrix2x3 = new Matrix2x3();
+        float[] elements = matrix2x3.getElements().floatArray();
+        float[] arr = vector.getValues().floatArray();
+
+        elements[2 + 0 * 3] = arr[0];
+        elements[2 + 1 * 3] = arr[1];
+
+        return matrix2x3;
+    }
+
+    /**
+     * Returns new 2D rotation transform based on the specified rotation value.
+     */
+    public static Matrix2x3 rotation(float angle) {
+        Matrix2x3 matrix2x3 = new Matrix2x3();
+        float[] elements = matrix2x3.getElements().floatArray();
+
+        float r = (float) Math.toRadians(angle);
+        float cos = (float) Math.cos(r);
+        float sin = (float) Math.sin(r);
+
+        elements[0 + 0 * 3] = cos;
+        elements[1 + 0 * 3] = -sin;
+        elements[0 + 1 * 3] = sin;
+        elements[1 + 1 * 3] = cos;
+
+        return matrix2x3;
+    }
+
+    /**
+     * Returns new 2D scale transform based on the specified scale values.
+     */
+    public static Matrix2x3 scale(float scaleX, float scaleY) {
+
+        Matrix2x3 matrix2x3 = new Matrix2x3();
+
+        float[] elements = matrix2x3.getElements().floatArray();
+
+        elements[0 + 0 * 3] = scaleX;
+        elements[1 + 1 * 3] = scaleY;
+
+
+        return matrix2x3;
+    }
 
 
 }

@@ -27,22 +27,7 @@ public class Vector<T extends Number> {
     }
 
 
-// TODO: make methods below work, hint: through processor solution.
-
-//    /**
-//     * Builds vector based on the specified length.
-//     */
-//    public Vector(int length) {
-//        this.values = (T[]) new Number[length];
-//    }
-//
-//    /**
-//     * Gets value of any component in the vector by the index.
-//     */
-//    public final T getComponent(int index) {
-//        return values[index];
-//    }
-//
+// TODO: make methods below work through processor solution.
 //    /**
 //     * Used to get component vector based on axis specified, order matters, carefully "xy" doesn't equal "yx".
 //     * Vector returned always have same number of dimensions as axis.length().
