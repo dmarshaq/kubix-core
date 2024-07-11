@@ -214,88 +214,83 @@ public class FloatProcessor extends OperationProcessor {
         return null;
     }
 
+    /**
+     * Builds new Float identity matrix.
+     */
+    @Override
+    public <T extends Number> Matrix<T> buildIdentityMatrix(Class<T> clas, int rows, int columns) {
+        if (Float.class.isAssignableFrom(clas)) {
+            Matrix<Float> identity = new Matrix<>(new FloatArray(new float[rows * columns]), rows, columns);
+            for (int row = 0; row < rows; row++) {
+                for (int col = 0; col < columns; col++) {
+                    if (row == col) {
+                        identity.getElements().floatArray()[col + row * columns] = 1.0f;
+                    }
+                    else {
+                        identity.getElements().floatArray()[col + row * columns] = 0.0f;
+                    }
+                }
+            }
+            return (Matrix<T>) identity;
+        }
+        else if (getNextProcessor() != null) {
+            return getNextProcessor().buildIdentityMatrix(clas, rows, columns);
+        }
+        return null;
+    }
 
-//
-//    /**
-//     * Builds new Float identity matrix.
-//     */
-//    @Override
-//    public <T extends Number> Matrix<T> buildIdentityMatrix(Class<T> clas, int rows, int columns) {
-//        if (Float.class.isAssignableFrom(clas)) {
-//            Matrix<T> identity = new Matrix<>(rows, columns);
-//            for (int row = 0; row < rows; row++) {
-//                for (int col = 0; col < columns; col++) {
-//                    Float element;
-//                    if (row == col) {
-//                        element = 1.0f;
-//                    }
-//                    else {
-//                        element = 0.0f;
-//                    }
-//                    identity.getElements()[row][col] = (T) element;
-//                }
-//            }
-//            return identity;
-//        }
-//        else if (getNextProcessor() != null) {
-//            return getNextProcessor().buildIdentityMatrix(clas, rows, columns);
-//        }
-//        return null;
-//    }
-//
-//    /**
-//     * Processes MatrixMultiplication operation with Float's.
-//     */
-//    @Override
-//    public <T extends Number> void processOperation(MatrixMultiplication<T> operation) {
-//        if (Float.class.isAssignableFrom(operation.getClasType())) {
-//            Matrix<T> first = operation.getFirst();
-//            Matrix<T> second = operation.getSecond();
-//
-//            if (first.getColumns() == second.getRows()) {
-//                Matrix<T> result = new Matrix<>(first.getRows(), second.getColumns());
-//                for (int rCol = 0; rCol < result.getColumns(); rCol++) {
-//                    for (int rRow = 0; rRow < result.getRows(); rRow++) {
-//                        float res = 0.0f;
-//                        for (int col = 0; col < first.getColumns(); col++) {
-//                            res += first.getElement(rRow, col).floatValue() * second.getElement(col, rCol).floatValue();
-//                        }
-//                        Float element = res;
-//                        result.getElements()[rRow][rCol] = (T) element;
-//                    }
-//                }
-//                operation.setResult(result);
-//            }
-//        }
-//        else if (getNextProcessor() != null) {
-//            getNextProcessor().processOperation(operation);
-//        }
-//    }
-//
-//    /**
-//     * Processes MatrixVectorMultiplication operation with Float's.
-//     */
-//    @Override
-//    public <T extends Number> void processOperation(MatrixVectorMultiplication<T> operation) {
-//        if (Float.class.isAssignableFrom(operation.getClasType())) {
-//            Matrix<T> matrix = operation.getMatrix();
-//            Vector<T> vector = operation.getVector();
-//
-//            if (matrix.getColumns() == vector.getValues().length) {
-//                Vector<T> result = new Vector<>(vector.getValues().length);
-//                for (int rRow = 0; rRow < result.getValues().length; rRow++) {
-//                    float res = 0.0f;
-//                    for (int col = 0; col < matrix.getColumns(); col++) {
-//                        res += matrix.getElement(rRow, col).floatValue() * vector.getComponent(col).floatValue();
-//                    }
-//                    Float value = res;
-//                    result.getValues()[rRow] = (T) value;
-//                }
-//                operation.setResultant(result);
-//            }
-//        }
-//        else if (getNextProcessor() != null) {
-//            getNextProcessor().processOperation(operation);
-//        }
-//    }
+    /**
+     * Processes MatrixMultiplication operation with Float's.
+     */
+    @Override
+    public <T extends Number> Matrix<T> matrixMultiplication(Matrix<T> first, Matrix<T> second) {
+        if (Float.class.isAssignableFrom(first.getElements().getElementClass())) {
+
+            if (first.getColumns() == second.getRows()) {
+                Matrix<Float> result = new Matrix<>(new FloatArray(new float[first.getRows() * second.getColumns()]), first.getRows(), second.getColumns());
+
+                for (int rCol = 0; rCol < result.getColumns(); rCol++) {
+                    for (int rRow = 0; rRow < result.getRows(); rRow++) {
+                        float res = 0.0f;
+                        for (int col = 0; col < first.getColumns(); col++) {
+                            res += first.getElements().floatArray()[col + rRow * first.getColumns()] * second.getElements().floatArray()[rCol + col * second.getColumns()];
+                        }
+                        result.getElements().floatArray()[rCol + rRow * result.getColumns()] = res;
+                    }
+                }
+
+                return (Matrix<T>) result;
+            }
+        }
+        else if (getNextProcessor() != null) {
+            return getNextProcessor().matrixMultiplication(first, second);
+        }
+        return null;
+    }
+
+    /**
+     * Processes MatrixVectorMultiplication operation with Float's.
+     */
+    @Override
+    public <T extends Number> Vector<T> matrixVectorMultiplication(Matrix<T> matrix, Vector<T> vector) {
+        if (Float.class.isAssignableFrom(matrix.getElements().getElementClass())) {
+
+            if (matrix.getColumns() == vector.getValues().floatArray().length) {
+                Vector<Float> result = new Vector<>(new FloatArray(new float[vector.getValues().floatArray().length]));
+                for (int rRow = 0; rRow < result.getValues().floatArray().length; rRow++) {
+                    float res = 0.0f;
+                    for (int col = 0; col < matrix.getColumns(); col++) {
+                        res += matrix.getElements().floatArray()[col + rRow * matrix.getColumns()] * vector.getValues().floatArray()[col];
+                    }
+                    result.getValues().floatArray()[rRow] = res;
+                }
+
+                return (Vector<T>) result;
+            }
+        }
+        else if (getNextProcessor() != null) {
+            return getNextProcessor().matrixVectorMultiplication(matrix, vector);
+        }
+        return null;
+    }
 }

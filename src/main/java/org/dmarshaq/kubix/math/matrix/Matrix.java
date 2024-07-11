@@ -26,7 +26,7 @@ public class Matrix<T extends Number> {
         return "Matrix(" + "elements=" + elements.arrayToString(rows, columns) + ')';
     }
 
-
+// TODO: make methods below work, hint: through processor solution.
 //    /**
 //     * Builds matrix based on the specified number of rows and columns.
 //     */

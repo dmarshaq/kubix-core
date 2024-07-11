@@ -29,9 +29,9 @@ public class FloatArray extends NumberArray<Float>{
         for(int row = 0; row < rows; row++) {
             stringBuilder.append("\n[");
             for(int col = 0; col < columns - 1; col++) {
-                stringBuilder.append(array[col + row * rows]).append(", ");
+                stringBuilder.append(array[col + row * columns]).append(", ");
             }
-            stringBuilder.append(array[columns - 1 + row * rows]).append("]");
+            stringBuilder.append(array[columns - 1 + row * columns]).append("]");
         }
 
         return stringBuilder.toString();

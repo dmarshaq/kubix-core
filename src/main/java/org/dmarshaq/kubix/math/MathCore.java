@@ -103,44 +103,26 @@ public class MathCore {
         return division(vector, magnitude(vector));
     }
 
-//
-//    /**
-//     * Returns new identity matrix of th e specified class, rows and columns.
-//     */
-//    public static <T extends Number> Matrix<T> identityMatrix(Class<T> clas, int rows, int columns) {
-//        return OPERATION_PROCESSOR.buildIdentityMatrix(clas, rows, columns);
-//    }
-//
-//    /**
-//     * Returns new matrix based on the specified number of rows, columns and fills it with specified value.
-//     */
-//     public static <T extends Number> Matrix<T> uniformMatrix(T value, int rows, int columns) {
-//        Matrix<T> matrix = new Matrix<>(rows, columns);
-//        for (int row = 0; row < rows; row++) {
-//            for (int col = 0; col < columns; col++) {
-//                matrix.getElements()[row][col] = value;
-//            }
-//        }
-//        return matrix;
-//    }
-//
-//    /**
-//     * Solves for the new matrix by multiplying the first matrix by the second matrix.
-//     */
-//    public static <T extends Number> Matrix<T> multiplication(Matrix<T> first, Matrix<T> second) {
-//        MatrixMultiplication<T> multiplication = new MatrixMultiplication<>(first, second);
-//        OPERATION_PROCESSOR.processOperation(multiplication);
-//        return multiplication.getResult();
-//    }
-//
-//    /**
-//     * Solves for the new vector by multiplying the matrix by the input vector.
-//     */
-//    public static <T extends Number> Vector<T> multiplication(Matrix<T> matrix, Vector<T> vector) {
-//        MatrixVectorMultiplication<T> multiplication = new MatrixVectorMultiplication<>(matrix, vector);
-//        OPERATION_PROCESSOR.processOperation(multiplication);
-//        return multiplication.getResultant();
-//    }
+    /**
+     * Returns new identity matrix of th e specified class, rows and columns.
+     */
+    public static <T extends Number> Matrix<T> identityMatrix(Class<T> clas, int rows, int columns) {
+        return OPERATION_PROCESSOR.buildIdentityMatrix(clas, rows, columns);
+    }
+
+    /**
+     * Solves for the new matrix by multiplying the first matrix by the second matrix.
+     */
+    public static <T extends Number> Matrix<T> multiplication(Matrix<T> first, Matrix<T> second) {
+        return OPERATION_PROCESSOR.matrixMultiplication(first, second);
+    }
+
+    /**
+     * Solves for the new vector by multiplying the matrix by the input vector.
+     */
+    public static <T extends Number> Vector<T> multiplication(Matrix<T> matrix, Vector<T> vector) {
+        return OPERATION_PROCESSOR.matrixVectorMultiplication(matrix, vector);
+    }
 //
 //    /**
 //     * Returns new orthographic projection based on the specified prism plane position values.

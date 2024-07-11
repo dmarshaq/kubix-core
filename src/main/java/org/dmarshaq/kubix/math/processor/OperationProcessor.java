@@ -19,14 +19,14 @@ public abstract class OperationProcessor {
     public abstract <T extends Number> T vectorMagnitude(Vector<T> vector);
     public abstract <T extends Number> Vector<T> scalarMultiplication(Vector<T> vector, T scalar);
     public abstract <T extends Number> Vector<T> scalarDivision(Vector<T> vector, T scalar);
-//    public abstract <T extends Number> void processOperation(MatrixMultiplication<T> operation);
-//    public abstract <T extends Number> void processOperation(MatrixVectorMultiplication<T> operation);
-//
+    public abstract <T extends Number> Matrix<T> matrixMultiplication(Matrix<T> first, Matrix<T> second);
+    public abstract <T extends Number> Vector<T> matrixVectorMultiplication(Matrix<T> matrix, Vector<T> vector);
+
     // Methods
     public abstract <T extends Number> Vector<T> buildVector(Class<T> clas, int length);
     public abstract <T extends Number> Vector<T> buildVector(T x, T y);
     public abstract <T extends Number> Vector<T> buildVector(T x, T y, T z);
     public abstract <T extends Number> Vector<T> buildVector(T x, T y, T z, T w);
-//    public abstract <T extends Number> Matrix<T> buildIdentityMatrix(Class<T> clas, int rows, int columns);
+    public abstract <T extends Number> Matrix<T> buildIdentityMatrix(Class<T> clas, int rows, int columns);
 
 }
