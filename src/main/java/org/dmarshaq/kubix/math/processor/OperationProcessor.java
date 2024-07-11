@@ -2,7 +2,7 @@ package org.dmarshaq.kubix.math.processor;
 
 import lombok.Getter;
 import org.dmarshaq.kubix.math.matrix.Matrix;
-import org.dmarshaq.kubix.math.operation.*;
+import org.dmarshaq.kubix.math.vector.Vector;
 
 @Getter
 public abstract class OperationProcessor {
@@ -12,16 +12,21 @@ public abstract class OperationProcessor {
         this.nextProcessor = nextProcessor;
     }
 
-    // Operations
-    public abstract <T extends Number> void processOperation(VectorAddition<T> operation);
-    public abstract <T extends Number> void processOperation(VectorNegation<T> operation);
-    public abstract <T extends Number> void processOperation(VectorDotProduct<T> operation);
-    public abstract <T extends Number> void processOperation(VectorMagnitude<T> operation);
-    public abstract <T extends Number> void processOperation(ScalarMultiplication<T> operation);
-    public abstract <T extends Number> void processOperation(ScalarDivision<T> operation);
-    public abstract <T extends Number> void processOperation(MatrixMultiplication<T> operation);
-    public abstract <T extends Number> void processOperation(MatrixVectorMultiplication<T> operation);
-
+    // Math Operations
+    public abstract <T extends Number> Vector<T> vectorAddition(Vector<T> first, Vector<T> second);
+    public abstract <T extends Number> Vector<T>  vectorNegation(Vector<T> vector);
+    public abstract <T extends Number> T vectorDotProduct(Vector<T> first, Vector<T> second);
+    public abstract <T extends Number> T vectorMagnitude(Vector<T> vector);
+    public abstract <T extends Number> Vector<T> scalarMultiplication(Vector<T> vector, T scalar);
+    public abstract <T extends Number> Vector<T> scalarDivision(Vector<T> vector, T scalar);
+//    public abstract <T extends Number> void processOperation(MatrixMultiplication<T> operation);
+//    public abstract <T extends Number> void processOperation(MatrixVectorMultiplication<T> operation);
+//
     // Methods
-    public abstract <T extends Number> Matrix<T> buildIdentityMatrix(Class<T> clas, int rows, int columns);
+    public abstract <T extends Number> Vector<T> buildVector(Class<T> clas, int length);
+    public abstract <T extends Number> Vector<T> buildVector(T x, T y);
+    public abstract <T extends Number> Vector<T> buildVector(T x, T y, T z);
+    public abstract <T extends Number> Vector<T> buildVector(T x, T y, T z, T w);
+//    public abstract <T extends Number> Matrix<T> buildIdentityMatrix(Class<T> clas, int rows, int columns);
+
 }

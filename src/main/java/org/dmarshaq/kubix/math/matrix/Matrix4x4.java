@@ -1,17 +1,13 @@
 package org.dmarshaq.kubix.math.matrix;
 
-import org.dmarshaq.kubix.math.matrix.Matrix;
-
-public class Matrix4x4 extends Matrix<Float> {
+/**
+ * Matrix4x4 is a complete float matrix that is used for storing various data that can define projections, transforms in 3D space.
+ * It's main advantage is ability to act as projection matrix.
+ */
+public class Matrix4x4 {
     /**
      * Builds default identity matrix 4x4.
      */
-    public Matrix4x4() {
-        super(new Float[][] {
-                {1f, 0f, 0f, 0f},
-                {0f, 1f, 0f, 0f},
-                {0f, 0f, 1f, 0f},
-                {0f, 0f, 0f, 1f}});
-    }
+
 
 }
