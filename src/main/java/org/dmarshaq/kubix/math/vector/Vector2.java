@@ -4,7 +4,7 @@ import org.dmarshaq.kubix.math.MathCore;
 import org.dmarshaq.kubix.math.array.FloatArray;
 
 
-public class Vector2 extends Vector<Float> implements AbstractFloatVector {
+public class Vector2 extends Vector<Float> implements AbstractFloatVector<Vector2> {
 
     /**
      * Builds 2D float vector based on the specified values.
@@ -28,36 +28,42 @@ public class Vector2 extends Vector<Float> implements AbstractFloatVector {
     }
 
     @Override
-    public void add(Vector<Float> vector) {
+    public Vector2 add(Vector<Float> vector) {
         getArrayOfValues()[0] += vector.getValues().floatArray()[0];
         getArrayOfValues()[1] += vector.getValues().floatArray()[1];
+        return this;
     }
 
     @Override
-    public void subtract(Vector<Float> vector) {
+    public Vector2 subtract(Vector<Float> vector) {
         getArrayOfValues()[0] -= vector.getValues().floatArray()[0];
         getArrayOfValues()[1] -= vector.getValues().floatArray()[1];
+        return this;
     }
 
     @Override
-    public void multiply(float scalar) {
+    public Vector2 multiply(float scalar) {
         getArrayOfValues()[0] *= scalar;
         getArrayOfValues()[1] *= scalar;
+        return this;
     }
 
     @Override
-    public void divide(float scalar) {
+    public Vector2 divide(float scalar) {
         getArrayOfValues()[0] /= scalar;
         getArrayOfValues()[1] /= scalar;
+        return this;
     }
 
     @Override
-    public void normalize() {
+    public Vector2 normalize() {
         divide(MathCore.magnitude(this));
+        return this;
     }
 
     @Override
-    public void negate() {
+    public Vector2 negate() {
         multiply(-1);
+        return this;
     }
 }

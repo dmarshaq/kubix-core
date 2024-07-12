@@ -6,69 +6,69 @@ import org.dmarshaq.kubix.math.vector.Vector;
 
 import java.nio.FloatBuffer;
 
-public interface AbstractFloatMatrixTransform extends AbstractFloatMatrix {
+public interface AbstractFloatMatrixTransform<T extends Vector<Float>> extends AbstractFloatMatrix {
 
     /**
-     * Returns vector representing x-axis in transform matrix, if defined.
+     * Returns new vector representing x-axis in transform matrix, if defined.
      */
-    default Vector<Float> axisVectorX() {
+    default T axisVectorX() {
         return null;
     }
 
     /**
-     * Returns vector representing y-axis in transform matrix, if defined.
+     * Returns new vector representing y-axis in transform matrix, if defined.
      */
-    default Vector<Float> axisVectorY() {
+    default T axisVectorY() {
         return null;
     }
 
     /**
-     * Returns vector representing z-axis in transform matrix, if defined.
+     * Returns new vector representing z-axis in transform matrix, if defined.
      */
-    default Vector<Float> axisVectorZ() {
+    default T axisVectorZ() {
         return null;
     }
 
     /**
-     * Returns vector representing origin position in transform matrix.
+     * Returns new vector representing origin position in transform matrix.
      */
-    Vector<Float> originVector();
+    T originVector();
 
     /**
-     * Returns direction of x-axis in transform matrix, if axisVectorX() is defined.
+     * Returns new vector direction of x-axis in transform matrix, if axisVectorX() is defined.
      */
-    default Vector<Float> right() {
+    default T right() {
         if (axisVectorX() != null)
-            return MathCore.normalization(axisVectorX());
+            return (T) MathCore.normalization(axisVectorX());
         return null;
     }
 
     /**
-     * Returns direction of y-axis in transform matrix, if axisVectorY() is defined.
+     * Returns new vector direction of y-axis in transform matrix, if axisVectorY() is defined.
      */
-    default Vector<Float> up() {
+    default T up() {
         if (axisVectorY() != null)
-            return MathCore.normalization(axisVectorY());
+            return (T) MathCore.normalization(axisVectorY());
         return null;
     }
 
     /**
-     * Returns direction of z-axis in transform matrix, if axisVectorZ() is defined.
+     * Returns new vector direction of z-axis in transform matrix, if axisVectorZ() is defined.
      */
-    default Vector<Float> forward() {
+    default T forward() {
         if (axisVectorZ() != null)
-            return MathCore.normalization(axisVectorZ());
+            return (T) MathCore.normalization(axisVectorZ());
         return null;
     }
 
     /**
-     * Returns world space vector from local space vector.
+     * Returns new world space vector from local space vector.
      */
-    Vector<Float> localToWorld(Vector<Float> localVector);
+    T localToWorld(T localVector);
 
     /**
-     * Returns local space vector from world space vector.
+     * Returns new local space vector from world space vector.
      */
-    Vector<Float> worldToLocal(Vector<Float> worldVector);
+    T worldToLocal(T worldVector);
 
 }
