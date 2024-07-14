@@ -281,7 +281,7 @@ public class DoubleProcessor extends OperationProcessor {
             if (matrix.getColumns() == vector.getValues().doubleArray().length) {
                 double[] arr1 = matrix.getElements().doubleArray();
                 double[] arr2 = vector.getValues().doubleArray();
-                double[] result = new double[arr2.length];
+                double[] result = new double[matrix.getRows()];
 
                 for (int rRow = 0; rRow < result.length; rRow++) {
                     double res = 0.0D;

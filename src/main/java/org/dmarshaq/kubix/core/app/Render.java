@@ -419,10 +419,10 @@ public abstract class Render implements Runnable {
             color = new Vector4f(1.0f, 1.0f, 1.0f, 1.0f);
         }
 
-        SubTexture subTexture = spriteDTO.getSubTexture();
-        if (subTexture == null) {
-            subTexture = new SubTexture(0, 0, 1, 1);
-        }
+//        TextureCroppedRegion textureCroppedRegion = spriteDTO.getTextureCroppedRegion();
+//        if (textureCroppedRegion == null) {
+//            textureCroppedRegion = new TextureCroppedRegion(0, 0, 1, 1);
+//        }
 
         Vector2f position = spriteDTO.getTransform().multiply(new Vector2f(), 1f);
         float order = spriteDTO.getLayer().zOrder();
@@ -430,8 +430,8 @@ public abstract class Render implements Runnable {
         Vector2f localXVector;
         Vector2f localYVector;
 
-        localXVector = new Vector2f( spriteDTO.getWidth() * subTexture.percentWidth(), 0);
-        localYVector = new Vector2f( 0, spriteDTO.getHeight() * subTexture.percentHeight() );
+        localXVector = new Vector2f( spriteDTO.getWidth(), 0);
+        localYVector = new Vector2f( 0, spriteDTO.getHeight() );
 
 
         localXVector = spriteDTO.getTransform().multiply(localXVector, 0);
@@ -448,8 +448,8 @@ public abstract class Render implements Runnable {
         VERTICES[vertexArraySpriteStart + 5 + offset] = color.z;
         VERTICES[vertexArraySpriteStart + 6 + offset] = color.w;
 
-        VERTICES[vertexArraySpriteStart + 7 + offset] = subTexture.x();
-        VERTICES[vertexArraySpriteStart + 8 + offset] = subTexture.y();
+        VERTICES[vertexArraySpriteStart + 7 + offset] = 0;
+        VERTICES[vertexArraySpriteStart + 8 + offset] = 0;
 
         VERTICES[vertexArraySpriteStart + 9 + offset] = textureSlot;
 
@@ -464,8 +464,8 @@ public abstract class Render implements Runnable {
         VERTICES[vertexArraySpriteStart + 5 + offset] = color.z;
         VERTICES[vertexArraySpriteStart + 6 + offset] = color.w;
 
-        VERTICES[vertexArraySpriteStart + 7 + offset] = subTexture.x() + subTexture.percentWidth();
-        VERTICES[vertexArraySpriteStart + 8 + offset] = subTexture.y();
+        VERTICES[vertexArraySpriteStart + 7 + offset] = 1;
+        VERTICES[vertexArraySpriteStart + 8 + offset] = 0;
 
         VERTICES[vertexArraySpriteStart + 9 + offset] = textureSlot;
 
@@ -480,8 +480,8 @@ public abstract class Render implements Runnable {
         VERTICES[vertexArraySpriteStart + 5 + offset] = color.z;
         VERTICES[vertexArraySpriteStart + 6 + offset] = color.w;
 
-        VERTICES[vertexArraySpriteStart + 7 + offset] = subTexture.x();
-        VERTICES[vertexArraySpriteStart + 8 + offset] = subTexture.y() + subTexture.percentHeight();
+        VERTICES[vertexArraySpriteStart + 7 + offset] = 0;
+        VERTICES[vertexArraySpriteStart + 8 + offset] = 1;
 
         VERTICES[vertexArraySpriteStart + 9 + offset] = textureSlot;
 
@@ -496,8 +496,8 @@ public abstract class Render implements Runnable {
         VERTICES[vertexArraySpriteStart + 5 + offset] = color.z;
         VERTICES[vertexArraySpriteStart + 6 + offset] = color.w;
 
-        VERTICES[vertexArraySpriteStart + 7 + offset] = subTexture.x() + subTexture.percentWidth();
-        VERTICES[vertexArraySpriteStart + 8 + offset] = subTexture.y() + subTexture.percentHeight();
+        VERTICES[vertexArraySpriteStart + 7 + offset] = 1;
+        VERTICES[vertexArraySpriteStart + 8 + offset] = 1;
 
         VERTICES[vertexArraySpriteStart + 9 + offset] = textureSlot;
 

@@ -281,7 +281,7 @@ public class ShortProcessor extends OperationProcessor {
             if (matrix.getColumns() == vector.getValues().shortArray().length) {
                 short[] arr1 = matrix.getElements().shortArray();
                 short[] arr2 = vector.getValues().shortArray();
-                short[] result = new short[arr2.length];
+                short[] result = new short[matrix.getRows()];
 
                 for (int rRow = 0; rRow < result.length; rRow++) {
                     short res = (short) 0;

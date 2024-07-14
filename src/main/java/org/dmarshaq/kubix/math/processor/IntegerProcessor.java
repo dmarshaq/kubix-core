@@ -281,7 +281,7 @@ public class IntegerProcessor extends OperationProcessor {
             if (matrix.getColumns() == vector.getValues().intArray().length) {
                 int[] arr1 = matrix.getElements().intArray();
                 int[] arr2 = vector.getValues().intArray();
-                int[] result = new int[arr2.length];
+                int[] result = new int[matrix.getRows()];
 
                 for (int rRow = 0; rRow < result.length; rRow++) {
                     int res = 0;

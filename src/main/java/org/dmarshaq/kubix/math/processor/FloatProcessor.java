@@ -282,7 +282,7 @@ public class FloatProcessor extends OperationProcessor {
             if (matrix.getColumns() == vector.getValues().floatArray().length) {
                 float[] arr1 = matrix.getElements().floatArray();
                 float[] arr2 = vector.getValues().floatArray();
-                float[] result = new float[arr2.length];
+                float[] result = new float[matrix.getRows()];
 
                 for (int rRow = 0; rRow < result.length; rRow++) {
                     float res = 0.0f;

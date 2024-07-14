@@ -6,6 +6,7 @@ import lombok.ToString;
 import org.dmarshaq.kubix.core.app.Context;
 import org.dmarshaq.kubix.core.graphic.Shader;
 import org.dmarshaq.kubix.core.graphic.Texture;
+import org.dmarshaq.kubix.core.graphic.TextureCroppedRegion;
 import org.dmarshaq.kubix.math.AbstractRectangle;
 import org.dmarshaq.kubix.math.vector.Vector2;
 
@@ -16,11 +17,11 @@ import java.awt.*;
 @ToString
 public class Sprite implements AbstractRectangle<Float, Vector2> {
     private final Vector2 position;
-    private Texture texture;
+    private TextureCroppedRegion texture;
     private Shader shader;
     private Color color;
 
-    public Sprite(Vector2 position, Texture texture, Shader shader) {
+    public Sprite(Vector2 position, TextureCroppedRegion texture, Shader shader) {
         this.texture = texture;
         this.position = position;
         this.shader = shader;
@@ -28,12 +29,12 @@ public class Sprite implements AbstractRectangle<Float, Vector2> {
 
     @Override
     public Float getWidth() {
-        return (float) (texture.getWidth() / Context.getUnitSize());
+        return texture.getWidth() / Context.getUnitSize();
     }
 
     @Override
     public Float getHeight() {
-        return (float) (texture.getHeight() / Context.getUnitSize());
+        return texture.getHeight() / Context.getUnitSize();
     }
 
     @Override

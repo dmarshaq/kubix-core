@@ -281,7 +281,7 @@ public class LongProcessor extends OperationProcessor {
             if (matrix.getColumns() == vector.getValues().longArray().length) {
                 long[] arr1 = matrix.getElements().longArray();
                 long[] arr2 = vector.getValues().longArray();
-                long[] result = new long[arr2.length];
+                long[] result = new long[matrix.getRows()];
 
                 for (int rRow = 0; rRow < result.length; rRow++) {
                     long res = 0L;

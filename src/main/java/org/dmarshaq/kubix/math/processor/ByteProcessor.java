@@ -281,7 +281,7 @@ public class ByteProcessor extends OperationProcessor {
             if (matrix.getColumns() == vector.getValues().byteArray().length) {
                 byte[] arr1 = matrix.getElements().byteArray();
                 byte[] arr2 = vector.getValues().byteArray();
-                byte[] result = new byte[arr2.length];
+                byte[] result = new byte[matrix.getRows()];
 
                 for (int rRow = 0; rRow < result.length; rRow++) {
                     byte res = (byte) 0;

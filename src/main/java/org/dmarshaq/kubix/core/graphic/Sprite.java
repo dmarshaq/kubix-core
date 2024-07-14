@@ -9,16 +9,16 @@ public class Sprite {
     private Matrix4f transform;
     private Layer layer;
     private Texture texture;
-    private SubTexture subTexture;
+    private TextureCroppedRegion textureCroppedRegion;
     private Color color;
     private Shader shader;
     private float width, height;
 
-    public Sprite(Matrix4f transform, Layer layer, Texture texture, SubTexture subTexture, Shader shader) {
+    public Sprite(Matrix4f transform, Layer layer, Texture texture, TextureCroppedRegion textureCroppedRegion, Shader shader) {
         this.transform = transform;
         this.layer = layer;
         this.texture = texture;
-        this.subTexture = subTexture;
+        this.textureCroppedRegion = textureCroppedRegion;
         this.color = null;
         this.shader = shader;
 
@@ -101,7 +101,7 @@ public class Sprite {
         this.transform = transform;
     }
 
-    public SubTexture getSubTexture() {
-        return subTexture;
+    public TextureCroppedRegion getSubTexture() {
+        return textureCroppedRegion;
     }
 }

@@ -16,7 +16,7 @@ public class SpriteDto {
     private final float width;
     private final float height;
     private final Texture texture;
-    private final SubTexture subTexture;
+    private final TextureCroppedRegion textureCroppedRegion;
     private final Layer layer;
     private final Vector4f color;
     private final Shader shader;

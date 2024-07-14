@@ -21,7 +21,7 @@ public class Snapshot {
                 .width(sprite.getWidth())
                 .height(sprite.getHeight())
                 .shader(sprite.getShader())
-                .subTexture(sprite.getSubTexture())
+                .textureCroppedRegion(sprite.getSubTexture())
                 .texture(sprite.getTexture())
                 .transform(Matrix4f.duplicate(sprite.getTransform()))
                 .build();
