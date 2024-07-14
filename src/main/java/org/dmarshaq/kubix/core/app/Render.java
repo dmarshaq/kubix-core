@@ -112,8 +112,6 @@ public abstract class Render implements Runnable {
     }
 
     public void init() {
-
-
         // Initialize GLFW. Most GLFW functions will not work before doing this.
         if ( !glfwInit() )
             throw new IllegalStateException("Unable to initialize GLFW");
@@ -132,8 +130,8 @@ public abstract class Render implements Runnable {
         else {
             screenWidth = 1280;
             screenHeight = 720;
-
         }
+
         aspectRatio = (float) screenWidth / screenHeight;
         window = glfwCreateWindow(screenWidth, screenHeight, getTitle(), isFullScreen() ? glfwGetPrimaryMonitor() : 0, 0);
 
@@ -152,7 +150,7 @@ public abstract class Render implements Runnable {
             // Get the resolution of the primary monitor
             GLFWVidMode vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 
-//            // Center the window
+            // Center the window
             if (!isFullScreen()) {
                 glfwSetWindowPos(
                         window,
@@ -192,28 +190,9 @@ public abstract class Render implements Runnable {
         mouseInput = new MouseInput();
         mouseInput.init(window);
 
-        glfwSetWindowSizeCallback(window, new GLFWWindowSizeCallback(){
+        glfwSetWindowSizeCallback(window, new GLFWWindowSizeCallback() {
             @Override
             public void invoke(long window, int width, int height){
-//                int newWidth = 0;
-//                int newHeight = 0;
-//                int diffrenceW = 0;
-//                int diffrenceH = 0;
-//
-//
-//                if (height > width || width - (int) (height * aspectRatio) < 0) {
-//                    newHeight = (int) (width / aspectRatio);
-//                    diffrenceH = height - newHeight;
-//                    newWidth = width;
-//                }
-//                else if (height < width) {
-//                    newWidth = (int) (height * aspectRatio);
-//                    diffrenceW = width - newWidth;
-//                    newHeight = height;
-//                }
-
-//                glViewport(diffrenceW / 2, diffrenceH / 2, newWidth, newHeight);
-
                 screenWidth = width;
                 screenHeight = height;
                 aspectRatio = (float) screenWidth / screenHeight;
@@ -292,7 +271,7 @@ public abstract class Render implements Runnable {
                 if (j > 2 && j < 5) {
                     val--;
                 }
-                if (j == 5) {
+                else if (j == 5) {
                     val = 1;
                 }
                 INDICES[i * 6 + j] = (i * 4 + val);
@@ -332,9 +311,13 @@ public abstract class Render implements Runnable {
 
     }
 
+    protected abstract void renderAccess();
+
     private void renderSnapshot() {
         modifyShaders();
         loadCameraMatrix();
+
+        renderAccess();
 
         SpriteDto[] spriteDtoArray = data.getSpriteDataArray();
 
@@ -351,6 +334,8 @@ public abstract class Render implements Runnable {
             glBindBuffer(GL_ARRAY_BUFFER, vbo);
             // Actually loading vertices into graphics memory
             glBufferSubData(GL_ARRAY_BUFFER, 0, VERTICES);
+            // Drawing mode
+            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
             // Drawing
 //            System.out.println("Quads rendered in Batch: " + quadsRenderedInBatch);
             glDrawElements(GL_TRIANGLES, quadsRenderedInBatch * 6, GL_UNSIGNED_INT, 0);
@@ -452,7 +437,7 @@ public abstract class Render implements Runnable {
         localXVector = spriteDTO.getTransform().multiply(localXVector, 0);
         localYVector = spriteDTO.getTransform().multiply(localYVector, 0);
 
-        // BOTTOM LEFT
+        // BOTTOM LEFT 0
         offset = 0;
         VERTICES[vertexArraySpriteStart + 0 + offset] = position.x;
         VERTICES[vertexArraySpriteStart + 1 + offset] = position.y;
@@ -468,7 +453,7 @@ public abstract class Render implements Runnable {
 
         VERTICES[vertexArraySpriteStart + 9 + offset] = textureSlot;
 
-        // BOTTOM RIGHT
+        // BOTTOM RIGHT 1
         offset += 10;
         VERTICES[vertexArraySpriteStart + 0 + offset] = position.x + localXVector.x;
         VERTICES[vertexArraySpriteStart + 1 + offset] = position.y + localXVector.y;
@@ -484,7 +469,7 @@ public abstract class Render implements Runnable {
 
         VERTICES[vertexArraySpriteStart + 9 + offset] = textureSlot;
 
-        // TOP LEFT
+        // TOP LEFT 2
         offset += 10;
         VERTICES[vertexArraySpriteStart + 0 + offset] = position.x + localYVector.x;
         VERTICES[vertexArraySpriteStart + 1 + offset] = position.y + localYVector.y;
@@ -500,7 +485,7 @@ public abstract class Render implements Runnable {
 
         VERTICES[vertexArraySpriteStart + 9 + offset] = textureSlot;
 
-        // TOP RIGHT
+        // TOP RIGHT 3
         offset += 10;
         VERTICES[vertexArraySpriteStart + 0 + offset] = position.x + localXVector.x + localYVector.x;
         VERTICES[vertexArraySpriteStart + 1 + offset] = position.y + localXVector.y + localYVector.y;

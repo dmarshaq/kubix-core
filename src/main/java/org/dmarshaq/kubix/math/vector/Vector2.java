@@ -28,6 +28,16 @@ public class Vector2 extends Vector<Float> implements AbstractFloatVector<Vector
     }
 
     @Override
+    public float x() {
+        return getArrayOfValues()[0];
+    }
+
+    @Override
+    public float y() {
+        return getArrayOfValues()[1];
+    }
+
+    @Override
     public Vector2 add(Vector<Float> vector) {
         getArrayOfValues()[0] += vector.getValues().floatArray()[0];
         getArrayOfValues()[1] += vector.getValues().floatArray()[1];

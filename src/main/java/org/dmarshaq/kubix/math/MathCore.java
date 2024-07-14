@@ -4,6 +4,7 @@ import org.dmarshaq.kubix.math.matrix.*;
 import org.dmarshaq.kubix.math.processor.*;
 import org.dmarshaq.kubix.math.vector.*;
 
+import java.awt.*;
 import java.util.Arrays;
 
 public class MathCore {
@@ -19,7 +20,7 @@ public class MathCore {
     private static final FloatProcessor OPERATION_PROCESSOR = new FloatProcessor(new IntegerProcessor(new DoubleProcessor(new LongProcessor(new ByteProcessor(new ShortProcessor(null))))));
 
     /**
-     * Returns new Vector of desired type and any length.
+     * Returns new vector of desired type and any length.
      */
     public static <T extends Number> Vector<T> vector(Class<T> clas, int length) {
         return OPERATION_PROCESSOR.buildVector(clas, length);
@@ -44,6 +45,23 @@ public class MathCore {
      */
     public static <T extends Number> Vector<T> vector4(T x, T y, T z, T w) {
         return OPERATION_PROCESSOR.buildVector(x, y, z, w);
+    }
+
+    /**
+     * Returns new Vector4 from Color specified.
+     */
+    public static Vector4 vector4(Color color) {
+        return new Vector4((float) color.getRed() / 255, (float) color.getGreen() / 255, (float) color.getBlue() / 255, (float) color.getAlpha() / 255);
+    }
+
+    /**
+     * Used to get component vector based on axis specified, order matters, carefully "xy" doesn't equal "yx".
+     * Vector returned always have same number of dimensions as axis.length().
+     * Can only be specified up to "xyzw" in any order.
+     * If specified axis.length() more than original Vector dimensions it will return component with added dimensions equal to 0.
+     */
+    public static <T extends Number> Vector<T> componentVector(Vector<T> vector, String axis) {
+        return OPERATION_PROCESSOR.componentVector(vector, axis);
     }
 
     /**

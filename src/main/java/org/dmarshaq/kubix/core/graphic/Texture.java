@@ -20,13 +20,13 @@ public class Texture {
     }
 
     private int generateID(int[] data) {
-        int result = glGenTextures();
-        glBindTexture(GL_TEXTURE_2D, result);
+        int id = glGenTextures();
+        glBindTexture(GL_TEXTURE_2D, id);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);  // make it sharp, disable antilising
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexImage2D(GL_TEXTURE_2D, 0 , GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, BufferUtils.createIntBuffer(data));
         glBindTexture(GL_TEXTURE_2D, 0);
-        return result;
+        return id;
     }
 
     public float getUnitWidth() {

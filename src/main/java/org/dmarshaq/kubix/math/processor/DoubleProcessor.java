@@ -1,8 +1,11 @@
 package org.dmarshaq.kubix.math.processor;
 
 import org.dmarshaq.kubix.math.array.DoubleArray;
+import org.dmarshaq.kubix.math.array.IntegerArray;
 import org.dmarshaq.kubix.math.matrix.Matrix;
 import org.dmarshaq.kubix.math.vector.Vector;
+
+import static org.dmarshaq.kubix.math.MathCore.AXIS;
 
 public class DoubleProcessor extends OperationProcessor {
     public DoubleProcessor(OperationProcessor nextProcessor) {
@@ -295,5 +298,27 @@ public class DoubleProcessor extends OperationProcessor {
             return getNextProcessor().matrixVectorMultiplication(matrix, vector);
         }
         return null;
+    }
+
+    /**
+     * Used to get component vector based on axis specified, order matters, carefully "xy" doesn't equal "yx".
+     * Vector returned always have same number of dimensions as axis.length().
+     * Can only be specified up to "xyzw" in any order.
+     * If specified axis.length() more than original Vector dimensions it will return component with added dimensions equal to 0.
+     */
+    @Override
+    public <T extends Number> Vector<T> componentVector(Vector<T> vector, String axis) {
+        int length = axis.length();
+
+        double[] arr = vector.getValues().doubleArray();
+        double[] result = new double[length];
+
+        for(int i = 0; i < length; i++) {
+            int index = AXIS.indexOf(axis.charAt(i));
+            if (index < arr.length) {
+                result[i] = arr[index];
+            }
+        }
+        return (Vector<T>) new Vector<>(new DoubleArray(result));
     }
 }

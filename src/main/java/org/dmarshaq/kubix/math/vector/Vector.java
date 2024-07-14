@@ -28,23 +28,6 @@ public class Vector<T extends Number> {
 
 
 // TODO: make methods below work through processor solution.
-//    /**
-//     * Used to get component vector based on axis specified, order matters, carefully "xy" doesn't equal "yx".
-//     * Vector returned always have same number of dimensions as axis.length().
-//     * Can only be specified up to "xyzw" in any order.
-//     * If specified axis.length() more than original Vector dimensions it will return component with added dimensions equal to null.
-//     */
-//    public final Vector<T> getComponent(String axis) {
-//        int length = axis.length();
-//        Vector<T> component = new Vector<>( (T[]) new Number[length] );
-//        for(int i = 0; i < length; i++) {
-//            int index = AXIS.indexOf(axis.charAt(i));
-//            if (index < values.length) {
-//                component.values[i] = values[index];
-//            }
-//        }
-//        return component;
-//    }
 
 
 }

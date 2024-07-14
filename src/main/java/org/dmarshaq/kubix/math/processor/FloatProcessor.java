@@ -6,6 +6,8 @@ import org.dmarshaq.kubix.math.vector.Vector;
 
 import java.util.Arrays;
 
+import static org.dmarshaq.kubix.math.MathCore.AXIS;
+
 public class FloatProcessor extends OperationProcessor {
     public FloatProcessor(OperationProcessor nextProcessor) {
         super(nextProcessor);
@@ -298,4 +300,27 @@ public class FloatProcessor extends OperationProcessor {
         }
         return null;
     }
+
+    /**
+     * Used to get component vector based on axis specified, order matters, carefully "xy" doesn't equal "yx".
+     * Vector returned always have same number of dimensions as axis.length().
+     * Can only be specified up to "xyzw" in any order.
+     * If specified axis.length() more than original Vector dimensions it will return component with added dimensions equal to 0.
+     */
+    @Override
+    public <T extends Number> Vector<T> componentVector(Vector<T> vector, String axis) {
+        int length = axis.length();
+
+        float[] arr = vector.getValues().floatArray();
+        float[] result = new float[length];
+
+        for(int i = 0; i < length; i++) {
+            int index = AXIS.indexOf(axis.charAt(i));
+            if (index < arr.length) {
+                result[i] = arr[index];
+            }
+        }
+        return (Vector<T>) new Vector<>(new FloatArray(result));
+    }
+
 }

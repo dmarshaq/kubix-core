@@ -12,6 +12,34 @@ public interface AbstractFloatVector<T extends Vector<Float>> {
     float[] getArrayOfValues();
 
     /**
+     * Returns float value of x-component of the vector.
+     */
+    default float x() {
+        return 0;
+    }
+
+    /**
+     * Returns float value of y-component of the vector.
+     */
+    default float y() {
+        return 0;
+    }
+
+    /**
+     * Returns float value of z-component of the vector.
+     */
+    default float z() {
+        return 0;
+    }
+
+    /**
+     * Returns float value of w-component of the vector.
+     */
+    default float w() {
+        return 0;
+    }
+
+    /**
      * Adds input vector to this vector.
      * Note: doesn't return new float vector.
      */

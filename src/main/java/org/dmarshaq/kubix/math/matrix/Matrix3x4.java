@@ -58,7 +58,7 @@ public class Matrix3x4 extends Matrix<Float> implements AbstractFloatMatrixTrans
 
     @Override
     public Vector3 worldToLocal(Vector3 worldVector) {
-        Vector3 relativeVector = worldVector.subtract(originVector());
+        Vector3 relativeVector = new Vector3(MathCore.subtraction(worldVector, originVector()));
 
         float x = MathCore.dotProduct(relativeVector, right()) / MathCore.magnitude(axisVectorX());
         float y = MathCore.dotProduct(relativeVector, up()) / MathCore.magnitude(axisVectorY());

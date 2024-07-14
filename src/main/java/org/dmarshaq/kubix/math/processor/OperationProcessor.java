@@ -28,5 +28,6 @@ public abstract class OperationProcessor {
     public abstract <T extends Number> Vector<T> buildVector(T x, T y, T z);
     public abstract <T extends Number> Vector<T> buildVector(T x, T y, T z, T w);
     public abstract <T extends Number> Matrix<T> buildIdentityMatrix(Class<T> clas, int rows, int columns);
+    public abstract <T extends Number> Vector<T> componentVector(Vector<T> vector, String axis);
 
 }
