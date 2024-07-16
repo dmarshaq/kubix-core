@@ -1,0 +1,42 @@
+package org.dmarshaq.kubix.serialization.shader;
+
+import org.dmarshaq.kubix.core.graphic.Shader;
+import org.dmarshaq.kubix.core.graphic.Texture;
+import org.dmarshaq.kubix.core.util.FileUtils;
+import org.dmarshaq.kubix.serialization.texture.TextureDto;
+import org.dmarshaq.kubix.serialization.texture.TextureScanner;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URISyntaxException;
+import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.dmarshaq.kubix.core.util.FileUtils.*;
+
+public class ShaderManager {
+
+    public static final Map<String, Shader> SHADER_MAP = new HashMap<>();
+
+    public static void loadShadersFromFiles()  {
+        List<Path> paths = findAllFilesInResourcesJAR("shader", ".glsl");
+        for (Path path : paths) {
+            StringBuilder name = new StringBuilder(path.toString());
+            name.delete(name.length() - 5, name.length());
+            name.delete(0, name.lastIndexOf("/") + 1);
+
+            SHADER_MAP.put(name.toString(), ShaderScanner.loadShaderFromFile(path));
+        }
+
+        List<File> files = findAllFilesInResources("shader", ".glsl");
+        for (File file : files) {
+            StringBuilder name = new StringBuilder(file.getName());
+            name.delete(name.length() - 5, name.length());
+
+            SHADER_MAP.put(name.toString(), ShaderScanner.loadShaderFromFile(file));
+        }
+    }
+}

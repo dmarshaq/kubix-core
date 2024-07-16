@@ -13,4 +13,9 @@ public interface Renderable {
      * Returns shader that is used in render to draw renderable object.
      */
     Shader getShader();
+
+    /**
+     * Returns layer on which render will draw renderable object.
+     */
+    Layer getLayer();
 }

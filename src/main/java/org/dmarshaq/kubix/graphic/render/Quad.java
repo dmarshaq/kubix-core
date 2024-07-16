@@ -7,9 +7,12 @@ import org.dmarshaq.kubix.math.vector.Vector2;
 import org.dmarshaq.kubix.math.vector.Vector3;
 import org.dmarshaq.kubix.math.vector.Vector4;
 
+import java.util.List;
+
 /**
  * Quad is a wrapper class for simple vertex float array that describes quad's figure.
  * It contains float array for storing each of 4 vertices data, as well as shader that is used in render to draw the quad.
+ * It also stores layer it supposed to render on.
  */
 @ToString
 public class Quad implements Renderable {
@@ -17,14 +20,16 @@ public class Quad implements Renderable {
 
     private final float[] vertices;
     private final Shader shader;
+    private final Layer layer;
 
     /**
      * Builds the quad with float array describing all 4 vertices each taking 10 floats in array.
-     * Shader needs to be specified.
+     * ShaderType needs to be specified.
      * Note: each vertex properties needs to also specified.
      */
-    public Quad(Shader shader) {
+    public Quad(Shader shader, Layer layer) {
         this.shader = shader;
+        this.layer = layer;
         vertices = new float[4 * VERTEX_STRIDE];
     }
 
@@ -52,5 +57,10 @@ public class Quad implements Renderable {
     @Override
     public Shader getShader() {
         return shader;
+    }
+
+    @Override
+    public Layer getLayer() {
+        return layer;
     }
 }

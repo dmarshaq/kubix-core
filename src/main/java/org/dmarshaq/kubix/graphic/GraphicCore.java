@@ -17,7 +17,7 @@ public class GraphicCore {
      */
     public static Quad quad(Sprite sprite) {
         // Creating quad with shader defined in sprite.
-        Quad quad = new Quad(sprite.getShader());
+        Quad quad = new Quad(sprite.getShader(), sprite.getLayer());
 
         // Getting origin position of the sprite.
         Vector3 position = new Vector3(MathCore.componentVector(sprite.getPosition(), "xyz"));
@@ -67,7 +67,7 @@ public class GraphicCore {
      */
     public static Quad quad(Sprite sprite, Matrix3x4 transformation) {
         // Creating quad with shader defined in sprite.
-        Quad quad = new Quad(sprite.getShader());
+        Quad quad = new Quad(sprite.getShader(), sprite.getLayer());
 
         // Getting color if it is not null, otherwise setting to pure white.
         Vector4 color;
@@ -100,7 +100,7 @@ public class GraphicCore {
             percentHeight = 1.0f;
         }
 
-        // Getting Vector2 transformed vertex positions of the sprite.
+        // Getting vertices positions by matrix vector multiplication.
         Vector4 position = new Vector4(sprite.getPosition().x(), sprite.getPosition().y(), 0.0f, 1.0f);
 
         Vector3 vertex0 = new Vector3(MathCore.multiplication(transformation, position));
@@ -123,7 +123,7 @@ public class GraphicCore {
      */
     public static Quad quad(Sprite sprite, Matrix2x3 transformation) {
         // Creating quad with shader defined in sprite.
-        Quad quad = new Quad(sprite.getShader());
+        Quad quad = new Quad(sprite.getShader(), sprite.getLayer());
 
         // Getting color if it is not null, otherwise setting to pure white.
         Vector4 color;
@@ -156,7 +156,7 @@ public class GraphicCore {
             percentHeight = 1.0f;
         }
 
-        // Getting Vector2 transformed vertex positions of the sprite.
+        // Getting vertices positions by matrix vector multiplication.
         Vector3 position = new Vector3(sprite.getPosition().x(), sprite.getPosition().y(), 1.0f);
 
         Vector3 vertex0 = new Vector3(MathCore.componentVector(MathCore.multiplication(transformation, position), "xyz"));

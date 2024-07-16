@@ -20,7 +20,7 @@ public class SerializationScanner {
 
     public static void serializeResourcesIntoPackets(List<Packet> packets) {
         for(int i = 1; i <= packets.size(); i++) {
-            saveToFile("src/main/resources/packets/packet" + i + ".kub", packets.get(i - 1).getData());
+            saveToFile("src/main/resources/packet/packet" + i + ".kub", packets.get(i - 1).getData());
         }
     }
 

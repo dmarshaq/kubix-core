@@ -251,7 +251,7 @@ public abstract class Render implements Runnable {
                 22, 23, 24, 25, 26, 27, 28, 29, 30, 31 };
 
         // Setup shader
-//        context.loadShaders(); TODO: Shader loading / serialization
+//        context.loadShaders(); TODO: ShaderType loading / serialization
 
         Shader.loadEngineShaders();
         pr_matrix = Matrix4f.orthographic(-2f, 2f, -1.5f, 1.5f, -1f, 1f); // basically camera matrix

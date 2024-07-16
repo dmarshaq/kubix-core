@@ -26,6 +26,10 @@ public class Shader {
         ID = ShaderUtils.load(vertex, fragment);
     }
 
+    public Shader(int id) {
+        ID = id;
+    }
+
     public static void loadEngineShaders() {
         BASIC = new Shader("shader/basic.vert", "shader/basic.frag");
     }

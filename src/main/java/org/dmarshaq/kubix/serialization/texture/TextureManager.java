@@ -42,8 +42,9 @@ public class TextureManager {
         }
     }
 
+    // TODO: JAR texture loading.
     private static void loadAndCompareTextureDtosFromImages()  {
-        List<File> files = FileUtils.findAllFilesInResources("textures", ".png");
+        List<File> files = FileUtils.findAllFilesInResources("texture", ".png");
         TextureDto empty = new TextureDto();
         for (File file : files) {
             empty.setName(file.getName().substring(0, file.getName().length() - 4));
@@ -52,11 +53,11 @@ public class TextureManager {
                 int index = TEXTURE_DTOS.indexOf(empty);
                 if (TEXTURE_DTOS.get(index).getLastModified() != empty.getLastModified()) {
                     System.out.println("Out of data");
-                    TEXTURE_DTOS.set(index, TextureScanner.loadTextureDtoFromImage(file, empty.getName()));
+                    TEXTURE_DTOS.set(index, TextureScanner.loadTextureDtoFromImage(file));
                 }
             }
             else {
-                TEXTURE_DTOS.add(TextureScanner.loadTextureDtoFromImage(file, empty.getName()));
+                TEXTURE_DTOS.add(TextureScanner.loadTextureDtoFromImage(file));
             }
         }
     }

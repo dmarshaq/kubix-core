@@ -5,6 +5,7 @@ import org.dmarshaq.kubix.core.serialization.Packet;
 import org.dmarshaq.kubix.core.serialization.SerializationScanner;
 import org.dmarshaq.kubix.core.util.FileUtils;
 import org.dmarshaq.kubix.serialization.texture.TextureManager;
+import org.dmarshaq.kubix.serialization.shader.ShaderManager;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -111,7 +112,7 @@ public abstract class Context {
     public abstract void initContextProperties();
 
     final void loadResources() {
-        SerializationScanner.serializeResourcesIntoPackets(loadResourcesFromPackets(SerializationScanner.deserializeResourcesIntoPackets(FileUtils.findAllFilesInResources("", ".kub"))));
+        SerializationScanner.serializeResourcesIntoPackets(loadResourcesFromPackets(SerializationScanner.deserializeResourcesIntoPackets(FileUtils.findAllFilesInResources("packet", ".kub"))));
     }
 
     final List<Packet> loadResourcesFromPackets(Packet[] packets) {
@@ -119,6 +120,7 @@ public abstract class Context {
 
         // Manager / Loaders, loading respective packets one by one, adding their new packets to new packets list.
         TextureManager.loadPackets(packets, newPackets);
+        ShaderManager.loadShadersFromFiles();
 
         return newPackets;
     }

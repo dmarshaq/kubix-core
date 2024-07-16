@@ -5,8 +5,8 @@ import lombok.Setter;
 import lombok.ToString;
 import org.dmarshaq.kubix.core.app.Context;
 import org.dmarshaq.kubix.core.graphic.Shader;
-import org.dmarshaq.kubix.core.graphic.Texture;
 import org.dmarshaq.kubix.core.graphic.TextureCroppedRegion;
+import org.dmarshaq.kubix.graphic.render.Layer;
 import org.dmarshaq.kubix.math.AbstractRectangle;
 import org.dmarshaq.kubix.math.vector.Vector2;
 
@@ -20,11 +20,13 @@ public class Sprite implements AbstractRectangle<Float, Vector2> {
     private TextureCroppedRegion texture;
     private Shader shader;
     private Color color;
+    private Layer layer;
 
-    public Sprite(Vector2 position, TextureCroppedRegion texture, Shader shader) {
+    public Sprite(Vector2 position, TextureCroppedRegion texture, Shader shader, Layer layer) {
         this.texture = texture;
         this.position = position;
         this.shader = shader;
+        this.layer = layer;
     }
 
     @Override

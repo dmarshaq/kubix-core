@@ -79,7 +79,7 @@ public class TextureScanner extends SerializationScanner {
         return new byte[Short.BYTES + HEADER.length() + Short.BYTES + namesLength + (textureCount * (Long.BYTES + Integer.BYTES + Integer.BYTES + Integer.BYTES)) + pixelsLength * Integer.BYTES];
     }
 
-    static TextureDto loadTextureDtoFromImage(File file, String name) {
+    static TextureDto loadTextureDtoFromImage(File file) {
         TextureDto textureDto = new TextureDto();
         int[] pixels = null;
 
@@ -101,7 +101,7 @@ public class TextureScanner extends SerializationScanner {
             }
         }
 
-        textureDto.setName(name);
+        textureDto.setName(file.getName().substring(0, file.getName().length() - 4));
         textureDto.setLastModified(file.lastModified());
         textureDto.setWidth(width);
         textureDto.setHeight(height);

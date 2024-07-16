@@ -2,6 +2,7 @@ package org.dmarshaq.kubix.core.app;
 
 import org.dmarshaq.kubix.core.graphic.Layer;
 import org.dmarshaq.kubix.core.time.Time;
+import org.dmarshaq.kubix.graphic.render.LayerManager;
 
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -41,6 +42,7 @@ public abstract class Update implements Runnable {
             Layer.clearRenderSpritesCount();
             // only in before first update (start method is called)
             if (start) {
+                LayerManager.buildLayers();
                 Layer.loadIndexes();
                 start();
                 start = false;
