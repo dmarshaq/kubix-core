@@ -4,6 +4,9 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.URI;
+import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.net.URISyntaxException;
 import java.net.URLClassLoader;
 import java.nio.ByteBuffer;
@@ -111,13 +114,17 @@ public interface FileUtils {
         return files;
     }
 
-    static List<Path> findAllFilesInResourcesJAR(String path, String fileType)  {
+    static List<String> findAllFilesInResourcesJar(String path, String fileType)  {
+        List<String> result = new ArrayList<>();
         try {
-            List<Path> result = getPathsFromResourceJAR(path);
-            for (int i = 0; i < result.size(); i++) {
-                if (!result.get(i).toString().endsWith(fileType)) {
-                    result.remove(i);
+            List<Path> pathsFromJar = getPathsFromResourceJAR(path);
+            for (int i = 0; i < pathsFromJar.size(); i++) {
+                if (!pathsFromJar.get(i).toString().endsWith(fileType)) {
+                    pathsFromJar.remove(i);
                     i--;
+                }
+                else {
+                    result.add(pathsFromJar.get(i).toString());
                 }
             }
             return result;
@@ -128,9 +135,7 @@ public interface FileUtils {
     }
 
     // Get all paths from a folder that inside the JAR file
-    private static List<Path> getPathsFromResourceJAR(String folder)
-            throws URISyntaxException, IOException {
-
+    private static List<Path> getPathsFromResourceJAR(String folder) throws URISyntaxException, IOException {
         List<Path> result;
 
         // get path of the current running JAR

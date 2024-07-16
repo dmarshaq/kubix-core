@@ -1,15 +1,21 @@
 package org.dmarshaq.kubix.core.app;
 
 import org.dmarshaq.kubix.core.graphic.Camera;
+import org.dmarshaq.kubix.core.graphic.Shader;
+import org.dmarshaq.kubix.core.graphic.Texture;
 import org.dmarshaq.kubix.core.serialization.Packet;
 import org.dmarshaq.kubix.core.serialization.SerializationScanner;
 import org.dmarshaq.kubix.core.util.FileUtils;
+import org.dmarshaq.kubix.core.util.IndexedHashMap;
+import org.dmarshaq.kubix.graphic.render.Layer;
+import org.dmarshaq.kubix.graphic.render.LayerManager;
 import org.dmarshaq.kubix.serialization.texture.TextureManager;
 import org.dmarshaq.kubix.serialization.shader.ShaderManager;
 
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public abstract class Context {
 
@@ -108,11 +114,30 @@ public abstract class Context {
         Render.setClearScreenColor(color);
     }
 
+    // Resources
+    private static Map<String, Texture> TEXTURES;
+    private static Map<String, Shader> SHADERS;
+    private static Map<String, Layer> LAYERS;
+
+    public static Map<String, Texture> textures() {
+        return TEXTURES;
+    }
+    public static Map<String, Shader> shaders() {
+        return SHADERS;
+    }
+    public static Map<String, Layer> layers() {
+        return LAYERS;
+    }
+
     // Object methods
     public abstract void initContextProperties();
 
     final void loadResources() {
         SerializationScanner.serializeResourcesIntoPackets(loadResourcesFromPackets(SerializationScanner.deserializeResourcesIntoPackets(FileUtils.findAllFilesInResources("packet", ".kub"))));
+
+        TEXTURES = TextureManager.TEXTURE_MAP;
+        SHADERS = ShaderManager.SHADER_MAP;
+        LAYERS = LayerManager.LAYER_MAP;
     }
 
     final List<Packet> loadResourcesFromPackets(Packet[] packets) {

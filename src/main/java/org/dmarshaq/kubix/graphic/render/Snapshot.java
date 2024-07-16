@@ -1,12 +1,10 @@
 package org.dmarshaq.kubix.graphic.render;
 
 import lombok.Getter;
+import org.dmarshaq.kubix.core.app.Context;
 import org.dmarshaq.kubix.core.graphic.Shader;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 
 public class Snapshot {
@@ -18,29 +16,19 @@ public class Snapshot {
         quadRenderBuffer = new ArrayList<>();
     }
 
-    public void addQuadToRenderBuffer(Quad quad, Layer layer) {
+    public void addQuadToRenderBuffer(Quad quad) {
         quadRenderBuffer.add(quad);
-        layer.quadCount++;
     }
 
     public void releaseQuadRenderBuffer() {
+        quadRenderArray = (Quad[]) quadRenderBuffer.toArray();
 
-//        Comparator<Quad> comparator = new Comparator<Quad>() {
-//            @Override
-//            public int compare(Quad o1, Quad o2) {
-//                return 0;
-//            }
-//        };
-//
-//
-//        quadRenderArray = (Quad[]) quadRenderBuffer.toArray();
-//
-//        //Parallel sorting
-//        Arrays.parallelSort(quadRenderArray, comparator);
-//
-//        Layer currentLayer;
-//        ShaderType currentShader = null;
+        Comparator<Quad> comparator = Quad::compareTo;
 
+        //Parallel sorting
+        Arrays.parallelSort(quadRenderArray, comparator);
+
+        quadRenderBuffer.clear();
     }
 
 }

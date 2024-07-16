@@ -19,8 +19,9 @@ public class Sprite implements AbstractRectangle<Float, Vector2> {
     private final Vector2 position;
     private TextureCroppedRegion texture;
     private Shader shader;
-    private Color color;
     private Layer layer;
+    private Color color;
+
 
     public Sprite(Vector2 position, TextureCroppedRegion texture, Shader shader, Layer layer) {
         this.texture = texture;

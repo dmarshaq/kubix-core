@@ -15,10 +15,6 @@ public class TextureDto {
     private int height;
     private int[] data;
 
-    static Texture toTexture(TextureDto textureDto) {
-        return new Texture(textureDto.getData(), textureDto.getWidth(), textureDto.getHeight());
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -1,13 +1,13 @@
 package org.dmarshaq.kubix.graphic.render;
 
-import lombok.Setter;
 import lombok.ToString;
+import org.dmarshaq.kubix.core.app.Context;
+import org.dmarshaq.kubix.graphic.render.Layer;
 import org.dmarshaq.kubix.core.graphic.Shader;
+import org.dmarshaq.kubix.core.graphic.Texture;
 import org.dmarshaq.kubix.math.vector.Vector2;
 import org.dmarshaq.kubix.math.vector.Vector3;
 import org.dmarshaq.kubix.math.vector.Vector4;
-
-import java.util.List;
 
 /**
  * Quad is a wrapper class for simple vertex float array that describes quad's figure.
@@ -21,15 +21,17 @@ public class Quad implements Renderable {
     private final float[] vertices;
     private final Shader shader;
     private final Layer layer;
+    private final Texture texture;
 
     /**
      * Builds the quad with float array describing all 4 vertices each taking 10 floats in array.
      * ShaderType needs to be specified.
      * Note: each vertex properties needs to also specified.
      */
-    public Quad(Shader shader, Layer layer) {
+    public Quad(Shader shader, Layer layer, Texture texture) {
         this.shader = shader;
         this.layer = layer;
+        this.texture = texture;
         vertices = new float[4 * VERTEX_STRIDE];
     }
 
@@ -62,5 +64,25 @@ public class Quad implements Renderable {
     @Override
     public Layer getLayer() {
         return layer;
+    }
+
+    public Texture getTexture() {
+        return texture;
+    }
+
+    @Override
+    public int compareTo(Renderable o) {
+        if (o instanceof Quad) {
+            int layerCompare = layer.compareTo(o.getLayer());
+            if (layerCompare != 0) {
+                return layerCompare;
+            }
+            int shaderCompare = shader.compareTo(o.getShader());
+            if (shaderCompare != 0) {
+                return shaderCompare;
+            }
+            return texture.compareTo(((Quad) o).getTexture());
+        }
+        return 0;
     }
 }

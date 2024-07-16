@@ -1,29 +1,20 @@
 package org.dmarshaq.kubix.graphic.render;
 
-import lombok.Getter;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+import org.dmarshaq.kubix.core.util.Ordarable;
 
-import java.util.Objects;
+@ToString
+@EqualsAndHashCode
+public class Layer implements Ordarable {
+    private final int order;
 
-public class Layer {
-    @Getter
-    private final String name;
-
-    public int quadCount;
-    public int lineCount;
-
-    Layer(String name) {
-        this.name = name;
+    public Layer(int order) {
+        this.order = order;
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Layer layer)) return false;
-        return Objects.equals(name, layer.name);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(name);
+    public int ordinal() {
+        return order;
     }
 }

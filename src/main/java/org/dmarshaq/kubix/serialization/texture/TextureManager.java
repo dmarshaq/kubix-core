@@ -3,6 +3,7 @@ package org.dmarshaq.kubix.serialization.texture;
 import org.dmarshaq.kubix.core.graphic.Texture;
 import org.dmarshaq.kubix.core.serialization.Packet;
 import org.dmarshaq.kubix.core.util.FileUtils;
+import org.dmarshaq.kubix.core.util.IndexedHashMap;
 
 
 import java.io.File;
@@ -12,6 +13,7 @@ import java.util.*;
 public class TextureManager {
     public static final Map<String, Texture> TEXTURE_MAP = new HashMap<>();
     private static final List<TextureDto> TEXTURE_DTOS = new ArrayList<>();
+    static int textureCounter = 0;
 
     public static void loadPackets(Packet[] inputPackets, List<Packet> outputPackets) {
 
@@ -29,7 +31,7 @@ public class TextureManager {
 
     private static void convertTextureDtosIntoTextureMap() {
         for (TextureDto textureDto : TextureManager.TEXTURE_DTOS) {
-            TEXTURE_MAP.put(textureDto.getName(), TextureDto.toTexture(textureDto));
+            TEXTURE_MAP.put(textureDto.getName(), toTexture(textureDto));
         }
     }
 
@@ -60,6 +62,10 @@ public class TextureManager {
                 TEXTURE_DTOS.add(TextureScanner.loadTextureDtoFromImage(file));
             }
         }
+    }
+
+    static Texture toTexture(TextureDto textureDto) {
+        return new Texture(textureDto.getData(), textureDto.getWidth(), textureDto.getHeight(), textureCounter++);
     }
 
 

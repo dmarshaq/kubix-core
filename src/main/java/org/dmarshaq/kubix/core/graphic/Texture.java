@@ -5,20 +5,23 @@ import lombok.Setter;
 import lombok.ToString;
 import org.dmarshaq.kubix.core.app.Context;
 import org.dmarshaq.kubix.core.util.BufferUtils;
+import org.dmarshaq.kubix.core.util.Ordarable;
 import org.dmarshaq.kubix.math.vector.Vector2;
 
 import static org.lwjgl.opengl.GL11.*;
 
 @Getter
 @ToString
-public class Texture {
+public class Texture implements Ordarable {
+    private final int order;
     private final int width;
     private final int height;
     private final int textureID;
     @Setter
     private TextureCroppedRegion[] tileSet;
 
-    public Texture(int[] pixels, int width, int height) {
+    public Texture(int[] pixels, int width, int height, int order) {
+        this.order = order;
         textureID = generateID(pixels);
         this.width = width;
         this.height = height;
@@ -45,4 +48,8 @@ public class Texture {
         return (float) height / Context.getUnitSize();
     }
 
+    @Override
+    public int ordinal() {
+        return order;
+    }
 }

@@ -2,13 +2,14 @@ package org.dmarshaq.kubix.core.graphic;
 
 import org.dmarshaq.kubix.core.mathj.Matrix4f;
 import org.dmarshaq.kubix.core.mathj.Vector3f;
+import org.dmarshaq.kubix.core.util.Ordarable;
 import org.dmarshaq.kubix.core.util.ShaderUtils;
 
 import java.util.HashMap;
 
 import static org.lwjgl.opengl.GL20.*;
 
-public class Shader {
+public class Shader implements Ordarable {
 
     public static final int VERTEX_ATTRIBUTE = 0;
     public static final int COLOR_ATTRIBUTE = 1;
@@ -20,18 +21,21 @@ public class Shader {
     private boolean enabled = false;
 
     private final int ID;
+    private final int order;
     private final HashMap<String, Integer> locationCache = new HashMap<>();
 
-    public Shader(String vertex, String fragment) {
+    public Shader(String vertex, String fragment, int order) {
+        this.order = order;
         ID = ShaderUtils.load(vertex, fragment);
     }
 
-    public Shader(int id) {
+    public Shader(int id, int order) {
+        this.order = order;
         ID = id;
     }
 
     public static void loadEngineShaders() {
-        BASIC = new Shader("shader/basic.vert", "shader/basic.frag");
+        BASIC = new Shader("shader/basic.vert", "shader/basic.frag", 1);
     }
 
     public int getUniform(String name) {
@@ -88,5 +92,10 @@ public class Shader {
 
     public int getID() {
         return ID;
+    }
+
+    @Override
+    public int ordinal() {
+        return order;
     }
 }

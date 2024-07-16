@@ -14,8 +14,8 @@ public class ShaderScanner extends SerializationScanner {
 
     static final String HEADER = "SHAD";
 
-    public static Shader loadShaderFromFile(Path path) {
-        String shader = loadAsString(path.toString());
+    public static Shader loadShaderFromFile(String path) {
+        String shader = loadAsString(path);
         StringBuilder vertex = new StringBuilder();
         StringBuilder fragment = new StringBuilder();
 
@@ -35,7 +35,7 @@ public class ShaderScanner extends SerializationScanner {
         vertex.append(shader, shader.indexOf("#vert") + 5, shader.indexOf("#frag"));
         fragment.append(shader, shader.indexOf("#frag") + 5, shader.length());
 
-        return new Shader(ShaderUtils.create(vertex.toString(), fragment.toString()));
+        return new Shader(ShaderUtils.create(vertex.toString(), fragment.toString()), ShaderManager.shaderCounter++);
     }
 
     public static Shader loadShaderFromFile(File file) {
@@ -59,6 +59,6 @@ public class ShaderScanner extends SerializationScanner {
         vertex.append(shader, shader.indexOf("#vert") + 5, shader.indexOf("#frag"));
         fragment.append(shader, shader.indexOf("#frag") + 5, shader.length());
 
-        return new Shader(ShaderUtils.create(vertex.toString(), fragment.toString()));
+        return new Shader(ShaderUtils.create(vertex.toString(), fragment.toString()), ShaderManager.shaderCounter++);
     }
 }
