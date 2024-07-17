@@ -4,8 +4,12 @@ import org.dmarshaq.kubix.core.graphic.*;
 import org.dmarshaq.kubix.core.input.Input;
 import org.dmarshaq.kubix.core.input.KeyCode;
 import org.dmarshaq.kubix.core.input.MouseInput;
-import org.dmarshaq.kubix.core.mathj.*;
 import org.dmarshaq.kubix.core.util.BufferUtils;
+import org.dmarshaq.kubix.graphic.render.QuadRender;
+import org.dmarshaq.kubix.graphic.render.Snapshot;
+import org.dmarshaq.kubix.math.MathCore;
+import org.dmarshaq.kubix.math.matrix.Matrix4x4;
+import org.dmarshaq.kubix.math.vector.Vector4;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.glfw.GLFWWindowSizeCallback;
 import org.lwjgl.openal.AL;
@@ -39,7 +43,7 @@ public abstract class Render implements Runnable {
 
     private Snapshot data;
     private long window, audioContext, audioDevice;
-    private Matrix4f pr_matrix;
+    private Matrix4x4 pr_matrix;
     private Update updateTask;
     private Context context;
     private static MouseInput mouseInput;
@@ -67,7 +71,6 @@ public abstract class Render implements Runnable {
         public static final int[] INDICES = new int[getMaxQuadsPerBatch() * 6];
         public static final int[] TEXTURES_USED = new int[32]; // 32 textures where texture at index 0 is a reserved space for color only
         public static int vao, vbo, ibo;
-        public static Shader currentShader;
     }
 
     @Override
@@ -235,31 +238,40 @@ public abstract class Render implements Runnable {
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         // Background
-        Vector4f color4f = MathJ.Math2D.toVector4f(color);
-        glClearColor(color4f.x, color4f.y, color4f.z, color4f.w);
-
-        // Load all resources
-        context.loadResources();
+        Vector4 vector4 = MathCore.vector4(color);
+        glClearColor(vector4.x(), vector4.y(), vector4.z(), vector4.w());
 
         // Setup audio
         alListener3f(AL_POSITION, 0.0f, 0.0f, 0.0f);
         alListener3f(AL_VELOCITY, 0.0f, 0.0f, 0.0f);
+
+        // Load all resources
+        context.loadResources();
 
         //  Texture Samplers
         int[] samplers = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
                 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
                 22, 23, 24, 25, 26, 27, 28, 29, 30, 31 };
 
+        context.loadTextures();
+
         // Setup shader
-//        context.loadShaders(); TODO: ShaderType loading / serialization
 
-        Shader.loadEngineShaders();
-        pr_matrix = Matrix4f.orthographic(-2f, 2f, -1.5f, 1.5f, -1f, 1f); // basically camera matrix
+        pr_matrix = MathCore.orthographic(-2f, 2f, -1.5f, 1.5f, -1f, 1f); // basically camera matrix
 
-        Shader.BASIC.setUniformMatrix4f("pr_matrix", pr_matrix);
-        Shader.BASIC.setUniform1iv("u_Textures", samplers);
-        Shader.BASIC.setUniformMatrix4f("ml_matrix", Matrix4f.identity());
-        Shader.BASIC.disable();
+//        Context.shaders().get("basic").setUniformMatrix4x4("pr_matrix", pr_matrix);
+//        Context.shaders().get("basic").setUniform1iv("u_Textures", samplers);
+//        Context.shaders().get("basic").setUniformMatrix4x4("ml_matrix", new Matrix4x4());
+//        Context.shaders().get("basic").disable();
+
+        Context.shaders().get("basic").setUniformMatrix4x4("pr_matrix", pr_matrix);
+        Context.shaders().get("basic").setUniform1iv("u_Textures", samplers);
+        int err = glGetError();
+        if (err != 0) {
+            System.out.println(err);
+        }
+        Context.shaders().get("basic").setUniformMatrix4x4("ml_matrix", new Matrix4x4());
+        Context.shaders().get("basic").disable();
 
         // Setup fonts
 //        context.loadFonts(); TODO: Fonts?
@@ -311,43 +323,13 @@ public abstract class Render implements Runnable {
 
     }
 
-    protected abstract void renderAccess();
-
     private void renderSnapshot() {
         modifyShaders();
         loadCameraMatrix();
 
-        renderAccess();
-
-        SpriteDto[] spriteDtoArray = data.getSpriteDataArray();
-
-        // BATCHES LOOP
-        int lastBatchIndexStopped = 0;
-        while (lastBatchIndexStopped < spriteDtoArray.length) {
-            // Vertices loading
-            lastBatchIndexStopped = nextBatch(lastBatchIndexStopped, spriteDtoArray);
-            // Enabling shader
-            currentShader.enable();
-            // Textures loading
-            loadTexturesUsedIntoSlots();
-            // Binding dynamic draw vertex buffer
-            glBindBuffer(GL_ARRAY_BUFFER, vbo);
-            // Actually loading vertices into graphics memory
-            glBufferSubData(GL_ARRAY_BUFFER, 0, VERTICES);
-            // Drawing mode
-            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-            // Drawing
-//            System.out.println("Quads rendered in Batch: " + quadsRenderedInBatch);
-            glDrawElements(GL_TRIANGLES, quadsRenderedInBatch * 6, GL_UNSIGNED_INT, 0);
-            drawcalls++;
-            // Cleaning up
-            flush();
-        }
-
-//        System.out.println("Draw calls per render: "  + drawcalls);
-        drawcalls = 0;
+        QuadRender.renderQuadsInBatch(data.getQuadRenderArray(), getMaxQuadsPerBatch());
     }
-
+    /*
     private int nextBatch(int startIndex, SpriteDto[] spriteDtoArray) {
         int spriteGlobalIndex = 0;
         int nextBatchStartIndex = 0;
@@ -408,7 +390,7 @@ public abstract class Render implements Runnable {
 
         return nextBatchStartIndex;
     }
-
+    /*
     private void loadSpriteVertices(int spriteIndex, SpriteDto spriteDTO, int textureSlot) {
         int vertexArraySpriteStart = spriteIndex * SPRITE_STRIDE_IN_ARRAY;
         int offset;
@@ -545,6 +527,8 @@ public abstract class Render implements Runnable {
             TEXTURES_USED[i] = 0;
         }
     }
+    */
+
 
     private void loadCameraMatrix() {
         /*
@@ -554,8 +538,8 @@ public abstract class Render implements Runnable {
          *   ------------------------------------------------------------------------------
          * */
         pr_matrix = data.getCamera().projectionMatrix();
-        Shader.BASIC.setUniformMatrix4f("pr_matrix", pr_matrix);
-        Shader.BASIC.disable();
+        Context.shaders().get("basic").setUniformMatrix4x4("pr_matrix", pr_matrix);
+        Context.shaders().get("basic").disable();
     }
 
     protected abstract void modifyShaders();

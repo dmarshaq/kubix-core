@@ -2,10 +2,7 @@ package org.dmarshaq.kubix.graphic.render;
 
 import org.dmarshaq.kubix.core.util.IndexedHashMap;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 
 public class LayerManager {
     public static final HashMap<String, Layer> LAYER_MAP = new HashMap<>();

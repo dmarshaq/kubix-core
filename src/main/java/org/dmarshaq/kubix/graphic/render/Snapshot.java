@@ -1,16 +1,18 @@
 package org.dmarshaq.kubix.graphic.render;
 
 import lombok.Getter;
-import org.dmarshaq.kubix.core.app.Context;
-import org.dmarshaq.kubix.core.graphic.Shader;
+import lombok.Setter;
+import org.dmarshaq.kubix.core.graphic.Camera;
 
 import java.util.*;
-
 
 public class Snapshot {
     private final List<Quad> quadRenderBuffer;
     @Getter
     private Quad[] quadRenderArray;
+    @Getter
+    @Setter
+    private Camera camera;
 
     public Snapshot() {
         quadRenderBuffer = new ArrayList<>();
@@ -21,11 +23,10 @@ public class Snapshot {
     }
 
     public void releaseQuadRenderBuffer() {
-        quadRenderArray = (Quad[]) quadRenderBuffer.toArray();
+        quadRenderArray = quadRenderBuffer.toArray(new Quad[0]);
 
         Comparator<Quad> comparator = Quad::compareTo;
 
-        //Parallel sorting
         Arrays.parallelSort(quadRenderArray, comparator);
 
         quadRenderBuffer.clear();

@@ -21,11 +21,13 @@ public class IndexedHashMap<K, V> {
     }
 
     public V get(int index) {
+        if (index >= list.size()) {
+            return null;
+        }
         return list.get(index);
     }
     public int getIndex(K key) {
         return map.get(key);
     }
-
 
 }

@@ -115,11 +115,11 @@ public abstract class Context {
     }
 
     // Resources
-    private static Map<String, Texture> TEXTURES;
+    private static IndexedHashMap<String, Texture> TEXTURES;
     private static Map<String, Shader> SHADERS;
     private static Map<String, Layer> LAYERS;
 
-    public static Map<String, Texture> textures() {
+    public static IndexedHashMap<String, Texture> textures() {
         return TEXTURES;
     }
     public static Map<String, Shader> shaders() {
@@ -150,5 +150,5 @@ public abstract class Context {
         return newPackets;
     }
 
-
+    public abstract void loadTextures();
 }

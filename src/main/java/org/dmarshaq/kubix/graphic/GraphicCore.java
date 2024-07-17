@@ -16,9 +16,6 @@ public class GraphicCore {
      * Returns new quad from sprite without additional matrix transformations.
      */
     public static Quad quad(Sprite sprite) {
-        // Creating quad with shader defined in sprite.
-        Quad quad = new Quad(sprite.getShader(), sprite.getLayer(), sprite.getTexture().getHost());
-
         // Getting origin position of the sprite.
         Vector3 position = new Vector3(MathCore.componentVector(sprite.getPosition(), "xyz"));
 
@@ -34,27 +31,24 @@ public class GraphicCore {
         float height;
 
         // Getting texture percent position, width and height to find texture coordinates.
+        Texture texture = null;
+        int texIndex = 0;
         Vector2 percentPosition;
         float percentWidth;
         float percentHeight;
 
-        if (sprite.getTexture() != null) {
-            width = sprite.getWidth();
-            height = sprite.getHeight();
-            percentPosition = sprite.getTexture().getPercentPosition();
-            percentWidth = sprite.getTexture().getPercentWidth();
-            percentHeight = sprite.getTexture().getPercentHeight();
-        }
-        else {
-            width = 1.0f;
-            height = 1.0f;
-            percentPosition = new Vector2(0, 0);
-            percentWidth = 1.0f;
-            percentHeight = 1.0f;
-        }
-
         // Calculating texture index.
-        int texIndex = sprite.getTexture().getHost().ordinal() % 31 + 1;
+        texture = sprite.getTexture().getHost();
+        texIndex = texture.ordinal() % 32;
+
+        width = sprite.getWidth();
+        height = sprite.getHeight();
+        percentPosition = sprite.getTexture().getPercentPosition();
+        percentWidth = sprite.getTexture().getPercentWidth();
+        percentHeight = sprite.getTexture().getPercentHeight();
+
+        // Creating quad with shader defined in sprite.
+        Quad quad = new Quad(sprite.getShader(), sprite.getLayer(), texture);
 
         // Setting vertices through 0 to 3.
         quad.setVertex(0, position,                                    color, percentPosition,                                               texIndex);
@@ -69,9 +63,6 @@ public class GraphicCore {
      * Returns new quad from sprite, with additional Matrix3x4 transformation.
      */
     public static Quad quad(Sprite sprite, Matrix3x4 transformation) {
-        // Creating quad with shader defined in sprite.
-        Quad quad = new Quad(sprite.getShader(), sprite.getLayer(), sprite.getTexture().getHost());
-
         // Getting color if it is not null, otherwise setting to pure white.
         Vector4 color;
         if (sprite.getColor() != null)
@@ -84,24 +75,21 @@ public class GraphicCore {
         float height;
 
         // Getting texture percent position, width and height to find texture coordinates.
+        Texture texture = null;
         Vector2 percentPosition;
         float percentWidth;
         float percentHeight;
+        int texIndex = 0;
 
-        if (sprite.getTexture() != null) {
-            width = sprite.getWidth();
-            height = sprite.getHeight();
-            percentPosition = sprite.getTexture().getPercentPosition();
-            percentWidth = sprite.getTexture().getPercentWidth();
-            percentHeight = sprite.getTexture().getPercentHeight();
-        }
-        else {
-            width = 1.0f;
-            height = 1.0f;
-            percentPosition = new Vector2(0, 0);
-            percentWidth = 1.0f;
-            percentHeight = 1.0f;
-        }
+        // Calculating texture index.
+        texture = sprite.getTexture().getHost();
+        texIndex = texture.ordinal() % 32;
+
+        width = sprite.getWidth();
+        height = sprite.getHeight();
+        percentPosition = sprite.getTexture().getPercentPosition();
+        percentWidth = sprite.getTexture().getPercentWidth();
+        percentHeight = sprite.getTexture().getPercentHeight();
 
         // Getting vertices positions by matrix vector multiplication.
         Vector4 position = new Vector4(sprite.getPosition().x(), sprite.getPosition().y(), 0.0f, 1.0f);
@@ -111,8 +99,8 @@ public class GraphicCore {
         Vector3 vertex2 = new Vector3(MathCore.multiplication(transformation, new Vector4(0, height, 0, 0).add(position)));
         Vector3 vertex3 = new Vector3(MathCore.multiplication(transformation, new Vector4(width, height, 0, 0).add(position)));
 
-        // Calculating texture index.
-        int texIndex = sprite.getTexture().getHost().ordinal() % 31 + 1;
+        // Creating quad with shader defined in sprite.
+        Quad quad = new Quad(sprite.getShader(), sprite.getLayer(), texture);
 
         // Setting vertices through 0 to 3.
         quad.setVertex(0, vertex0, color, percentPosition,                                               texIndex);
@@ -127,9 +115,6 @@ public class GraphicCore {
      * Returns new quad from sprite, with additional Matrix2x3 transformation.
      */
     public static Quad quad(Sprite sprite, Matrix2x3 transformation) {
-        // Creating quad with shader defined in sprite.
-        Quad quad = new Quad(sprite.getShader(), sprite.getLayer(), sprite.getTexture().getHost());
-
         // Getting color if it is not null, otherwise setting to pure white.
         Vector4 color;
         if (sprite.getColor() != null)
@@ -142,24 +127,40 @@ public class GraphicCore {
         float height;
 
         // Getting texture percent position, width and height to find texture coordinates.
+        Texture texture = null;
+        int texIndex = 0;
         Vector2 percentPosition;
         float percentWidth;
         float percentHeight;
 
-        if (sprite.getTexture() != null) {
-            width = sprite.getWidth();
-            height = sprite.getHeight();
-            percentPosition = sprite.getTexture().getPercentPosition();
-            percentWidth = sprite.getTexture().getPercentWidth();
-            percentHeight = sprite.getTexture().getPercentHeight();
-        }
-        else {
-            width = 1.0f;
-            height = 1.0f;
-            percentPosition = new Vector2(0, 0);
-            percentWidth = 1.0f;
-            percentHeight = 1.0f;
-        }
+        // Calculating texture index.
+        texture = sprite.getTexture().getHost();
+        texIndex = texture.ordinal() % 32;
+
+        width = sprite.getWidth();
+        height = sprite.getHeight();
+        percentPosition = sprite.getTexture().getPercentPosition();
+        percentWidth = sprite.getTexture().getPercentWidth();
+        percentHeight = sprite.getTexture().getPercentHeight();
+
+//        if (sprite.getTexture() != null) {
+//            // Calculating texture index.
+//            texture = sprite.getTexture().getHost();
+//            texIndex = texture.ordinal() % 32;
+//
+//            width = sprite.getWidth();
+//            height = sprite.getHeight();
+//            percentPosition = sprite.getTexture().getPercentPosition();
+//            percentWidth = sprite.getTexture().getPercentWidth();
+//            percentHeight = sprite.getTexture().getPercentHeight();
+//        }
+//        else {
+//            width = 1.0f;
+//            height = 1.0f;
+//            percentPosition = new Vector2(0, 0);
+//            percentWidth = 1.0f;
+//            percentHeight = 1.0f;
+//        }
 
         // Getting vertices positions by matrix vector multiplication.
         Vector3 position = new Vector3(sprite.getPosition().x(), sprite.getPosition().y(), 1.0f);
@@ -169,8 +170,10 @@ public class GraphicCore {
         Vector3 vertex2 = new Vector3(MathCore.componentVector(MathCore.multiplication(transformation, new Vector3(0, height, 0).add(position)), "xyz"));
         Vector3 vertex3 = new Vector3(MathCore.componentVector(MathCore.multiplication(transformation, new Vector3(width, height, 0).add(position)), "xyz"));
 
-        // Calculating texture index.
-        int texIndex = sprite.getTexture().getHost().ordinal() % 31 + 1;
+
+
+        // Creating quad with shader defined in sprite.
+        Quad quad = new Quad(sprite.getShader(), sprite.getLayer(), texture);
 
         // Setting vertices through 0 to 3.
         quad.setVertex(0, vertex0, color, percentPosition,                                               texIndex);

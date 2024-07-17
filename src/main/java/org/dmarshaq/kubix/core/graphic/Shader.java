@@ -1,9 +1,9 @@
 package org.dmarshaq.kubix.core.graphic;
 
-import org.dmarshaq.kubix.core.mathj.Matrix4f;
-import org.dmarshaq.kubix.core.mathj.Vector3f;
 import org.dmarshaq.kubix.core.util.Ordarable;
 import org.dmarshaq.kubix.core.util.ShaderUtils;
+import org.dmarshaq.kubix.math.matrix.Matrix4x4;
+import org.dmarshaq.kubix.math.vector.Vector3;
 
 import java.util.HashMap;
 
@@ -15,8 +15,6 @@ public class Shader implements Ordarable {
     public static final int COLOR_ATTRIBUTE = 1;
     public static final int TCOORDS_ATTRIBUTE = 2;
     public static final int TINDEX_ATTRIBUTE = 3;
-
-    public static Shader BASIC;
 
     private boolean enabled = false;
 
@@ -32,10 +30,6 @@ public class Shader implements Ordarable {
     public Shader(int id, int order) {
         this.order = order;
         ID = id;
-    }
-
-    public static void loadEngineShaders() {
-        BASIC = new Shader("shader/basic.vert", "shader/basic.frag", 1);
     }
 
     public int getUniform(String name) {
@@ -65,11 +59,11 @@ public class Shader implements Ordarable {
         if (!enabled) enable();
         glUniform2f(getUniform(name), x, y);
     }
-    public void setUniform3f(String name, Vector3f vector) {
+    public void setUniform3f(String name, Vector3 vector) {
         if (!enabled) enable();
-        glUniform3f(getUniform(name), vector.x, vector.y, vector.z);
+        glUniform3f(getUniform(name), vector.x(), vector.y(), vector.z());
     }
-    public void setUniformMatrix4f(String name, Matrix4f matrix) {
+    public void setUniformMatrix4x4(String name, Matrix4x4 matrix) {
         if (!enabled) enable();
         glUniformMatrix4fv(getUniform(name), false, matrix.toFloatBuffer());
     }

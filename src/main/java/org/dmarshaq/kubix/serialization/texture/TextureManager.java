@@ -1,5 +1,6 @@
 package org.dmarshaq.kubix.serialization.texture;
 
+import org.dmarshaq.kubix.core.app.Context;
 import org.dmarshaq.kubix.core.graphic.Texture;
 import org.dmarshaq.kubix.core.serialization.Packet;
 import org.dmarshaq.kubix.core.util.FileUtils;
@@ -11,12 +12,14 @@ import java.util.*;
 
 
 public class TextureManager {
-    public static final Map<String, Texture> TEXTURE_MAP = new HashMap<>();
+    public static final IndexedHashMap<String, Texture> TEXTURE_MAP = new IndexedHashMap<>();
     private static final List<TextureDto> TEXTURE_DTOS = new ArrayList<>();
+    // Ordinal 0 is for NO_TEXTURE.
     static int textureCounter = 0;
 
     public static void loadPackets(Packet[] inputPackets, List<Packet> outputPackets) {
-
+        TEXTURE_MAP.put("notexture", Texture.NO_TEXTURE);
+        textureCounter++;
 
         loadTextureDtosFromPackets(inputPackets);
 
@@ -46,15 +49,18 @@ public class TextureManager {
 
     // TODO: JAR texture loading.
     private static void loadAndCompareTextureDtosFromImages()  {
+
         List<File> files = FileUtils.findAllFilesInResources("texture", ".png");
         TextureDto empty = new TextureDto();
         for (File file : files) {
             empty.setName(file.getName().substring(0, file.getName().length() - 4));
             empty.setLastModified(file.lastModified());
             if (TEXTURE_DTOS.contains(empty)) {
+
+
                 int index = TEXTURE_DTOS.indexOf(empty);
                 if (TEXTURE_DTOS.get(index).getLastModified() != empty.getLastModified()) {
-                    System.out.println("Out of data");
+                    System.out.println("Resource: " + TEXTURE_DTOS.get(index).getName() + ", out of date");
                     TEXTURE_DTOS.set(index, TextureScanner.loadTextureDtoFromImage(file));
                 }
             }

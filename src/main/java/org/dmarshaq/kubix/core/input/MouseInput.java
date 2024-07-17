@@ -1,11 +1,12 @@
 package org.dmarshaq.kubix.core.input;
 
 import org.dmarshaq.kubix.core.app.Render;
-import org.dmarshaq.kubix.core.mathj.Vector2i;
+import org.dmarshaq.kubix.math.MathCore;
+import org.dmarshaq.kubix.math.vector.Vector;
 import org.lwjgl.glfw.GLFW;
 
 public class MouseInput  {
-    private final Vector2i currentPos = new Vector2i();
+    private final Vector<Integer> currentPos = MathCore.vector2(0, 0);
     private boolean inWindow, leftButtonPressed, rightButtonPressed, leftToggle, leftPress, leftUnpress, rightToggle, rightPress, rightUnpress;
 
 
@@ -16,8 +17,8 @@ public class MouseInput  {
 
     public void init(long windowHandle) {
         GLFW.glfwSetCursorPosCallback(windowHandle, (window, xpos, ypos) -> {
-            currentPos.x = (int) xpos;
-            currentPos.y = (int) (Render.getScreenHeight() - ypos);
+            currentPos.getValues().intArray()[0] = (int) xpos;
+            currentPos.getValues().intArray()[1] = (int) (Render.getScreenHeight() - ypos);
         });
 
         GLFW.glfwSetCursorEnterCallback(windowHandle, (window, entered) -> {
@@ -31,7 +32,7 @@ public class MouseInput  {
     }
 
 
-    public Vector2i mousePos() {
+    public Vector<Integer> mousePos() {
         return currentPos;
     }
 

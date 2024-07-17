@@ -12,6 +12,8 @@ import org.dmarshaq.kubix.math.vector.Vector2;
 
 import java.awt.*;
 
+import static org.dmarshaq.kubix.core.graphic.Texture.NO_TEXTURE;
+
 @Getter
 @Setter
 @ToString
@@ -25,6 +27,14 @@ public class Sprite implements AbstractRectangle<Float, Vector2> {
 
     public Sprite(Vector2 position, TextureCroppedRegion texture, Shader shader, Layer layer) {
         this.texture = texture;
+        this.position = position;
+        this.shader = shader;
+        this.layer = layer;
+    }
+
+    public Sprite(Vector2 position, Color color, Shader shader, Layer layer) {
+        this.color = color;
+        this.texture = NO_TEXTURE.getTileSet()[0];
         this.position = position;
         this.shader = shader;
         this.layer = layer;

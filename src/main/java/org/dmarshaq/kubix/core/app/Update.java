@@ -1,8 +1,8 @@
 package org.dmarshaq.kubix.core.app;
 
-import org.dmarshaq.kubix.core.graphic.Layer;
 import org.dmarshaq.kubix.core.time.Time;
 import org.dmarshaq.kubix.graphic.render.LayerManager;
+import org.dmarshaq.kubix.graphic.render.Snapshot;
 
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -39,11 +39,9 @@ public abstract class Update implements Runnable {
             // new snapshot
             snapshot = new Snapshot();
             // layers Clean Up
-            Layer.clearRenderSpritesCount();
             // only in before first update (start method is called)
             if (start) {
                 LayerManager.buildLayers();
-                Layer.loadIndexes();
                 start();
                 start = false;
             }
@@ -52,7 +50,7 @@ public abstract class Update implements Runnable {
             Time.updateTimers();
             update();
             // snapshot packing up
-            snapshot.closeSpriteInputStream();
+            snapshot.releaseQuadRenderBuffer();
             // loading snapshot into render
             render.loadData(snapshot);
 

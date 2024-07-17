@@ -5,17 +5,14 @@ import org.dmarshaq.kubix.core.util.IndexedHashMap;
 
 import java.io.File;
 
-import java.nio.file.Path;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.dmarshaq.kubix.core.util.FileUtils.*;
 
 public class ShaderManager {
 
-    public static final Map<String, Shader> SHADER_MAP = new HashMap<>();
+    public static final HashMap<String, Shader> SHADER_MAP = new HashMap<>();
     static int shaderCounter = 0;
 
     public static void loadShadersFromFiles()  {

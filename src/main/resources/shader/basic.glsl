@@ -34,6 +34,7 @@ uniform sampler2D u_Textures[32];
 void main() {
 
     int index = int(v_TexIndex);
+
     if (index == 0) {
         color = v_Color;
     }
