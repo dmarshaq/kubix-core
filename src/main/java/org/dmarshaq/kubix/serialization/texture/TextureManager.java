@@ -34,7 +34,7 @@ public class TextureManager {
 
     private static void convertTextureDtosIntoTextureMap() {
         for (TextureDto textureDto : TextureManager.TEXTURE_DTOS) {
-            TEXTURE_MAP.put(textureDto.getName(), toTexture(textureDto));
+            TEXTURE_MAP.put(textureDto.getName(), TextureScanner.toTexture(textureDto));
         }
     }
 
@@ -70,9 +70,7 @@ public class TextureManager {
         }
     }
 
-    static Texture toTexture(TextureDto textureDto) {
-        return new Texture(textureDto.getData(), textureDto.getWidth(), textureDto.getHeight(), textureCounter++);
-    }
+
 
 
 }

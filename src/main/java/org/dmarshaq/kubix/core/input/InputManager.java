@@ -6,7 +6,7 @@ import static org.lwjgl.glfw.GLFW.*;
 
 
 public class InputManager {
-    public static final HashMap<Integer, KeyCode> KEY_CODE_MAP = new HashMap<>();
+    static final HashMap<Integer, KeyCode> KEY_CODE_MAP = new HashMap<>();
 
     public static void loadGLFWKeyCodes()  {
         KEY_CODE_MAP.put(GLFW_KEY_A, KeyCode.A);

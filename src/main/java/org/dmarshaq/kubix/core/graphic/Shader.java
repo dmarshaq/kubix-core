@@ -1,7 +1,6 @@
 package org.dmarshaq.kubix.core.graphic;
 
 import org.dmarshaq.kubix.core.util.Ordarable;
-import org.dmarshaq.kubix.core.util.ShaderUtils;
 import org.dmarshaq.kubix.math.matrix.Matrix4x4;
 import org.dmarshaq.kubix.math.vector.Vector3;
 
@@ -18,25 +17,20 @@ public class Shader implements Ordarable {
 
     private boolean enabled = false;
 
-    private final int ID;
+    private final int id;
     private final int order;
     private final HashMap<String, Integer> locationCache = new HashMap<>();
 
-    public Shader(String vertex, String fragment, int order) {
-        this.order = order;
-        ID = ShaderUtils.load(vertex, fragment);
-    }
-
     public Shader(int id, int order) {
         this.order = order;
-        ID = id;
+        this.id = id;
     }
 
-    public int getUniform(String name) {
+    private int getUniform(String name) {
         if (locationCache.containsKey(name)) {
             return locationCache.get(name);
         }
-        int result =  glGetUniformLocation(ID, name);
+        int result =  glGetUniformLocation(id, name);
         if (result == -1) {
             System.err.println("Could not find uniform variable '" + name + "'!");
         }
@@ -75,7 +69,7 @@ public class Shader implements Ordarable {
     }
 
     public void enable() {
-        glUseProgram(ID);
+        glUseProgram(id);
         enabled = true;
     }
 
@@ -84,8 +78,8 @@ public class Shader implements Ordarable {
         enabled = false;
     }
 
-    public int getID() {
-        return ID;
+    public int getId() {
+        return id;
     }
 
     @Override

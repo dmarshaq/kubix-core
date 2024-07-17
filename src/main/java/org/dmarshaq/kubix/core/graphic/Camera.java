@@ -1,6 +1,8 @@
 package org.dmarshaq.kubix.core.graphic;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.ToString;
 import org.dmarshaq.kubix.core.app.Context;
 import org.dmarshaq.kubix.math.MathCore;
 import org.dmarshaq.kubix.math.Rectangle;
@@ -8,12 +10,14 @@ import org.dmarshaq.kubix.math.matrix.Matrix4x4;
 import org.dmarshaq.kubix.math.vector.Vector2;
 
 @Getter
+@EqualsAndHashCode
+@ToString
 public class Camera {
 
     private final Rectangle fov;
 
     public Camera(float x, float y, float width, float height) {
-        this.fov = new Rectangle(0, 0, width, height);
+        this.fov = new Rectangle(new Vector2(x, y), width, height);
         fov.setCenter(new Vector2(x, y));
 
         if (Context.getMainCamera() == null) {

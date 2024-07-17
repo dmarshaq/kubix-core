@@ -562,4 +562,5 @@ public abstract class Render implements Runnable {
     public static void setClearScreenColor(Color c) {
         color = c;
     }
+
 }

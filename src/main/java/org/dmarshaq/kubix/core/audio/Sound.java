@@ -11,7 +11,7 @@ import static org.lwjgl.system.libc.LibCStdlib.free;
 
 public class Sound {
     private int bufferID;
-    private int sourceID;
+    private int sourceId;
 
     private boolean isPlaying = false;
 
@@ -55,13 +55,13 @@ public class Sound {
         alBufferData(bufferID, format, rawAudioBuffer, sampleRate);
 
         // Generate the source
-        sourceID = alGenSources();
+        sourceId = alGenSources();
 
-        alSourcei(sourceID, AL_BUFFER, bufferID);
-        alSourcei(sourceID, AL_LOOPING, loops ? 1 : 0);
-        alSource3f(sourceID, AL_POSITION, 0.0f, 0.0f, 0.0f);
-        alSourcef(sourceID, AL_GAIN, volume);
-        alSourcef(sourceID, AL_PITCH, pitch);
+        alSourcei(sourceId, AL_BUFFER, bufferID);
+        alSourcei(sourceId, AL_LOOPING, loops ? 1 : 0);
+        alSource3f(sourceId, AL_POSITION, 0.0f, 0.0f, 0.0f);
+        alSourcef(sourceId, AL_GAIN, volume);
+        alSourcef(sourceId, AL_PITCH, pitch);
 
 
         // Free stb raw audio buffer
@@ -69,46 +69,46 @@ public class Sound {
     }
 
     public void delete() {
-        alDeleteSources(sourceID);
+        alDeleteSources(sourceId);
         alDeleteBuffers(bufferID);
     }
 
     public void play() {
-        int state = alGetSourcei(sourceID, AL_SOURCE_STATE);
+        int state = alGetSourcei(sourceId, AL_SOURCE_STATE);
         if (state == AL_STOPPED) {
             isPlaying = false;
-            alSource3f(sourceID, AL_POSITION, 0.0f, 0.0f, 0.0f);
+            alSource3f(sourceId, AL_POSITION, 0.0f, 0.0f, 0.0f);
         }
 
         if (!isPlaying) {
-            alSourcePlay(sourceID);
+            alSourcePlay(sourceId);
             isPlaying = true;
         }
     }
 
     public void stop() {
         if (isPlaying) {
-            alSourceStop(sourceID);
+            alSourceStop(sourceId);
             isPlaying = false;
         }
     }
 
     public void setPosition(float x, float y, float z) {
-        alSource3f(sourceID, AL_POSITION, x, y, z);
+        alSource3f(sourceId, AL_POSITION, x, y, z);
     }
 
     public void setVolume(float volume) {
-        alSourcef(sourceID, AL_GAIN, volume);
+        alSourcef(sourceId, AL_GAIN, volume);
     }
 
     public void setPitch(float pitch) {
-        alSourcef(sourceID, AL_PITCH, pitch);
+        alSourcef(sourceId, AL_PITCH, pitch);
     }
 
 
 
     public boolean isPlaying() {
-        int state = alGetSourcei(sourceID, AL_SOURCE_STATE);
+        int state = alGetSourcei(sourceId, AL_SOURCE_STATE);
         if (state == AL_STOPPED) {
             isPlaying = false;
         }

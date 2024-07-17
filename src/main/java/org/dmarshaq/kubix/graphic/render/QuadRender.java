@@ -5,13 +5,10 @@ import org.dmarshaq.kubix.core.graphic.Shader;
 import org.dmarshaq.kubix.core.graphic.Texture;
 import org.lwjgl.opengl.GL20;
 
-import java.util.Arrays;
-
 import static org.dmarshaq.kubix.core.app.Render.BatchRenderer.TEXTURES_USED;
 import static org.dmarshaq.kubix.core.app.Render.BatchRenderer.VERTICES;
 import static org.dmarshaq.kubix.core.app.Render.BatchRenderer.vbo;
 import static org.lwjgl.opengl.GL11.GL_FRONT_AND_BACK;
-import static org.lwjgl.opengl.GL11.GL_LINE;
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
 import static org.lwjgl.opengl.GL11.glDrawElements;
@@ -88,7 +85,7 @@ public class QuadRender {
                 break;
             }
             else {
-                TEXTURES_USED[i] = texture.getTextureID();
+                TEXTURES_USED[i] = texture.getTextureId();
             }
         }
     }

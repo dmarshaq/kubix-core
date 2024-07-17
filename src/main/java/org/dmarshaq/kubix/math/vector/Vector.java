@@ -26,8 +26,4 @@ public class Vector<T extends Number> {
         return "Vector(" + "values=" + values.arrayToString() + ')';
     }
 
-
-// TODO: make methods below work through processor solution.
-
-
 }
