@@ -1,5 +1,6 @@
 package org.dmarshaq.kubix.core.app;
 
+import org.dmarshaq.kubix.core.input.InputManager;
 import org.dmarshaq.kubix.core.time.Time;
 import org.dmarshaq.kubix.graphic.render.LayerManager;
 import org.dmarshaq.kubix.graphic.render.Snapshot;
@@ -49,8 +50,9 @@ public abstract class Update implements Runnable {
             Render.getMouseInput().input();
             Time.updateTimers();
             update();
-            // snapshot packing up
+            // snapshot packing up, as well as resetting key states
             snapshot.releaseQuadRenderBuffer();
+            InputManager.resetReleasedKeyStates();
             // loading snapshot into render
             render.loadData(snapshot);
 

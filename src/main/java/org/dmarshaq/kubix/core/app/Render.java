@@ -80,8 +80,6 @@ public abstract class Render implements Runnable {
 
         renderInit();
 
-        KeyCode.initKeyCodes();
-
         Thread update = new Thread(updateTask);
         update.start();
 
@@ -164,6 +162,7 @@ public abstract class Render implements Runnable {
         } // the stack frame is popped automatically
 
         glfwSetKeyCallback(window, new Input());
+        glfwSetInputMode(window, GLFW_STICKY_KEYS, 1);
 
         // Make the OpenGL context current
         glfwMakeContextCurrent(window);

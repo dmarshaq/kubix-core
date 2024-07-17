@@ -3,6 +3,7 @@ package org.dmarshaq.kubix.core.app;
 import org.dmarshaq.kubix.core.graphic.Camera;
 import org.dmarshaq.kubix.core.graphic.Shader;
 import org.dmarshaq.kubix.core.graphic.Texture;
+import org.dmarshaq.kubix.core.input.InputManager;
 import org.dmarshaq.kubix.core.serialization.Packet;
 import org.dmarshaq.kubix.core.serialization.SerializationScanner;
 import org.dmarshaq.kubix.core.util.FileUtils;
@@ -146,6 +147,7 @@ public abstract class Context {
         // Manager / Loaders, loading respective packets one by one, adding their new packets to new packets list.
         TextureManager.loadPackets(packets, newPackets);
         ShaderManager.loadShadersFromFiles();
+        InputManager.loadGLFWKeyCodes();
 
         return newPackets;
     }
