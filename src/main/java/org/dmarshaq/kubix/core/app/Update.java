@@ -49,7 +49,6 @@ public abstract class Update implements Runnable {
                 start = false;
             }
             // update method called, as well as inputs and time
-            Render.getMouseInput().input();
             Time.updateTimers();
             update();
             // snapshot packing up, as well as resetting key states

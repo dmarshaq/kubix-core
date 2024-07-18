@@ -141,7 +141,7 @@ public abstract class Context {
         // Manager / Loaders, loading respective packets one by one, adding their new packets to new packets list.
         TextureManager.loadPackets(packets, newPackets);
         ShaderManager.loadShadersFromFiles();
-        InputManager.loadGLFWKeyCodes();
+        InputManager.mapGLFWKeyCodes();
 
         return newPackets;
     }

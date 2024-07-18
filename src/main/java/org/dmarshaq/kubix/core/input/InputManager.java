@@ -8,7 +8,7 @@ import static org.lwjgl.glfw.GLFW.*;
 public class InputManager {
     static final HashMap<Integer, KeyCode> KEY_CODE_MAP = new HashMap<>();
 
-    public static void loadGLFWKeyCodes()  {
+    public static void mapGLFWKeyCodes()  {
         KEY_CODE_MAP.put(GLFW_KEY_A, KeyCode.A);
         KEY_CODE_MAP.put(GLFW_KEY_B, KeyCode.B);
         KEY_CODE_MAP.put(GLFW_KEY_C, KeyCode.C);
@@ -39,6 +39,8 @@ public class InputManager {
         KEY_CODE_MAP.put(GLFW_KEY_LEFT_SHIFT, KeyCode.LEFT_SHIFT);
         KEY_CODE_MAP.put(GLFW_KEY_LEFT_CONTROL, KeyCode.LEFT_CONTROL);
         KEY_CODE_MAP.put(GLFW_KEY_RIGHT_CONTROL, KeyCode.RIGHT_CONTROL);
+        KEY_CODE_MAP.put(GLFW_MOUSE_BUTTON_1, KeyCode.LEFT_MOUSE_BUTTON);
+        KEY_CODE_MAP.put(GLFW_MOUSE_BUTTON_2, KeyCode.RIGHT_MOUSE_BUTTON);
     }
 
     public static void resetReleasedKeyStates() {

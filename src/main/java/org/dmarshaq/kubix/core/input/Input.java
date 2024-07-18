@@ -8,12 +8,12 @@ import java.util.List;
 import static org.lwjgl.glfw.GLFW.*;
 
 public class Input extends GLFWKeyCallback {
-    public final static boolean[] KEY_PRESSED = new boolean[KeyCode.values().length];
-    public final static boolean[] KEY_HOLD = new boolean[KeyCode.values().length];
-    public final static boolean[] KEY_RELEASED = new boolean[KeyCode.values().length];
+    public static final boolean[] KEY_PRESSED = new boolean[KeyCode.values().length];
+    public static final boolean[] KEY_HOLD = new boolean[KeyCode.values().length];
+    public static final boolean[] KEY_RELEASED = new boolean[KeyCode.values().length];
 
-    private final static List<Integer> RELEASED_KEY_INDICES = new ArrayList<>();
-    private final static List<Integer> PRESSED_KEY_INDICES = new ArrayList<>();
+    static final List<Integer> RELEASED_KEY_INDICES = new ArrayList<>();
+    static final List<Integer> PRESSED_KEY_INDICES = new ArrayList<>();
 
     @Override
     public void invoke(long window, int key, int scancode, int action, int mods) {

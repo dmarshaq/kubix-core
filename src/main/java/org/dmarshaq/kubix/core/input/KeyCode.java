@@ -30,5 +30,7 @@ public enum KeyCode {
     SPACE,
     LEFT_SHIFT,
     LEFT_CONTROL,
-    RIGHT_CONTROL;
+    RIGHT_CONTROL,
+    LEFT_MOUSE_BUTTON,
+    RIGHT_MOUSE_BUTTON;
 }

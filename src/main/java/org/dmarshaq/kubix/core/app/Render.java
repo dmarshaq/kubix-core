@@ -1,5 +1,6 @@
 package org.dmarshaq.kubix.core.app;
 
+import lombok.Getter;
 import org.dmarshaq.kubix.core.graphic.*;
 import org.dmarshaq.kubix.core.graphic.Window;
 import org.dmarshaq.kubix.core.input.Input;
@@ -40,14 +41,20 @@ import static org.lwjgl.system.MemoryUtil.*;
 
 public abstract class Render implements Runnable {
 
-    private Window window;
+    public static final Dimension SCREEN_DIMENSION = Toolkit.getDefaultToolkit().getScreenSize();
+
+    @Getter
+    private static Window window;
+
+
     private Snapshot data;
+
     private long audioContext, audioDevice;
     private Matrix4x4 pr_matrix;
     private Update updateTask;
     private Context context;
     private static MouseInput mouseInput;
-    private static int screenWidth, screenHeight;
+
     private static float aspectRatio;
     private static Color color = new Color(150, 150, 150, 255);
 
@@ -122,56 +129,43 @@ public abstract class Render implements Runnable {
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE); // the window will stay hidden after creation
         glfwWindowHint(GLFW_RESIZABLE, isFullScreen() ? GLFW_FALSE : GLFW_TRUE); // the window will be resizable
 
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        // TODO refactor screen data usage.
-        // wtf is this
+
         // Create the window
-        if (isFullScreen()) {
-            screenWidth = (int) screenSize.getWidth();
-            screenHeight = (int) screenSize.getHeight();
+        if (Context.isFullScreen()) {
+            window = new Window((int) SCREEN_DIMENSION.getWidth(), (int) SCREEN_DIMENSION.getHeight(), Context.getTitle(), true);
         }
         else {
-            screenWidth = 1280;
-            screenHeight = 720;
+            window = new Window(1280, 720, Context.getTitle(), false);
         }
 
-        aspectRatio = (float) screenWidth / screenHeight;
-
-        window = new Window(screenWidth, screenHeight, Context.getTitle(), Context.isFullScreen());
-
-        // Get the thread stack and push a new frame
-        try ( MemoryStack stack = stackPush() ) {
-            IntBuffer pWidth = stack.mallocInt(1); // int*
-            IntBuffer pHeight = stack.mallocInt(1); // int*
-
-            // Get the window size passed to glfwCreateWindow
-            glfwGetWindowSize(window.getWindow(), pWidth, pHeight);
-
-
-            // Get the resolution of the primary monitor
-            GLFWVidMode vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-
-            // Center the window
-            if (!isFullScreen()) {
-                glfwSetWindowPos(
-                        window.getWindow(),
-                        (vidmode.width() - screenWidth) / 2,
-                        (vidmode.height() - screenHeight) / 2
-                );
-            }
-        } // the stack frame is popped automatically
-
-        window.setKeyCallback(new Input());
-        glfwSetInputMode(window.getWindow(), GLFW_STICKY_KEYS, 1);
+        // Get the resolution of the primary monitor
+        GLFWVidMode vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+        // Center the window
+        if (!isFullScreen() && vidmode != null) {
+            glfwSetWindowPos(
+                    window.getWindow(),
+                    (vidmode.width() - window.width()) / 2,
+                    (vidmode.height() - window.height()) / 2
+            );
+        }
 
         // Make the OpenGL context current
         window.makeContextCurrent();
-
         // Enable v-sync
         glfwSwapInterval(1);
 
+        // Input call back
+        window.setKeyCallback(new Input());
+        glfwSetInputMode(window.getWindow(), GLFW_STICKY_KEYS, 1);
+        // Mouse Input call back
+        new MouseInput().init(window.getWindow());
+        // Size call back
+        window.setSizeCallback(Window.windowDefaultSizeCallback(window));
+
         // Make the window visible
         window.show();
+
+        // -------- audio
 
         // Initialize the audio device
         String defaultDeviceName = alcGetString(0, ALC_DEFAULT_DEVICE_SPECIFIER);
@@ -188,11 +182,6 @@ public abstract class Render implements Runnable {
             System.out.println("Audio library not supported.");
         }
 
-        // Set call backs
-        mouseInput = new MouseInput();
-        mouseInput.init(window.getWindow());
-
-        window.setSizeCallback(Window.windowDefaultSizeCallback(window));
     }
 
     private void render() {
@@ -208,10 +197,6 @@ public abstract class Render implements Runnable {
         // Poll for window events. The key callback above will only be
         // invoked during this call.
         glfwPollEvents();
-    }
-
-    public Window getWindow() {
-        return window;
     }
 
     private void renderInit() {
@@ -305,22 +290,6 @@ public abstract class Render implements Runnable {
         pr_matrix = data.getCamera().projectionMatrix();
         Context.shaders().get("basic").setUniformMatrix4x4("pr_matrix", pr_matrix);
         Context.shaders().get("basic").disable();
-    }
-
-    public static float getAspectRatio() {
-        return aspectRatio;
-    }
-
-    public static int getScreenWidth() {
-        return screenWidth;
-    }
-
-    public static int getScreenHeight() {
-        return screenHeight;
-    }
-
-    public static MouseInput getMouseInput() {
-        return mouseInput;
     }
 
     public static void setClearScreenColor(Color c) {
