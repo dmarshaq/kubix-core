@@ -2,12 +2,7 @@ package org.dmarshaq.kubix.math.vector;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.ToString;
-import org.dmarshaq.kubix.math.MathCore;
 import org.dmarshaq.kubix.math.array.NumberArray;
-
-import static org.dmarshaq.kubix.math.MathCore.AXIS;
-
 
 @Getter
 @EqualsAndHashCode

@@ -1,12 +1,12 @@
 package org.dmarshaq.kubix.core.app;
 
 import org.dmarshaq.kubix.core.graphic.*;
+import org.dmarshaq.kubix.core.graphic.Window;
 import org.dmarshaq.kubix.core.input.Input;
-import org.dmarshaq.kubix.core.input.KeyCode;
 import org.dmarshaq.kubix.core.input.MouseInput;
 import org.dmarshaq.kubix.core.util.BufferUtils;
-import org.dmarshaq.kubix.graphic.render.QuadRender;
-import org.dmarshaq.kubix.graphic.render.Snapshot;
+import org.dmarshaq.kubix.core.graphic.render.QuadRender;
+import org.dmarshaq.kubix.core.graphic.render.Snapshot;
 import org.dmarshaq.kubix.math.MathCore;
 import org.dmarshaq.kubix.math.matrix.Matrix4x4;
 import org.dmarshaq.kubix.math.vector.Vector4;
@@ -30,7 +30,6 @@ import static org.lwjgl.openal.AL10.*;
 import static org.lwjgl.openal.ALC10.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL11.glViewport;
-import static org.lwjgl.opengl.GL13.*;
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL20.*;
@@ -41,8 +40,9 @@ import static org.lwjgl.system.MemoryUtil.*;
 
 public abstract class Render implements Runnable {
 
+    private Window window;
     private Snapshot data;
-    private long window, audioContext, audioDevice;
+    private long audioContext, audioDevice;
     private Matrix4x4 pr_matrix;
     private Update updateTask;
     private Context context;
@@ -101,8 +101,8 @@ public abstract class Render implements Runnable {
         alcCloseDevice(audioDevice);
 
         // Free the window callbacks and destroy the window
-        glfwFreeCallbacks(window);
-        glfwDestroyWindow(window);
+        window.freeCallbacks();
+        window.destroyWindow();
 
         // Terminate GLFW and free the error callback
         glfwTerminate();
@@ -123,6 +123,8 @@ public abstract class Render implements Runnable {
         glfwWindowHint(GLFW_RESIZABLE, isFullScreen() ? GLFW_FALSE : GLFW_TRUE); // the window will be resizable
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        // TODO refactor screen data usage.
+        // wtf is this
         // Create the window
         if (isFullScreen()) {
             screenWidth = (int) screenSize.getWidth();
@@ -134,11 +136,8 @@ public abstract class Render implements Runnable {
         }
 
         aspectRatio = (float) screenWidth / screenHeight;
-        window = glfwCreateWindow(screenWidth, screenHeight, getTitle(), isFullScreen() ? glfwGetPrimaryMonitor() : 0, 0);
 
-        if ( window == NULL )
-            throw new RuntimeException("Failed to create the GLFW window");
-
+        window = new Window(screenWidth, screenHeight, Context.getTitle(), Context.isFullScreen());
 
         // Get the thread stack and push a new frame
         try ( MemoryStack stack = stackPush() ) {
@@ -146,7 +145,8 @@ public abstract class Render implements Runnable {
             IntBuffer pHeight = stack.mallocInt(1); // int*
 
             // Get the window size passed to glfwCreateWindow
-            glfwGetWindowSize(window, pWidth, pHeight);
+            glfwGetWindowSize(window.getWindow(), pWidth, pHeight);
+
 
             // Get the resolution of the primary monitor
             GLFWVidMode vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
@@ -154,24 +154,24 @@ public abstract class Render implements Runnable {
             // Center the window
             if (!isFullScreen()) {
                 glfwSetWindowPos(
-                        window,
+                        window.getWindow(),
                         (vidmode.width() - screenWidth) / 2,
                         (vidmode.height() - screenHeight) / 2
                 );
             }
         } // the stack frame is popped automatically
 
-        glfwSetKeyCallback(window, new Input());
-        glfwSetInputMode(window, GLFW_STICKY_KEYS, 1);
+        window.setKeyCallback(new Input());
+        glfwSetInputMode(window.getWindow(), GLFW_STICKY_KEYS, 1);
 
         // Make the OpenGL context current
-        glfwMakeContextCurrent(window);
+        window.makeContextCurrent();
 
         // Enable v-sync
         glfwSwapInterval(1);
 
         // Make the window visible
-        glfwShowWindow(window);
+        window.show();
 
         // Initialize the audio device
         String defaultDeviceName = alcGetString(0, ALC_DEFAULT_DEVICE_SPECIFIER);
@@ -190,26 +190,9 @@ public abstract class Render implements Runnable {
 
         // Set call backs
         mouseInput = new MouseInput();
-        mouseInput.init(window);
+        mouseInput.init(window.getWindow());
 
-        glfwSetWindowSizeCallback(window, new GLFWWindowSizeCallback() {
-            @Override
-            public void invoke(long window, int width, int height){
-                screenWidth = width;
-                screenHeight = height;
-                aspectRatio = (float) screenWidth / screenHeight;
-                glViewport(0, 0, screenWidth, screenHeight);
-                Camera cam = data.getCamera();
-                if (cam != null) {
-                    float unitWidth = getMinScreenUnitWidth();
-                    float unitHeight = getMinScreenUnitHeight();
-                    cam.setCameraFov(Math.max((float) width / getUnitSize(), unitWidth), Math.max((float) height / getUnitSize(), unitHeight));
-                }
-                else {
-                    System.out.println("No Main Camera found.");
-                }
-            }
-        });
+        window.setSizeCallback(Window.windowDefaultSizeCallback(window));
     }
 
     private void render() {
@@ -221,13 +204,13 @@ public abstract class Render implements Runnable {
         if (error != GL_NO_ERROR)
             System.out.println(error);
 
-        glfwSwapBuffers(window); // swap the color buffers
+        glfwSwapBuffers(window.getWindow()); // swap the color buffers
         // Poll for window events. The key callback above will only be
         // invoked during this call.
         glfwPollEvents();
     }
 
-    public long getWindow() {
+    public Window getWindow() {
         return window;
     }
 
@@ -252,23 +235,12 @@ public abstract class Render implements Runnable {
                 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
                 22, 23, 24, 25, 26, 27, 28, 29, 30, 31 };
 
-        context.loadTextures();
-
         // Setup shader
-
         pr_matrix = MathCore.orthographic(-2f, 2f, -1.5f, 1.5f, -1f, 1f); // basically camera matrix
 
-//        Context.shaders().get("basic").setUniformMatrix4x4("pr_matrix", pr_matrix);
-//        Context.shaders().get("basic").setUniform1iv("u_Textures", samplers);
-//        Context.shaders().get("basic").setUniformMatrix4x4("ml_matrix", new Matrix4x4());
-//        Context.shaders().get("basic").disable();
 
         Context.shaders().get("basic").setUniformMatrix4x4("pr_matrix", pr_matrix);
         Context.shaders().get("basic").setUniform1iv("u_Textures", samplers);
-        int err = glGetError();
-        if (err != 0) {
-            System.out.println(err);
-        }
         Context.shaders().get("basic").setUniformMatrix4x4("ml_matrix", new Matrix4x4());
         Context.shaders().get("basic").disable();
 
@@ -323,235 +295,27 @@ public abstract class Render implements Runnable {
     }
 
     private void renderSnapshot() {
-        modifyShaders();
         loadCameraMatrix();
 
         QuadRender.renderQuadsInBatch(data.getQuadRenderArray(), getMaxQuadsPerBatch());
     }
-    /*
-    private int nextBatch(int startIndex, SpriteDto[] spriteDtoArray) {
-        int spriteGlobalIndex = 0;
-        int nextBatchStartIndex = 0;
-        int offsetToStartIndex = 0;
-        int currentLayerIndex = -1;
-
-        while (quadsRenderedInBatch < getMaxQuadsPerBatch()) {
-            spriteGlobalIndex = startIndex + offsetToStartIndex;
-            offsetToStartIndex++;
-
-            if (spriteGlobalIndex >= spriteDtoArray.length) {
-                return spriteDtoArray.length;
-            }
-
-            SpriteDto spriteDTO = spriteDtoArray[spriteGlobalIndex];
-
-            // check if null, if true skip that element
-            if (spriteDTO == null) {
-                continue;
-            }
-            // layer check logic
-            else if (currentLayerIndex != -1 && currentLayerIndex != spriteDTO.getLayer().ordinal() && nextBatchStartIndex != 0) {
-                break;
-            }
-            // shader check logic
-            else if (quadsRenderedInBatch != 0 && currentShader != spriteDTO.getShader()) {
-                nextBatchStartIndex = spriteGlobalIndex;
-                break;
-            }
-            currentShader = spriteDTO.getShader();
-            currentLayerIndex = spriteDTO.getLayer().ordinal();
-
-            // manage texture
-            int slot = 0;
-            Texture texture = spriteDTO.getTexture();
-            if (texture != null) {
-                slot = allocateTextureSlot( texture.getTextureID() );
-                if (slot == -1) {
-                    if (nextBatchStartIndex == 0) {
-                        nextBatchStartIndex = spriteGlobalIndex;
-                    }
-                    continue;
-                }
-            }
-
-            // if every check before is good, load spriteDTO data into actual vertices used
-            loadSpriteVertices(quadsRenderedInBatch, spriteDtoArray[spriteGlobalIndex], slot);
-            quadsRenderedInBatch++;
-
-            // little clean up, plus it will ensure our nextBatch doesn't go twice for any spriteDTO
-            spriteDtoArray[spriteGlobalIndex] = null;
-
-        }
-
-        if (nextBatchStartIndex == 0) {
-            nextBatchStartIndex = spriteGlobalIndex + 1;
-        }
-
-        return nextBatchStartIndex;
-    }
-    /*
-    private void loadSpriteVertices(int spriteIndex, SpriteDto spriteDTO, int textureSlot) {
-        int vertexArraySpriteStart = spriteIndex * SPRITE_STRIDE_IN_ARRAY;
-        int offset;
-        // ORDER: BOTTOM LEFT -> BOTTOM RIGHT -> TOP LEFT -> TOP RIGHT
-
-        Vector4f color = spriteDTO.getColor();
-        if (color == null) {
-            color = new Vector4f(1.0f, 1.0f, 1.0f, 1.0f);
-        }
-
-//        TextureCroppedRegion textureCroppedRegion = spriteDTO.getTextureCroppedRegion();
-//        if (textureCroppedRegion == null) {
-//            textureCroppedRegion = new TextureCroppedRegion(0, 0, 1, 1);
-//        }
-
-        Vector2f position = spriteDTO.getTransform().multiply(new Vector2f(), 1f);
-        float order = spriteDTO.getLayer().zOrder();
-
-        Vector2f localXVector;
-        Vector2f localYVector;
-
-        localXVector = new Vector2f( spriteDTO.getWidth(), 0);
-        localYVector = new Vector2f( 0, spriteDTO.getHeight() );
-
-
-        localXVector = spriteDTO.getTransform().multiply(localXVector, 0);
-        localYVector = spriteDTO.getTransform().multiply(localYVector, 0);
-
-        // BOTTOM LEFT 0
-        offset = 0;
-        VERTICES[vertexArraySpriteStart + 0 + offset] = position.x;
-        VERTICES[vertexArraySpriteStart + 1 + offset] = position.y;
-        VERTICES[vertexArraySpriteStart + 2 + offset] = order;
-
-        VERTICES[vertexArraySpriteStart + 3 + offset] = color.x;
-        VERTICES[vertexArraySpriteStart + 4 + offset] = color.y;
-        VERTICES[vertexArraySpriteStart + 5 + offset] = color.z;
-        VERTICES[vertexArraySpriteStart + 6 + offset] = color.w;
-
-        VERTICES[vertexArraySpriteStart + 7 + offset] = 0;
-        VERTICES[vertexArraySpriteStart + 8 + offset] = 0;
-
-        VERTICES[vertexArraySpriteStart + 9 + offset] = textureSlot;
-
-        // BOTTOM RIGHT 1
-        offset += 10;
-        VERTICES[vertexArraySpriteStart + 0 + offset] = position.x + localXVector.x;
-        VERTICES[vertexArraySpriteStart + 1 + offset] = position.y + localXVector.y;
-        VERTICES[vertexArraySpriteStart + 2 + offset] = order;
-
-        VERTICES[vertexArraySpriteStart + 3 + offset] = color.x;
-        VERTICES[vertexArraySpriteStart + 4 + offset] = color.y;
-        VERTICES[vertexArraySpriteStart + 5 + offset] = color.z;
-        VERTICES[vertexArraySpriteStart + 6 + offset] = color.w;
-
-        VERTICES[vertexArraySpriteStart + 7 + offset] = 1;
-        VERTICES[vertexArraySpriteStart + 8 + offset] = 0;
-
-        VERTICES[vertexArraySpriteStart + 9 + offset] = textureSlot;
-
-        // TOP LEFT 2
-        offset += 10;
-        VERTICES[vertexArraySpriteStart + 0 + offset] = position.x + localYVector.x;
-        VERTICES[vertexArraySpriteStart + 1 + offset] = position.y + localYVector.y;
-        VERTICES[vertexArraySpriteStart + 2 + offset] = order;
-
-        VERTICES[vertexArraySpriteStart + 3 + offset] = color.x;
-        VERTICES[vertexArraySpriteStart + 4 + offset] = color.y;
-        VERTICES[vertexArraySpriteStart + 5 + offset] = color.z;
-        VERTICES[vertexArraySpriteStart + 6 + offset] = color.w;
-
-        VERTICES[vertexArraySpriteStart + 7 + offset] = 0;
-        VERTICES[vertexArraySpriteStart + 8 + offset] = 1;
-
-        VERTICES[vertexArraySpriteStart + 9 + offset] = textureSlot;
-
-        // TOP RIGHT 3
-        offset += 10;
-        VERTICES[vertexArraySpriteStart + 0 + offset] = position.x + localXVector.x + localYVector.x;
-        VERTICES[vertexArraySpriteStart + 1 + offset] = position.y + localXVector.y + localYVector.y;
-        VERTICES[vertexArraySpriteStart + 2 + offset] = order;
-
-        VERTICES[vertexArraySpriteStart + 3 + offset] = color.x;
-        VERTICES[vertexArraySpriteStart + 4 + offset] = color.y;
-        VERTICES[vertexArraySpriteStart + 5 + offset] = color.z;
-        VERTICES[vertexArraySpriteStart + 6 + offset] = color.w;
-
-        VERTICES[vertexArraySpriteStart + 7 + offset] = 1;
-        VERTICES[vertexArraySpriteStart + 8 + offset] = 1;
-
-        VERTICES[vertexArraySpriteStart + 9 + offset] = textureSlot;
-
-    }
-
-    private int allocateTextureSlot(int textureID) {
-        for (int i = 1; i < TEXTURES_USED.length; i++) {
-            if (textureID == TEXTURES_USED[i]) {
-                // Use existing one for sprite
-                return i;
-            }
-            if (TEXTURES_USED[i] == 0) {
-                // Allocate another texture slot for sprite
-                TEXTURES_USED[i] = textureID;
-                return i;
-            }
-            if (i == TEXTURES_USED.length - 1) {
-                // Not enough space skip sprite
-                return -1;
-            }
-        }
-        // Failed in allocation
-        System.out.println("Failed in allocation of texture slot.");
-        return -1;
-    }
-
-    private void loadTexturesUsedIntoSlots() {
-        for (int i = 0; i < TEXTURES_USED.length; i++) {
-            glActiveTexture(GL_TEXTURE0 + i);
-            glBindTexture(GL_TEXTURE_2D, TEXTURES_USED[i]);
-        }
-    }
-
-    private void flush() {
-        unbindUsedTextures();
-        quadsRenderedInBatch = 0;
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        currentShader.disable();
-    }
-
-    private void unbindUsedTextures() {
-        for (int i = 0; i < TEXTURES_USED.length; i++) {
-            glActiveTexture(GL_TEXTURE0 + i);
-            glBindTexture(GL_TEXTURE_2D, 0);
-            TEXTURES_USED[i] = 0;
-        }
-    }
-    */
 
 
     private void loadCameraMatrix() {
-        /*
-         *   ------------------------------------------------------------------------------
-         *   CAMERA: this function takes camera's property from last update snapshot and
-         *   assigns it to pr_matrix which applies to Sprites with Basic shader.
-         *   ------------------------------------------------------------------------------
-         * */
         pr_matrix = data.getCamera().projectionMatrix();
         Context.shaders().get("basic").setUniformMatrix4x4("pr_matrix", pr_matrix);
         Context.shaders().get("basic").disable();
     }
 
-    protected abstract void modifyShaders();
-
     public static float getAspectRatio() {
         return aspectRatio;
     }
 
-    public static float getScreenWidth() {
+    public static int getScreenWidth() {
         return screenWidth;
     }
 
-    public static float getScreenHeight() {
+    public static int getScreenHeight() {
         return screenHeight;
     }
 

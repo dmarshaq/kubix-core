@@ -1,8 +1,6 @@
-package org.dmarshaq.kubix.graphic.render;
+package org.dmarshaq.kubix.core.graphic.render;
 
 import lombok.ToString;
-import org.dmarshaq.kubix.core.app.Context;
-import org.dmarshaq.kubix.graphic.render.Layer;
 import org.dmarshaq.kubix.core.graphic.Shader;
 import org.dmarshaq.kubix.core.graphic.Texture;
 import org.dmarshaq.kubix.math.vector.Vector2;

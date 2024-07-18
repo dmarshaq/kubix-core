@@ -8,8 +8,8 @@ import org.dmarshaq.kubix.core.serialization.Packet;
 import org.dmarshaq.kubix.core.serialization.SerializationScanner;
 import org.dmarshaq.kubix.core.util.FileUtils;
 import org.dmarshaq.kubix.core.util.IndexedHashMap;
-import org.dmarshaq.kubix.graphic.render.Layer;
-import org.dmarshaq.kubix.graphic.render.LayerManager;
+import org.dmarshaq.kubix.core.graphic.render.Layer;
+import org.dmarshaq.kubix.core.graphic.render.LayerManager;
 import org.dmarshaq.kubix.serialization.texture.TextureManager;
 import org.dmarshaq.kubix.serialization.shader.ShaderManager;
 
@@ -31,13 +31,10 @@ public abstract class Context {
 
 
     // FPS
-    private static int FPS_CAP = 240; // frames per second
+    private static int FPS_CAP = 10000; // frames per second
 
     // STATES
     private static boolean running = true;
-
-    // KEYS
-    private static int MAX_KEYS = 11;
 
     // RENDER
     private static boolean DRAW_GIZMOS = true;
@@ -63,9 +60,6 @@ public abstract class Context {
     }
     public static int getFPSCap() {
         return FPS_CAP;
-    }
-    public static int getMaxInputKeys() {
-        return MAX_KEYS;
     }
     public static boolean isDrawGizmos() {
         return DRAW_GIZMOS;
@@ -151,6 +145,4 @@ public abstract class Context {
 
         return newPackets;
     }
-
-    public abstract void loadTextures();
 }

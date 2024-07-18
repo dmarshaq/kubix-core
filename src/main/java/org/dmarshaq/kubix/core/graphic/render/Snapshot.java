@@ -1,4 +1,4 @@
-package org.dmarshaq.kubix.graphic.render;
+package org.dmarshaq.kubix.core.graphic.render;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -10,6 +10,8 @@ public class Snapshot {
     private final List<Quad> quadRenderBuffer;
     @Getter
     private Quad[] quadRenderArray;
+
+    // TODO CameraDto for snapshot.
     @Getter
     @Setter
     private Camera camera;

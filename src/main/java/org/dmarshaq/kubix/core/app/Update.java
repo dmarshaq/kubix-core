@@ -1,9 +1,10 @@
 package org.dmarshaq.kubix.core.app;
 
+import org.dmarshaq.kubix.core.graphic.Window;
 import org.dmarshaq.kubix.core.input.InputManager;
 import org.dmarshaq.kubix.core.time.Time;
-import org.dmarshaq.kubix.graphic.render.LayerManager;
-import org.dmarshaq.kubix.graphic.render.Snapshot;
+import org.dmarshaq.kubix.core.graphic.render.LayerManager;
+import org.dmarshaq.kubix.core.graphic.render.Snapshot;
 
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -33,7 +34,8 @@ public abstract class Update implements Runnable {
             lastFrameTime = time;
 
             // check if user closed the window
-            if (render.getWindow() != 0 && glfwWindowShouldClose(render.getWindow())) {
+            Window window = render.getWindow();
+            if (window.getWindow() != 0 && glfwWindowShouldClose(window.getWindow())) {
                 Context.stopRunning();
             }
 

@@ -1,4 +1,4 @@
-package org.dmarshaq.kubix.graphic;
+package org.dmarshaq.kubix.core.graphic;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -6,7 +6,7 @@ import lombok.ToString;
 import org.dmarshaq.kubix.core.app.Context;
 import org.dmarshaq.kubix.core.graphic.Shader;
 import org.dmarshaq.kubix.core.graphic.TextureCroppedRegion;
-import org.dmarshaq.kubix.graphic.render.Layer;
+import org.dmarshaq.kubix.core.graphic.render.Layer;
 import org.dmarshaq.kubix.math.AbstractRectangle;
 import org.dmarshaq.kubix.math.vector.Vector2;
 

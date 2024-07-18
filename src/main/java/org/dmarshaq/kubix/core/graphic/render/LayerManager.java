@@ -1,6 +1,4 @@
-package org.dmarshaq.kubix.graphic.render;
-
-import org.dmarshaq.kubix.core.util.IndexedHashMap;
+package org.dmarshaq.kubix.core.graphic.render;
 
 import java.util.HashMap;
 

@@ -5,8 +5,6 @@ import org.dmarshaq.kubix.core.graphic.TextureCroppedRegion;
 import org.dmarshaq.kubix.core.serialization.Packet;
 import org.dmarshaq.kubix.core.serialization.SerializationScanner;
 import org.dmarshaq.kubix.core.util.BufferUtils;
-import org.dmarshaq.kubix.math.vector.Vector2;
-
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.*;

@@ -1,4 +1,4 @@
-package org.dmarshaq.kubix.graphic.render;
+package org.dmarshaq.kubix.core.graphic.render;
 
 import org.dmarshaq.kubix.core.app.Context;
 import org.dmarshaq.kubix.core.graphic.Shader;

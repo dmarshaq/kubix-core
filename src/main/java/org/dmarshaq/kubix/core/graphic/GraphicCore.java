@@ -1,8 +1,6 @@
-package org.dmarshaq.kubix.graphic;
+package org.dmarshaq.kubix.core.graphic;
 
-import org.dmarshaq.kubix.core.graphic.Texture;
-import org.dmarshaq.kubix.core.graphic.TextureCroppedRegion;
-import org.dmarshaq.kubix.graphic.render.Quad;
+import org.dmarshaq.kubix.core.graphic.render.Quad;
 import org.dmarshaq.kubix.math.MathCore;
 import org.dmarshaq.kubix.math.matrix.Matrix2x3;
 import org.dmarshaq.kubix.math.matrix.Matrix3x4;
@@ -142,25 +140,6 @@ public class GraphicCore {
         percentPosition = sprite.getTexture().getPercentPosition();
         percentWidth = sprite.getTexture().getPercentWidth();
         percentHeight = sprite.getTexture().getPercentHeight();
-
-//        if (sprite.getTexture() != null) {
-//            // Calculating texture index.
-//            texture = sprite.getTexture().getHost();
-//            texIndex = texture.ordinal() % 32;
-//
-//            width = sprite.getWidth();
-//            height = sprite.getHeight();
-//            percentPosition = sprite.getTexture().getPercentPosition();
-//            percentWidth = sprite.getTexture().getPercentWidth();
-//            percentHeight = sprite.getTexture().getPercentHeight();
-//        }
-//        else {
-//            width = 1.0f;
-//            height = 1.0f;
-//            percentPosition = new Vector2(0, 0);
-//            percentWidth = 1.0f;
-//            percentHeight = 1.0f;
-//        }
 
         // Getting vertices positions by matrix vector multiplication.
         Vector3 position = new Vector3(sprite.getPosition().x(), sprite.getPosition().y(), 1.0f);
