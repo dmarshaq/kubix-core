@@ -5,9 +5,7 @@ import org.dmarshaq.kubix.core.graphic.Shader;
 import org.dmarshaq.kubix.core.graphic.Texture;
 import org.lwjgl.opengl.GL20;
 
-import static org.dmarshaq.kubix.core.app.Render.BatchRenderer.TEXTURES_USED;
-import static org.dmarshaq.kubix.core.app.Render.BatchRenderer.VERTICES;
-import static org.dmarshaq.kubix.core.app.Render.BatchRenderer.vbo;
+import static org.dmarshaq.kubix.core.graphic.render.Render.BatchRenderer.*;
 import static org.lwjgl.opengl.GL11.GL_FRONT_AND_BACK;
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;

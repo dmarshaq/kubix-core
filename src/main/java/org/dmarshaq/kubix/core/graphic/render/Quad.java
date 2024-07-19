@@ -15,6 +15,7 @@ import org.dmarshaq.kubix.math.vector.Vector4;
 @ToString
 public class Quad implements Renderable {
     public static final int VERTEX_STRIDE = 10;
+    public static final int VERTICES = 4;
 
     private final float[] vertices;
     private final Shader shader;

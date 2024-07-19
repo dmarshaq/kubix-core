@@ -16,7 +16,6 @@ public class Sound {
     private boolean isPlaying = false;
 
     public Sound(String path, boolean loops, float volume, float pitch) {
-
         // Allocate space to store the return information from stb
         stackPush();
         IntBuffer channelsBuffer = stackMallocInt(1);
@@ -104,8 +103,6 @@ public class Sound {
     public void setPitch(float pitch) {
         alSourcef(sourceId, AL_PITCH, pitch);
     }
-
-
 
     public boolean isPlaying() {
         int state = alGetSourcei(sourceId, AL_SOURCE_STATE);

@@ -1,7 +1,7 @@
 package org.dmarshaq.kubix.core.input;
 
 import lombok.Getter;
-import org.dmarshaq.kubix.core.app.Render;
+import org.dmarshaq.kubix.core.app.Graphic;
 import org.dmarshaq.kubix.math.MathCore;
 import org.dmarshaq.kubix.math.vector.Vector;
 import org.lwjgl.glfw.GLFW;
@@ -17,7 +17,7 @@ public class MouseInput  {
     public void init(long windowHandle) {
         GLFW.glfwSetCursorPosCallback(windowHandle, (window, xpos, ypos) -> {
             POSITION.getValues().intArray()[0] = (int) xpos;
-            POSITION.getValues().intArray()[1] = (int) (Render.getWindow().height() - ypos);
+            POSITION.getValues().intArray()[1] = (int) (Graphic.getWindow().height() - ypos);
         });
 
         GLFW.glfwSetCursorEnterCallback(windowHandle, (window, entered) -> {

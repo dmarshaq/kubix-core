@@ -25,9 +25,11 @@ public abstract class Context {
     private static int UNIT_SIZE = 64; // 64 x 64 unit size
 
     private static boolean FULL_SCREEN = true;
+    private static Color CLEAR_COLOR = new Color(100, 100, 100, 255);
     private static Camera MAIN_CAMERA;
     public static int MIN_SCREEN_UNIT_WIDTH = 16;
     public static int MIN_SCREEN_UNIT_HEIGHT = 9;
+
 
 
     // FPS
@@ -76,6 +78,10 @@ public abstract class Context {
     public static int getMinScreenUnitHeight() {
         return MIN_SCREEN_UNIT_HEIGHT;
     }
+    public static Color getClearColor() {
+        return CLEAR_COLOR;
+    }
+
 
 
     protected static void setTitle(String title) {
@@ -106,7 +112,7 @@ public abstract class Context {
         MIN_SCREEN_UNIT_HEIGHT = minScreenUnitHeight;
     }
     protected static void setClearColor(Color color) {
-        Render.setClearScreenColor(color);
+        CLEAR_COLOR = color;
     }
 
     // Resources

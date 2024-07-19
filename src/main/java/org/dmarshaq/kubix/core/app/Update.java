@@ -11,13 +11,13 @@ import static org.lwjgl.glfw.GLFW.*;
 import static org.dmarshaq.kubix.core.app.Context.*;
 
 public abstract class Update implements Runnable {
-    private Render render;
+    private Graphic graphic;
     private boolean start = true;
 
     protected Snapshot snapshot;
 
-    public void setRenderTask(Render renderTask) {
-        this.render = renderTask;
+    public void setRenderTask(Graphic graphicTask) {
+        this.graphic = graphicTask;
     }
 
     @Override
@@ -34,7 +34,7 @@ public abstract class Update implements Runnable {
             lastFrameTime = time;
 
             // check if user closed the window
-            Window window = render.getWindow();
+            Window window = graphic.getWindow();
             if (window.getWindow() != 0 && glfwWindowShouldClose(window.getWindow())) {
                 Context.stopRunning();
             }
@@ -54,11 +54,11 @@ public abstract class Update implements Runnable {
             // snapshot packing up, as well as resetting key states
             snapshot.releaseQuadRenderBuffer();
             InputManager.resetReleasedKeyStates();
-            // loading snapshot into render
-            render.loadData(snapshot);
+            // loading snapshot into graphic
+            graphic.loadData(snapshot);
 
-            synchronized (render) {
-                render.notify();
+            synchronized (graphic) {
+                graphic.notify();
             }
             try {
                 double remainingTime = nextUpdateTime - System.nanoTime();
