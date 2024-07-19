@@ -1,7 +1,7 @@
 package org.dmarshaq.kubix.core.audio;
 
 import lombok.Getter;
-import org.dmarshaq.kubix.math.vector.Vector3;
+import org.dmarshaq.kubix.core.math.vector.Vector3;
 import org.lwjgl.openal.AL;
 import org.lwjgl.openal.ALC;
 import org.lwjgl.openal.ALCCapabilities;

@@ -4,10 +4,10 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 import org.dmarshaq.kubix.core.app.Context;
-import org.dmarshaq.kubix.math.MathCore;
-import org.dmarshaq.kubix.math.Rectangle;
-import org.dmarshaq.kubix.math.matrix.Matrix4x4;
-import org.dmarshaq.kubix.math.vector.Vector2;
+import org.dmarshaq.kubix.core.math.MathCore;
+import org.dmarshaq.kubix.core.math.Rectangle;
+import org.dmarshaq.kubix.core.math.matrix.Matrix4x4;
+import org.dmarshaq.kubix.core.math.vector.Vector2;
 
 @Getter
 @EqualsAndHashCode

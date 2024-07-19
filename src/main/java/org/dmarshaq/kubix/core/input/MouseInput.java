@@ -2,8 +2,8 @@ package org.dmarshaq.kubix.core.input;
 
 import lombok.Getter;
 import org.dmarshaq.kubix.core.app.Graphic;
-import org.dmarshaq.kubix.math.MathCore;
-import org.dmarshaq.kubix.math.vector.Vector;
+import org.dmarshaq.kubix.core.math.MathCore;
+import org.dmarshaq.kubix.core.math.vector.Vector;
 import org.lwjgl.glfw.GLFW;
 
 import static org.lwjgl.glfw.GLFW.GLFW_PRESS;

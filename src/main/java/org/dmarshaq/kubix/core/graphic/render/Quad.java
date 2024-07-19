@@ -1,11 +1,9 @@
 package org.dmarshaq.kubix.core.graphic.render;
 
 import lombok.ToString;
-import org.dmarshaq.kubix.core.graphic.Shader;
-import org.dmarshaq.kubix.core.graphic.Texture;
-import org.dmarshaq.kubix.math.vector.Vector2;
-import org.dmarshaq.kubix.math.vector.Vector3;
-import org.dmarshaq.kubix.math.vector.Vector4;
+import org.dmarshaq.kubix.core.math.vector.Vector2;
+import org.dmarshaq.kubix.core.math.vector.Vector3;
+import org.dmarshaq.kubix.core.math.vector.Vector4;
 
 /**
  * Quad is a wrapper class for simple vertex float array that describes quad's figure.

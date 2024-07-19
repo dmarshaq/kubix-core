@@ -1,7 +1,5 @@
 package org.dmarshaq.kubix.core.graphic.render;
 
-import org.dmarshaq.kubix.core.graphic.Shader;
-
 public interface Renderable extends Comparable<Renderable> {
 
     /**

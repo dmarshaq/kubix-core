@@ -1,12 +1,14 @@
 package org.dmarshaq.kubix.core.graphic;
 
 import org.dmarshaq.kubix.core.graphic.render.Quad;
-import org.dmarshaq.kubix.math.MathCore;
-import org.dmarshaq.kubix.math.matrix.Matrix2x3;
-import org.dmarshaq.kubix.math.matrix.Matrix3x4;
-import org.dmarshaq.kubix.math.vector.Vector2;
-import org.dmarshaq.kubix.math.vector.Vector3;
-import org.dmarshaq.kubix.math.vector.Vector4;
+import org.dmarshaq.kubix.core.graphic.render.Texture;
+import org.dmarshaq.kubix.core.graphic.render.TextureCroppedRegion;
+import org.dmarshaq.kubix.core.math.MathCore;
+import org.dmarshaq.kubix.core.math.matrix.Matrix2x3;
+import org.dmarshaq.kubix.core.math.matrix.Matrix3x4;
+import org.dmarshaq.kubix.core.math.vector.Vector2;
+import org.dmarshaq.kubix.core.math.vector.Vector3;
+import org.dmarshaq.kubix.core.math.vector.Vector4;
 
 public class GraphicCore {
 

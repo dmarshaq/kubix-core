@@ -4,15 +4,15 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.dmarshaq.kubix.core.app.Context;
-import org.dmarshaq.kubix.core.graphic.Shader;
-import org.dmarshaq.kubix.core.graphic.TextureCroppedRegion;
+import org.dmarshaq.kubix.core.graphic.render.Shader;
+import org.dmarshaq.kubix.core.graphic.render.TextureCroppedRegion;
 import org.dmarshaq.kubix.core.graphic.render.Layer;
-import org.dmarshaq.kubix.math.AbstractRectangle;
-import org.dmarshaq.kubix.math.vector.Vector2;
+import org.dmarshaq.kubix.core.math.AbstractRectangle;
+import org.dmarshaq.kubix.core.math.vector.Vector2;
 
 import java.awt.*;
 
-import static org.dmarshaq.kubix.core.graphic.Texture.NO_TEXTURE;
+import static org.dmarshaq.kubix.core.graphic.render.Texture.NO_TEXTURE;
 
 @Getter
 @Setter

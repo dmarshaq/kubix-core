@@ -1,12 +1,11 @@
 package org.dmarshaq.kubix.core.graphic.render;
 
 import org.dmarshaq.kubix.core.app.Context;
-import org.dmarshaq.kubix.core.graphic.Shader;
 import org.dmarshaq.kubix.core.graphic.Window;
 import org.dmarshaq.kubix.core.util.BufferUtils;
-import org.dmarshaq.kubix.math.MathCore;
-import org.dmarshaq.kubix.math.matrix.Matrix4x4;
-import org.dmarshaq.kubix.math.vector.Vector4;
+import org.dmarshaq.kubix.core.math.MathCore;
+import org.dmarshaq.kubix.core.math.matrix.Matrix4x4;
+import org.dmarshaq.kubix.core.math.vector.Vector4;
 
 import java.awt.*;
 

@@ -1,8 +1,8 @@
 package org.dmarshaq.kubix.core.app;
 
 import org.dmarshaq.kubix.core.graphic.Camera;
-import org.dmarshaq.kubix.core.graphic.Shader;
-import org.dmarshaq.kubix.core.graphic.Texture;
+import org.dmarshaq.kubix.core.graphic.render.Shader;
+import org.dmarshaq.kubix.core.graphic.render.Texture;
 import org.dmarshaq.kubix.core.input.InputManager;
 import org.dmarshaq.kubix.core.serialization.Packet;
 import org.dmarshaq.kubix.core.serialization.SerializationScanner;
@@ -10,8 +10,8 @@ import org.dmarshaq.kubix.core.util.FileUtils;
 import org.dmarshaq.kubix.core.util.IndexedHashMap;
 import org.dmarshaq.kubix.core.graphic.render.Layer;
 import org.dmarshaq.kubix.core.graphic.render.LayerManager;
-import org.dmarshaq.kubix.serialization.texture.TextureManager;
-import org.dmarshaq.kubix.serialization.shader.ShaderManager;
+import org.dmarshaq.kubix.core.serialization.texture.TextureManager;
+import org.dmarshaq.kubix.core.serialization.shader.ShaderManager;
 
 import java.awt.*;
 import java.util.ArrayList;

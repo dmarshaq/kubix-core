@@ -8,7 +8,7 @@ import org.dmarshaq.kubix.core.graphic.render.Render;
 import org.dmarshaq.kubix.core.input.Input;
 import org.dmarshaq.kubix.core.input.MouseInput;
 import org.dmarshaq.kubix.core.graphic.render.Snapshot;
-import org.dmarshaq.kubix.math.vector.Vector3;
+import org.dmarshaq.kubix.core.math.vector.Vector3;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 
