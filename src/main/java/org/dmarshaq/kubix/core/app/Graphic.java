@@ -3,11 +3,11 @@ package org.dmarshaq.kubix.core.app;
 import lombok.Getter;
 import lombok.Setter;
 import org.dmarshaq.kubix.core.audio.Audio;
-import org.dmarshaq.kubix.core.graphic.Window;
+import org.dmarshaq.kubix.core.graphic.element.Window;
 import org.dmarshaq.kubix.core.graphic.render.Render;
 import org.dmarshaq.kubix.core.input.Input;
 import org.dmarshaq.kubix.core.input.MouseInput;
-import org.dmarshaq.kubix.core.graphic.render.Snapshot;
+import org.dmarshaq.kubix.core.graphic.element.Snapshot;
 import org.dmarshaq.kubix.core.math.vector.Vector3;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
@@ -42,6 +42,7 @@ public abstract class Graphic implements Runnable {
         GL.createCapabilities();
 
         context.loadResources();
+        initShaders();
         render = new Render(window, Context.getClearColor());
 
         Thread update = new Thread(updateTask);
@@ -57,6 +58,7 @@ public abstract class Graphic implements Runnable {
                     throw new RuntimeException(e);
                 }
             }
+            modifyShaders();
             render.render(snapshot);
         }
 
@@ -130,4 +132,9 @@ public abstract class Graphic implements Runnable {
 
         audio.setListener(new Vector3(0.0f, 0.0f, 0.0f), new Vector3(0.0f, 0.0f, 0.0f));
     }
+
+    abstract protected void initShaders();
+    abstract protected void modifyShaders();
+
+
 }

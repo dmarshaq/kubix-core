@@ -1,8 +1,7 @@
-package org.dmarshaq.kubix.core.graphic.render;
+package org.dmarshaq.kubix.core.graphic.element;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.dmarshaq.kubix.core.graphic.Camera;
 
 import java.util.*;
 

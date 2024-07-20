@@ -1,5 +1,6 @@
-package org.dmarshaq.kubix.core.graphic.render;
+package org.dmarshaq.kubix.core.graphic.element;
 
+import lombok.Getter;
 import lombok.ToString;
 import org.dmarshaq.kubix.core.math.vector.Vector2;
 import org.dmarshaq.kubix.core.math.vector.Vector3;
@@ -12,12 +13,13 @@ import org.dmarshaq.kubix.core.math.vector.Vector4;
  */
 @ToString
 public class Quad implements Renderable {
-    public static final int VERTEX_STRIDE = 10;
+    public static final int VERTEX_STRIDE = 13;
     public static final int VERTICES = 4;
 
     private final float[] vertices;
     private final Shader shader;
     private final Layer layer;
+    @Getter
     private final Texture texture;
 
     /**
@@ -35,7 +37,7 @@ public class Quad implements Renderable {
     /**
      * Sets any quad vertex from 0 to 3 to specified properties.
      */
-    public void setVertex(int vertex, Vector3 position, Vector4 color, Vector2 texCoordinates, int texSlotIndex) {
+    public void setVertex(int vertex, Vector3 position, Vector4 color, Vector2 texCoordinates, int texSlotIndex, Vector3 normal) {
         vertices[0 + vertex * VERTEX_STRIDE] = position.x();
         vertices[1 + vertex * VERTEX_STRIDE] = position.y();
         vertices[2 + vertex * VERTEX_STRIDE] = position.z();
@@ -46,6 +48,9 @@ public class Quad implements Renderable {
         vertices[7 + vertex * VERTEX_STRIDE] = texCoordinates.x();
         vertices[8 + vertex * VERTEX_STRIDE] = texCoordinates.y();
         vertices[9 + vertex * VERTEX_STRIDE] = texSlotIndex;
+        vertices[10 + vertex * VERTEX_STRIDE] = normal.x();
+        vertices[11 + vertex * VERTEX_STRIDE] = normal.y();
+        vertices[12 + vertex * VERTEX_STRIDE] = normal.z();
     }
 
     @Override
@@ -61,10 +66,6 @@ public class Quad implements Renderable {
     @Override
     public Layer getLayer() {
         return layer;
-    }
-
-    public Texture getTexture() {
-        return texture;
     }
 
     @Override

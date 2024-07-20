@@ -1,8 +1,9 @@
 package org.dmarshaq.kubix.core.graphic;
 
-import org.dmarshaq.kubix.core.graphic.render.Quad;
-import org.dmarshaq.kubix.core.graphic.render.Texture;
-import org.dmarshaq.kubix.core.graphic.render.TextureCroppedRegion;
+import org.dmarshaq.kubix.core.graphic.element.Quad;
+import org.dmarshaq.kubix.core.graphic.element.Sprite;
+import org.dmarshaq.kubix.core.graphic.element.Texture;
+import org.dmarshaq.kubix.core.graphic.element.TextureCroppedRegion;
 import org.dmarshaq.kubix.core.math.MathCore;
 import org.dmarshaq.kubix.core.math.matrix.Matrix2x3;
 import org.dmarshaq.kubix.core.math.matrix.Matrix3x4;
@@ -47,14 +48,17 @@ public class GraphicCore {
         percentWidth = sprite.getTexture().getPercentWidth();
         percentHeight = sprite.getTexture().getPercentHeight();
 
+        // Getting normal vector.
+        Vector3 normal = MathCore.forward().negate();
+
         // Creating quad with shader defined in sprite.
         Quad quad = new Quad(sprite.getShader(), sprite.getLayer(), texture);
 
         // Setting vertices through 0 to 3.
-        quad.setVertex(0, position,                                    color, percentPosition,                                               texIndex);
-        quad.setVertex(1, new Vector3(width, 0, 0).add(position),      color, new Vector2(percentWidth, 0).add(percentPosition),             texIndex);
-        quad.setVertex(2, new Vector3(0, height, 0).add(position),     color, new Vector2(0, percentHeight).add(percentPosition),            texIndex);
-        quad.setVertex(3, new Vector3(width, height, 0).add(position), color, new Vector2(percentWidth, percentHeight).add(percentPosition), texIndex);
+        quad.setVertex(0, position,                                    color, percentPosition,                                               texIndex, normal);
+        quad.setVertex(1, new Vector3(width, 0, 0).add(position),      color, new Vector2(percentWidth, 0).add(percentPosition),             texIndex, normal);
+        quad.setVertex(2, new Vector3(0, height, 0).add(position),     color, new Vector2(0, percentHeight).add(percentPosition),            texIndex, normal);
+        quad.setVertex(3, new Vector3(width, height, 0).add(position), color, new Vector2(percentWidth, percentHeight).add(percentPosition), texIndex, normal);
 
         return quad;
     }
@@ -99,14 +103,17 @@ public class GraphicCore {
         Vector3 vertex2 = new Vector3(MathCore.multiplication(transformation, new Vector4(0, height, 0, 0).add(position)));
         Vector3 vertex3 = new Vector3(MathCore.multiplication(transformation, new Vector4(width, height, 0, 0).add(position)));
 
+        // Getting normal vector.
+        Vector3 normal = transformation.axisVectorZ().normalize().negate();
+
         // Creating quad with shader defined in sprite.
         Quad quad = new Quad(sprite.getShader(), sprite.getLayer(), texture);
 
         // Setting vertices through 0 to 3.
-        quad.setVertex(0, vertex0, color, percentPosition,                                               texIndex);
-        quad.setVertex(1, vertex1, color, new Vector2(percentWidth, 0).add(percentPosition),             texIndex);
-        quad.setVertex(2, vertex2, color, new Vector2(0, percentHeight).add(percentPosition),            texIndex);
-        quad.setVertex(3, vertex3, color, new Vector2(percentWidth, percentHeight).add(percentPosition), texIndex);
+        quad.setVertex(0, vertex0, color, percentPosition,                                               texIndex, normal);
+        quad.setVertex(1, vertex1, color, new Vector2(percentWidth, 0).add(percentPosition),             texIndex, normal);
+        quad.setVertex(2, vertex2, color, new Vector2(0, percentHeight).add(percentPosition),            texIndex, normal);
+        quad.setVertex(3, vertex3, color, new Vector2(percentWidth, percentHeight).add(percentPosition), texIndex, normal);
 
         return quad;
     }
@@ -151,16 +158,17 @@ public class GraphicCore {
         Vector3 vertex2 = new Vector3(MathCore.componentVector(MathCore.multiplication(transformation, new Vector3(0, height, 0).add(position)), "xyz"));
         Vector3 vertex3 = new Vector3(MathCore.componentVector(MathCore.multiplication(transformation, new Vector3(width, height, 0).add(position)), "xyz"));
 
-
+        // Getting normal vector.
+        Vector3 normal = MathCore.forward().negate();
 
         // Creating quad with shader defined in sprite.
         Quad quad = new Quad(sprite.getShader(), sprite.getLayer(), texture);
 
         // Setting vertices through 0 to 3.
-        quad.setVertex(0, vertex0, color, percentPosition,                                               texIndex);
-        quad.setVertex(1, vertex1, color, new Vector2(percentWidth, 0).add(percentPosition),             texIndex);
-        quad.setVertex(2, vertex2, color, new Vector2(0, percentHeight).add(percentPosition),            texIndex);
-        quad.setVertex(3, vertex3, color, new Vector2(percentWidth, percentHeight).add(percentPosition), texIndex);
+        quad.setVertex(0, vertex0, color, percentPosition,                                               texIndex, normal);
+        quad.setVertex(1, vertex1, color, new Vector2(percentWidth, 0).add(percentPosition),             texIndex, normal);
+        quad.setVertex(2, vertex2, color, new Vector2(0, percentHeight).add(percentPosition),            texIndex, normal);
+        quad.setVertex(3, vertex3, color, new Vector2(percentWidth, percentHeight).add(percentPosition), texIndex, normal);
 
         return quad;
     }

@@ -1,7 +1,10 @@
 package org.dmarshaq.kubix.core.graphic.render;
 
 import org.dmarshaq.kubix.core.app.Context;
-import org.dmarshaq.kubix.core.graphic.Window;
+import org.dmarshaq.kubix.core.graphic.element.Quad;
+import org.dmarshaq.kubix.core.graphic.element.Shader;
+import org.dmarshaq.kubix.core.graphic.element.Snapshot;
+import org.dmarshaq.kubix.core.graphic.element.Window;
 import org.dmarshaq.kubix.core.util.BufferUtils;
 import org.dmarshaq.kubix.core.math.MathCore;
 import org.dmarshaq.kubix.core.math.matrix.Matrix4x4;
@@ -46,11 +49,13 @@ public class Render {
         // Setup shader
         pr_matrix = MathCore.orthographic(-2f, 2f, -1.5f, 1.5f, -1f, 1f); // basically camera matrix
 
+        Shader basic = Context.shaders().get("basic");
 
-        Context.shaders().get("basic").setUniformMatrix4x4("pr_matrix", pr_matrix);
-        Context.shaders().get("basic").setUniform1iv("u_Textures", samplers);
-        Context.shaders().get("basic").setUniformMatrix4x4("ml_matrix", new Matrix4x4());
-        Context.shaders().get("basic").disable();
+        basic.enable();
+        basic.setUniformMatrix4x4("pr_matrix", pr_matrix);
+        basic.setUniform1iv("u_Textures", samplers);
+        basic.setUniformMatrix4x4("ml_matrix", new Matrix4x4());
+        basic.disable();
 
         // Build indices
         for (int i = 0; i < getMaxQuadsPerBatch(); i++) {
@@ -74,17 +79,20 @@ public class Render {
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
         glBufferData(GL_ARRAY_BUFFER, VERTICES.length * 4, GL_DYNAMIC_DRAW);
 
-        glVertexAttribPointer(Shader.VERTEX_ATTRIBUTE, 3, GL_FLOAT, false, 10 * 4, 0 * 4);
+        glVertexAttribPointer(Shader.VERTEX_ATTRIBUTE, 3, GL_FLOAT, false, Quad.VERTEX_STRIDE * 4, 0 * 4);
         glEnableVertexAttribArray(Shader.VERTEX_ATTRIBUTE);
 
-        glVertexAttribPointer(Shader.COLOR_ATTRIBUTE, 4, GL_FLOAT, false, 10 * 4, 3 * 4);
+        glVertexAttribPointer(Shader.COLOR_ATTRIBUTE, 4, GL_FLOAT, false, Quad.VERTEX_STRIDE * 4, 3 * 4);
         glEnableVertexAttribArray(Shader.COLOR_ATTRIBUTE);
 
-        glVertexAttribPointer(Shader.TCOORDS_ATTRIBUTE, 2, GL_FLOAT, false, 10 * 4, 7 * 4);
+        glVertexAttribPointer(Shader.TCOORDS_ATTRIBUTE, 2, GL_FLOAT, false, Quad.VERTEX_STRIDE * 4, 7 * 4);
         glEnableVertexAttribArray(Shader.TCOORDS_ATTRIBUTE);
 
-        glVertexAttribPointer(Shader.TINDEX_ATTRIBUTE, 1, GL_FLOAT, false, 10 * 4, 9 * 4);
+        glVertexAttribPointer(Shader.TINDEX_ATTRIBUTE, 1, GL_FLOAT, false, Quad.VERTEX_STRIDE * 4, 9 * 4);
         glEnableVertexAttribArray(Shader.TINDEX_ATTRIBUTE);
+
+        glVertexAttribPointer(Shader.NORMAL_ATTRIBUTE, 3, GL_FLOAT, false, Quad.VERTEX_STRIDE * 4, 10 * 4);
+        glEnableVertexAttribArray(Shader.NORMAL_ATTRIBUTE);
 
         ibo = glGenBuffers();
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
@@ -110,8 +118,10 @@ public class Render {
 
     private void loadCameraMatrix(Snapshot snapshot) {
         pr_matrix = snapshot.getCamera().projectionMatrix();
-        Context.shaders().get("basic").setUniformMatrix4x4("pr_matrix", pr_matrix);
-        Context.shaders().get("basic").disable();
+        Shader basic = Context.shaders().get("basic");
+        basic.enable();
+        basic.setUniformMatrix4x4("pr_matrix", pr_matrix);
+        basic.disable();
     }
 
     public static class BatchRenderer {

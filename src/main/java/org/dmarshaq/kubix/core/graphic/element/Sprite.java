@@ -1,18 +1,15 @@
-package org.dmarshaq.kubix.core.graphic;
+package org.dmarshaq.kubix.core.graphic.element;
 
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.dmarshaq.kubix.core.app.Context;
-import org.dmarshaq.kubix.core.graphic.render.Shader;
-import org.dmarshaq.kubix.core.graphic.render.TextureCroppedRegion;
-import org.dmarshaq.kubix.core.graphic.render.Layer;
 import org.dmarshaq.kubix.core.math.AbstractRectangle;
 import org.dmarshaq.kubix.core.math.vector.Vector2;
 
 import java.awt.*;
 
-import static org.dmarshaq.kubix.core.graphic.render.Texture.NO_TEXTURE;
+import static org.dmarshaq.kubix.core.graphic.element.Texture.NO_TEXTURE;
 
 @Getter
 @Setter

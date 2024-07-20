@@ -21,6 +21,13 @@ public class Matrix3x4 extends Matrix<Float> implements AbstractFloatMatrixTrans
                 0f, 0f, 1f, 0f}), 3, 4);
     }
 
+    /**
+     * Casts Matrix<Float> to Matrix3x4.
+     * Note: new Matrix3x4 will have reference to the same FloatArray object.
+     */
+    public Matrix3x4(Matrix<Float> matrix) {
+        super(matrix.getElements(), 3, 4);
+    }
 
     @Override
     public float[] getArrayOfElements() {

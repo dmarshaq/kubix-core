@@ -1,4 +1,4 @@
-package org.dmarshaq.kubix.core.graphic.render;
+package org.dmarshaq.kubix.core.graphic.element;
 
 public interface Renderable extends Comparable<Renderable> {
 

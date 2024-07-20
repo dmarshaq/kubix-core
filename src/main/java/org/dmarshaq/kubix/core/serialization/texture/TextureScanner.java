@@ -1,6 +1,6 @@
 package org.dmarshaq.kubix.core.serialization.texture;
 
-import org.dmarshaq.kubix.core.graphic.render.Texture;
+import org.dmarshaq.kubix.core.graphic.element.Texture;
 import org.dmarshaq.kubix.core.serialization.Packet;
 import org.dmarshaq.kubix.core.serialization.SerializationScanner;
 import org.dmarshaq.kubix.core.util.BufferUtils;

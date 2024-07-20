@@ -1,8 +1,6 @@
-package org.dmarshaq.kubix.core.graphic;
+package org.dmarshaq.kubix.core.graphic.element;
 
 import lombok.Getter;
-import lombok.Setter;
-import org.dmarshaq.kubix.core.input.Input;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFWKeyCallback;
 import org.lwjgl.glfw.GLFWWindowSizeCallback;

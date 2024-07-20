@@ -1,6 +1,10 @@
 package org.dmarshaq.kubix.core.graphic.render;
 
 import org.dmarshaq.kubix.core.app.Context;
+import org.dmarshaq.kubix.core.graphic.element.Layer;
+import org.dmarshaq.kubix.core.graphic.element.Quad;
+import org.dmarshaq.kubix.core.graphic.element.Shader;
+import org.dmarshaq.kubix.core.graphic.element.Texture;
 import org.lwjgl.opengl.GL20;
 
 import static org.dmarshaq.kubix.core.graphic.render.Render.BatchRenderer.*;

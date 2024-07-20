@@ -232,5 +232,25 @@ public class MathCore {
         return matrix2x3;
     }
 
+    /**
+     * Returns new Vector3 that represents world right direction vector.
+     */
+    public static Vector3 right() {
+        return new Vector3(1.0f, 0.0f, 0.0f);
+    }
+
+    /**
+     * Returns new Vector3 that represents world up direction vector.
+     */
+    public static Vector3 up() {
+        return new Vector3(0.0f, 1.0f, 0.0f);
+    }
+
+    /**
+     * Returns new Vector3 that represents world forward direction vector.
+     */
+    public static Vector3 forward() {
+        return new Vector3(0.0f, 0.0f, 1.0f);
+    }
 
 }

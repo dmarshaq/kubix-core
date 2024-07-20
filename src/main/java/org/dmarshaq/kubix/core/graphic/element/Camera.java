@@ -1,4 +1,4 @@
-package org.dmarshaq.kubix.core.graphic;
+package org.dmarshaq.kubix.core.graphic.element;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

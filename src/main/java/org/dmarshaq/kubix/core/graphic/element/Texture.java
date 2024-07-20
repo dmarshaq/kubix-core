@@ -1,4 +1,4 @@
-package org.dmarshaq.kubix.core.graphic.render;
+package org.dmarshaq.kubix.core.graphic.element;
 
 import lombok.Getter;
 import lombok.Setter;
