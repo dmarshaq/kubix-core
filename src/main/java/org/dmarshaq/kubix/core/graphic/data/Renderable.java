@@ -1,4 +1,7 @@
-package org.dmarshaq.kubix.core.graphic.element;
+package org.dmarshaq.kubix.core.graphic.data;
+
+import org.dmarshaq.kubix.core.graphic.resource.Layer;
+import org.dmarshaq.kubix.core.graphic.resource.Shader;
 
 public interface Renderable extends Comparable<Renderable> {
 

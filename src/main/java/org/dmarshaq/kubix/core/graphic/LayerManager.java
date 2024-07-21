@@ -1,6 +1,6 @@
 package org.dmarshaq.kubix.core.graphic;
 
-import org.dmarshaq.kubix.core.graphic.element.Layer;
+import org.dmarshaq.kubix.core.graphic.resource.Layer;
 
 import java.util.HashMap;
 

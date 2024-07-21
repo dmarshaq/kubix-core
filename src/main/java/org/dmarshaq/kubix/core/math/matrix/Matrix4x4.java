@@ -6,10 +6,10 @@ import org.dmarshaq.kubix.core.math.array.NumberArray;
 import org.dmarshaq.kubix.core.math.vector.Vector3;
 
 /**
- * Matrix4x4 is a complete float matrix that is used for storing various data that can define projections, transforms in 3D space.
- * It's main advantage is ability to act as projection matrix.
+ * Matrix4x4 is a complete float matrix that is used for storing various data that can define transforms in 3D space.
+ * It's also used to act as projection matrix.
  */
-public class Matrix4x4 extends Matrix<Float> implements AbstractFloatMatrixTransform<Vector3> {
+public class Matrix4x4 extends Matrix<Float> implements AbstractFloatMatrixTransform<Vector3, Matrix4x4> {
 
     /**
      * Builds default identity float matrix 4x4.
@@ -20,6 +20,13 @@ public class Matrix4x4 extends Matrix<Float> implements AbstractFloatMatrixTrans
                 0f, 1f, 0f, 0f,
                 0f, 0f, 1f, 0f,
                 0f, 0f, 0f, 1f}), 4, 4);
+    }
+
+    /**
+     * Builds specified float matrix 4x4.
+     */
+    public Matrix4x4(float[] elements) {
+        super(new FloatArray(elements), 4, 4);
     }
 
     /**
@@ -34,6 +41,27 @@ public class Matrix4x4 extends Matrix<Float> implements AbstractFloatMatrixTrans
     public float[] getArrayOfElements() {
         return getElements().floatArray();
     }
+
+    @Override
+    public Matrix4x4 multiply(Matrix4x4 matrix) {
+        float[] arr1 = getArrayOfElements();
+        float[] arr2 = matrix.getArrayOfElements();
+        float[] result = new float[16];
+
+        for (int rCol = 0; rCol < matrix.getColumns(); rCol++) {
+            for (int rRow = 0; rRow < getRows(); rRow++) {
+                float res = 0.0f;
+                for (int col = 0; col < getColumns(); col++) {
+                    res += arr1[col + rRow * getColumns()] * arr2[rCol + col * matrix.getColumns()];
+                }
+                result[rCol + rRow * matrix.getColumns()] = res;
+            }
+        }
+
+        setElements(new FloatArray(result), 4, 4);
+        return this;
+    }
+
 
     @Override
     public Vector3 axisVectorX() {

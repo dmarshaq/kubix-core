@@ -1,15 +1,18 @@
 package org.dmarshaq.kubix.core.graphic;
 
-import org.dmarshaq.kubix.core.graphic.element.Quad;
+import org.dmarshaq.kubix.core.app.Context;
+import org.dmarshaq.kubix.core.graphic.data.Line;
+import org.dmarshaq.kubix.core.graphic.data.Quad;
 import org.dmarshaq.kubix.core.graphic.element.Sprite;
-import org.dmarshaq.kubix.core.graphic.element.Texture;
-import org.dmarshaq.kubix.core.graphic.element.TextureCroppedRegion;
+import org.dmarshaq.kubix.core.graphic.resource.Texture;
+import org.dmarshaq.kubix.core.graphic.resource.TextureCroppedRegion;
+import org.dmarshaq.kubix.core.math.AbstractRectangle;
 import org.dmarshaq.kubix.core.math.MathCore;
-import org.dmarshaq.kubix.core.math.matrix.Matrix2x3;
-import org.dmarshaq.kubix.core.math.matrix.Matrix3x4;
-import org.dmarshaq.kubix.core.math.vector.Vector2;
-import org.dmarshaq.kubix.core.math.vector.Vector3;
-import org.dmarshaq.kubix.core.math.vector.Vector4;
+import org.dmarshaq.kubix.core.math.matrix.Matrix3x3;
+import org.dmarshaq.kubix.core.math.matrix.Matrix4x4;
+import org.dmarshaq.kubix.core.math.vector.*;
+
+import java.awt.*;
 
 public class GraphicCore {
 
@@ -64,9 +67,9 @@ public class GraphicCore {
     }
 
     /**
-     * Returns new quad from sprite, with additional Matrix3x4 transformation.
+     * Returns new quad from sprite, with additional Matrix4x4 transformation.
      */
-    public static Quad quad(Sprite sprite, Matrix3x4 transformation) {
+    public static Quad quad(Sprite sprite, Matrix4x4 transformation) {
         // Getting color if it is not null, otherwise setting to pure white.
         Vector4 color;
         if (sprite.getColor() != null)
@@ -119,9 +122,9 @@ public class GraphicCore {
     }
 
     /**
-     * Returns new quad from sprite, with additional Matrix2x3 transformation.
+     * Returns new quad from sprite, with additional Matrix3x3 transformation.
      */
-    public static Quad quad(Sprite sprite, Matrix2x3 transformation) {
+    public static Quad quad(Sprite sprite, Matrix3x3 transformation) {
         // Getting color if it is not null, otherwise setting to pure white.
         Vector4 color;
         if (sprite.getColor() != null)
@@ -172,7 +175,7 @@ public class GraphicCore {
 
         return quad;
     }
-
+    
     /**
      * Slices texture by grid, by creating new TextureCroppedRegion[].
      */
@@ -190,4 +193,70 @@ public class GraphicCore {
 
         texture.setTileSet(tileSet);
     }
+
+    /**
+     * Returns new line from vector.
+     */
+    public static <T extends Vector<Float>> Line line(T vector, Color color) {
+        Line line = new Line(Context.shaders().get("basic_line"), Context.layers().get("gizmos"), 1.0f);
+
+        Vector4 vector4 = MathCore.vector4(color);
+        line.setVertex(0, new Vector3(0, 0, 0), vector4);
+        line.setVertex(1, new Vector3(MathCore.componentVector(vector, "xyz")), vector4);
+
+        return line;
+    }
+
+    /**
+     * Returns new line from two points.
+     */
+    public static <T extends Vector<Float>> Line line(T start, T end, Color color) {
+        Line line = new Line(Context.shaders().get("basic_line"), Context.layers().get("gizmos"), 1.0f);
+
+        Vector4 vector4 = MathCore.vector4(color);
+        line.setVertex(0, new Vector3(MathCore.componentVector(start, "xyz")), vector4);
+        line.setVertex(1, new Vector3(MathCore.componentVector(end, "xyz")), vector4);
+
+        return line;
+    }
+
+    /**
+     * Returns new line array from rectangle.
+     */
+    public static <T extends AbstractRectangle<Float, ?>> Line[] outline(T rectangle, Color color) {
+        Line[] outline = new Line[4];
+        Vector4 vector4 = MathCore.vector4(color);
+
+        for (int i = 0; i < outline.length; i++) {
+            outline[i] = new Line(Context.shaders().get("basic_line"), Context.layers().get("gizmos"), 1.0f);
+        }
+
+        Vector3 start = new Vector3(MathCore.componentVector(rectangle.getPosition(), "xyz"));
+        Vector3 end = new Vector3(rectangle.getWidth(), 0, 0).add(start);
+
+        outline[0].setVertex(0, start, vector4);
+        outline[0].setVertex(1, end, vector4);
+
+        start = end;
+        end = new Vector3(0, rectangle.getHeight(), 0).add(start);
+
+        outline[1].setVertex(0, start, vector4);
+        outline[1].setVertex(1, end, vector4);
+
+        start = end;
+        end = new Vector3(-rectangle.getWidth(), 0, 0).add(start);
+
+        outline[2].setVertex(0, start, vector4);
+        outline[2].setVertex(1, end, vector4);
+
+        start = end;
+        end = new Vector3(0, -rectangle.getHeight(), 0).add(start);
+
+        outline[3].setVertex(0, start, vector4);
+        outline[3].setVertex(1, end, vector4);
+
+        return outline;
+    }
+
+
 }

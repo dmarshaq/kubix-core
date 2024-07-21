@@ -1,14 +1,14 @@
 package org.dmarshaq.kubix.core.app;
 
 import org.dmarshaq.kubix.core.graphic.element.Camera;
-import org.dmarshaq.kubix.core.graphic.element.Shader;
-import org.dmarshaq.kubix.core.graphic.element.Texture;
+import org.dmarshaq.kubix.core.graphic.resource.Shader;
+import org.dmarshaq.kubix.core.graphic.resource.Texture;
 import org.dmarshaq.kubix.core.input.InputManager;
 import org.dmarshaq.kubix.core.serialization.Packet;
 import org.dmarshaq.kubix.core.serialization.SerializationScanner;
 import org.dmarshaq.kubix.core.util.FileUtils;
 import org.dmarshaq.kubix.core.util.IndexedHashMap;
-import org.dmarshaq.kubix.core.graphic.element.Layer;
+import org.dmarshaq.kubix.core.graphic.resource.Layer;
 import org.dmarshaq.kubix.core.graphic.LayerManager;
 import org.dmarshaq.kubix.core.serialization.texture.TextureManager;
 import org.dmarshaq.kubix.core.serialization.shader.ShaderManager;
@@ -41,6 +41,7 @@ public abstract class Context {
     // RENDER
     private static boolean DRAW_GIZMOS = true;
     private static int MAX_QUADS_PER_BATCH = 256;
+    private static int MAX_LINES_PER_BATCH = 1028;
 
     // PUBLIC METHODS
     public static void stopRunning() {
@@ -68,6 +69,9 @@ public abstract class Context {
     }
     public static int getMaxQuadsPerBatch() {
         return MAX_QUADS_PER_BATCH;
+    }
+    public static int getMaxLinesPerBatch() {
+        return MAX_LINES_PER_BATCH;
     }
     public static Camera getMainCamera() {
         return  MAIN_CAMERA;
@@ -101,6 +105,9 @@ public abstract class Context {
     }
     protected static void setMaxQuadsPerBatch(int maxQuadsPerBatch) {
         Context.MAX_QUADS_PER_BATCH = maxQuadsPerBatch;
+    }
+    protected static void setMaxLinesPerBatch(int maxLinesPerBatch) {
+        Context.MAX_LINES_PER_BATCH = maxLinesPerBatch;
     }
     public static void setMainCamera(Camera camera) {
         Context.MAIN_CAMERA = camera;

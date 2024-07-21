@@ -1,4 +1,4 @@
-package org.dmarshaq.kubix.core.graphic.element;
+package org.dmarshaq.kubix.core.graphic.resource;
 
 import lombok.Getter;
 import org.dmarshaq.kubix.core.math.AbstractRectangle;

@@ -2,12 +2,14 @@ package org.dmarshaq.kubix.core.math.vector;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.Setter;
 import org.dmarshaq.kubix.core.math.array.NumberArray;
 
+@Setter
 @Getter
 @EqualsAndHashCode
 public class Vector<T extends Number> {
-    private final NumberArray<T> values;
+    private NumberArray<T> values;
 
     /**
      * Builds vector based on the specified values.

@@ -6,7 +6,7 @@ import org.dmarshaq.kubix.core.math.vector.Vector;
 
 import java.nio.FloatBuffer;
 
-public interface AbstractFloatMatrixTransform<T extends Vector<Float>> extends AbstractFloatMatrix {
+public interface AbstractFloatMatrixTransform<T extends Vector<Float>, E extends Matrix<Float>> extends AbstractFloatMatrix<E> {
 
     /**
      * Returns new vector representing x-axis in transform matrix, if defined.

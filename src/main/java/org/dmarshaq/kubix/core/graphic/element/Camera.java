@@ -4,9 +4,11 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 import org.dmarshaq.kubix.core.app.Context;
+import org.dmarshaq.kubix.core.app.Graphic;
 import org.dmarshaq.kubix.core.math.MathCore;
 import org.dmarshaq.kubix.core.math.Rectangle;
 import org.dmarshaq.kubix.core.math.matrix.Matrix4x4;
+import org.dmarshaq.kubix.core.math.vector.Vector;
 import org.dmarshaq.kubix.core.math.vector.Vector2;
 
 @Getter
@@ -23,6 +25,13 @@ public class Camera {
         if (Context.getMainCamera() == null) {
             Context.setMainCamera(this);
         }
+    }
+
+    public Vector2 screenToWorld(Vector<Integer> screenPosition) {
+        return new Vector2(
+                fov.getPosition().x() + (float) screenPosition.getValues().intArray()[0] * fov.getWidth() / Graphic.getWindow().width(),
+                fov.getPosition().y() + (float) screenPosition.getValues().intArray()[1] * fov.getHeight() / Graphic.getWindow().height()
+                );
     }
 
     public void setCameraFov(float width, float height) {

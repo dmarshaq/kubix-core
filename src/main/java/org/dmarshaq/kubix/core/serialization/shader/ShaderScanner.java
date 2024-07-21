@@ -1,6 +1,6 @@
 package org.dmarshaq.kubix.core.serialization.shader;
 
-import org.dmarshaq.kubix.core.graphic.element.Shader;
+import org.dmarshaq.kubix.core.graphic.resource.Shader;
 import org.dmarshaq.kubix.core.serialization.SerializationScanner;
 
 import java.io.File;

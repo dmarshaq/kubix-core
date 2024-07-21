@@ -5,7 +5,6 @@ import org.dmarshaq.kubix.core.math.processor.*;
 import org.dmarshaq.kubix.core.math.vector.*;
 
 import java.awt.*;
-import java.util.Arrays;
 
 public class MathCore {
 
@@ -162,9 +161,9 @@ public class MathCore {
     /**
      * Returns new 2D transform based on the specified vector, rotation and scale values.
      */
-    public static Matrix2x3 TRS(Vector2 vector, float angle, float scaleX, float scaleY) {
-        Matrix2x3 matrix2x3 = new Matrix2x3();
-        float[] elements = matrix2x3.getElements().floatArray();
+    public static Matrix3x3 TRS(Vector2 vector, float angle, float scaleX, float scaleY) {
+        Matrix3x3 matrix3X3 = new Matrix3x3();
+        float[] elements = matrix3X3.getElements().floatArray();
         float[] arr = vector.getValues().floatArray();
 
         elements[2 + 0 * 3] = arr[0];
@@ -180,29 +179,29 @@ public class MathCore {
         elements[0 + 1 * 3] = sin * scaleX;
         elements[1 + 1 * 3] = cos * scaleY;
 
-        return matrix2x3;
+        return matrix3X3;
     }
 
     /**
      * Returns new 2D translate transform based on the specified vector2 value.
      */
-    public static Matrix2x3 translate(Vector2 vector) {
-        Matrix2x3 matrix2x3 = new Matrix2x3();
-        float[] elements = matrix2x3.getElements().floatArray();
+    public static Matrix3x3 translate(Vector2 vector) {
+        Matrix3x3 matrix3X3 = new Matrix3x3();
+        float[] elements = matrix3X3.getElements().floatArray();
         float[] arr = vector.getValues().floatArray();
 
         elements[2 + 0 * 3] = arr[0];
         elements[2 + 1 * 3] = arr[1];
 
-        return matrix2x3;
+        return matrix3X3;
     }
 
     /**
      * Returns new 2D rotation transform based on the specified rotation value.
      */
-    public static Matrix2x3 rotation(float angle) {
-        Matrix2x3 matrix2x3 = new Matrix2x3();
-        float[] elements = matrix2x3.getElements().floatArray();
+    public static Matrix3x3 rotation(float angle) {
+        Matrix3x3 matrix3X3 = new Matrix3x3();
+        float[] elements = matrix3X3.getElements().floatArray();
 
         float r = (float) Math.toRadians(angle);
         float cos = (float) Math.cos(r);
@@ -213,23 +212,23 @@ public class MathCore {
         elements[0 + 1 * 3] = sin;
         elements[1 + 1 * 3] = cos;
 
-        return matrix2x3;
+        return matrix3X3;
     }
 
     /**
      * Returns new 2D scale transform based on the specified scale values.
      */
-    public static Matrix2x3 scale(float scaleX, float scaleY) {
+    public static Matrix3x3 scale(float scaleX, float scaleY) {
 
-        Matrix2x3 matrix2x3 = new Matrix2x3();
+        Matrix3x3 matrix3X3 = new Matrix3x3();
 
-        float[] elements = matrix2x3.getElements().floatArray();
+        float[] elements = matrix3X3.getElements().floatArray();
 
         elements[0 + 0 * 3] = scaleX;
         elements[1 + 1 * 3] = scaleY;
 
 
-        return matrix2x3;
+        return matrix3X3;
     }
 
     /**

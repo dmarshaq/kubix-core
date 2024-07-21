@@ -1,7 +1,10 @@
-package org.dmarshaq.kubix.core.graphic.element;
+package org.dmarshaq.kubix.core.graphic.data;
 
 import lombok.Getter;
 import lombok.ToString;
+import org.dmarshaq.kubix.core.graphic.resource.Layer;
+import org.dmarshaq.kubix.core.graphic.resource.Shader;
+import org.dmarshaq.kubix.core.graphic.resource.Texture;
 import org.dmarshaq.kubix.core.math.vector.Vector2;
 import org.dmarshaq.kubix.core.math.vector.Vector3;
 import org.dmarshaq.kubix.core.math.vector.Vector4;
@@ -15,6 +18,7 @@ import org.dmarshaq.kubix.core.math.vector.Vector4;
 public class Quad implements Renderable {
     public static final int VERTEX_STRIDE = 13;
     public static final int VERTICES = 4;
+    public static final int STRIDE = VERTEX_STRIDE * VERTICES;
 
     private final float[] vertices;
     private final Shader shader;
@@ -23,15 +27,14 @@ public class Quad implements Renderable {
     private final Texture texture;
 
     /**
-     * Builds the quad with float array describing all 4 vertices each taking 10 floats in array.
-     * ShaderType needs to be specified.
-     * Note: each vertex properties needs to also specified.
+     * Builds the quad with float array describing all 4 vertices each taking 13 floats in array.
+     * Note: each vertex properties needs to also be specified, through setVertex().
      */
     public Quad(Shader shader, Layer layer, Texture texture) {
         this.shader = shader;
         this.layer = layer;
         this.texture = texture;
-        vertices = new float[4 * VERTEX_STRIDE];
+        vertices = new float[VERTICES * VERTEX_STRIDE];
     }
 
     /**

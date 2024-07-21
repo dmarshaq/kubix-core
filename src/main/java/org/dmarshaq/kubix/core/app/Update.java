@@ -1,10 +1,10 @@
 package org.dmarshaq.kubix.core.app;
 
-import org.dmarshaq.kubix.core.graphic.element.Window;
+import org.dmarshaq.kubix.core.graphic.Window;
 import org.dmarshaq.kubix.core.input.InputManager;
 import org.dmarshaq.kubix.core.time.Time;
 import org.dmarshaq.kubix.core.graphic.LayerManager;
-import org.dmarshaq.kubix.core.graphic.element.Snapshot;
+import org.dmarshaq.kubix.core.graphic.data.Snapshot;
 
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -53,6 +53,7 @@ public abstract class Update implements Runnable {
             update();
             // snapshot packing up, as well as resetting key states
             snapshot.releaseQuadRenderBuffer();
+            snapshot.releaseLineRenderBuffer();
             InputManager.resetReleasedKeyStates();
             // loading snapshot into graphic
             graphic.loadData(snapshot);

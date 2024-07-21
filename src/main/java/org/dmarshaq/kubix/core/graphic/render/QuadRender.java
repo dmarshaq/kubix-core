@@ -1,11 +1,10 @@
 package org.dmarshaq.kubix.core.graphic.render;
 
 import org.dmarshaq.kubix.core.app.Context;
-import org.dmarshaq.kubix.core.graphic.element.Layer;
-import org.dmarshaq.kubix.core.graphic.element.Quad;
-import org.dmarshaq.kubix.core.graphic.element.Shader;
-import org.dmarshaq.kubix.core.graphic.element.Texture;
-import org.lwjgl.opengl.GL20;
+import org.dmarshaq.kubix.core.graphic.resource.Layer;
+import org.dmarshaq.kubix.core.graphic.data.Quad;
+import org.dmarshaq.kubix.core.graphic.resource.Shader;
+import org.dmarshaq.kubix.core.graphic.resource.Texture;
 
 import static org.dmarshaq.kubix.core.graphic.render.Render.BatchRenderer.*;
 import static org.lwjgl.opengl.GL11.GL_FRONT_AND_BACK;
@@ -17,13 +16,11 @@ import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
 
 public class QuadRender {
-    private static Layer currentLayer;
     private static Shader currentShader;
     private static int currentTextureGroup;
     private static int quadsInBatch;
 
-
-    public static void renderQuadsInBatch(Quad[] sortedQuads, int maxQuadsPerBatch) {
+    public static void renderInBatch(Quad[] sortedQuads, int maxQuadsPerBatch) {
         int pointer = 0;
         while (pointer < sortedQuads.length) {
             // Vertices loading
@@ -34,25 +31,21 @@ public class QuadRender {
             loadTextureGroup();
             loadTexturesUsedIntoSlots();
             // Binding dynamic draw vertex buffer
-            glBindBuffer(GL_ARRAY_BUFFER, vbo);
+            glBindBuffer(GL_ARRAY_BUFFER, vertexQuadBufferObject);
             // Actually loading vertices into graphics memory
-            glBufferSubData(GL_ARRAY_BUFFER, 0, VERTICES);
+            glBufferSubData(GL_ARRAY_BUFFER, 0, QUAD_RENDER_VERTICES);
             // Drawing mode
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
             // Drawing
 //            System.out.println("Quads rendered in Batch: " + quadsRenderedInBatch);
             glDrawElements(GL_TRIANGLES, quadsInBatch * 6, GL_UNSIGNED_INT, 0);
-            int error = GL20.glGetError();
-            if (error != 0) {
-                System.out.println(error);
-            }
             // Cleaning up
             flush();
         }
     }
 
     private static int nextBatch(int pointer, Quad[] sortedQuads, int threshold) {
-        currentLayer = sortedQuads[pointer].getLayer();
+        Layer currentLayer = sortedQuads[pointer].getLayer();
         currentShader = sortedQuads[pointer].getShader();
         currentTextureGroup = sortedQuads[pointer].getTexture().ordinal() / 32;
 
@@ -63,7 +56,7 @@ public class QuadRender {
                 && currentShader == sortedQuads[pointer].getShader()
                 && currentTextureGroup == sortedQuads[pointer].getTexture().ordinal() / 32) {
 
-            copyQuadVertices(quadsInBatch * 4 * Quad.VERTEX_STRIDE, sortedQuads[pointer].getVertexData());
+            copyQuadVertices(quadsInBatch * Quad.STRIDE, sortedQuads[pointer].getVertexData());
 
             quadsInBatch++;
             pointer++;
@@ -74,7 +67,7 @@ public class QuadRender {
 
     private static void copyQuadVertices(int pointer, float[] src) {
         for (float f : src) {
-            VERTICES[pointer++] = f;
+            QUAD_RENDER_VERTICES[pointer++] = f;
         }
     }
 
@@ -85,15 +78,15 @@ public class QuadRender {
                 break;
             }
             else {
-                TEXTURES_USED[i] = texture.getTextureId();
+                QUAD_RENDER_TEXTURES_USED[i] = texture.getTextureId();
             }
         }
     }
 
     private static void loadTexturesUsedIntoSlots() {
-        for (int i = 0; i < TEXTURES_USED.length; i++) {
+        for (int i = 0; i < QUAD_RENDER_TEXTURES_USED.length; i++) {
             glActiveTexture(GL_TEXTURE0 + i);
-            glBindTexture(GL_TEXTURE_2D, TEXTURES_USED[i]);
+            glBindTexture(GL_TEXTURE_2D, QUAD_RENDER_TEXTURES_USED[i]);
         }
     }
 
@@ -105,10 +98,10 @@ public class QuadRender {
     }
 
     private static void unbindUsedTextures() {
-        for (int i = 0; i < TEXTURES_USED.length; i++) {
+        for (int i = 0; i < QUAD_RENDER_TEXTURES_USED.length; i++) {
             glActiveTexture(GL_TEXTURE0 + i);
             glBindTexture(GL_TEXTURE_2D, 0);
-            TEXTURES_USED[i] = 0;
+            QUAD_RENDER_TEXTURES_USED[i] = 0;
         }
     }
 }
