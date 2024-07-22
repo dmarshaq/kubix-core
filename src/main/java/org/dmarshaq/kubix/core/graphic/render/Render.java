@@ -148,7 +148,7 @@ public class Render {
     }
 
     private void loadCameraMatrix(Snapshot snapshot) {
-        pr_matrix = snapshot.getCamera().projectionMatrix();
+        pr_matrix = snapshot.getCamera().getProjection();
 
         // Quad shader
         Shader basic = Context.shaders().get("basic_quad");

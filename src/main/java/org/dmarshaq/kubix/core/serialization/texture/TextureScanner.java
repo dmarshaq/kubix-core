@@ -132,6 +132,12 @@ public class TextureScanner extends SerializationScanner {
                 data[x + (height - 1 - y) * width] = a << 24 | b << 16 | g << 8 | r;
             }
         }
+
+        StringBuilder name = new StringBuilder(string);
+        name.delete(name.length() - 4, name.length());
+        name.delete(0, name.lastIndexOf("/") + 1);
+
+        textureDto.setName(name.toString());
         textureDto.setWidth(width);
         textureDto.setHeight(height);
         textureDto.setData(data);

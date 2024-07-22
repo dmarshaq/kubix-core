@@ -17,24 +17,30 @@ public class TextureManager {
     static int textureCounter = 0;
 
     public static void loadPackets(Packet[] inputPackets, List<Packet> outputPackets) {
+        // No texture 4
         TEXTURE_MAP.put("notexture", Texture.NO_TEXTURE);
         textureCounter++;
 
+        // Jar loading, doesn't serialize
+        loadTextureDtosFromJar(FileUtils.findAllFilesInResourcesJar("texture", ".png"));
+        putTextureDtosIntoTextureMap();
+        TEXTURE_DTOS.clear();
+        // Game loading, does serialize
         loadTextureDtosFromPackets(inputPackets);
-
-        loadAndCompareTextureDtosFromImages();
-
-        convertTextureDtosIntoTextureMap();
-
+        loadAndCompareTextureDtosFromImages(FileUtils.findAllFilesInResources("texture", ".png"));
+        putTextureDtosIntoTextureMap();
         outputPackets.add(TextureScanner.serializeTexturePacket(TEXTURE_DTOS));
-
         TEXTURE_DTOS.clear();
     }
 
-    private static void convertTextureDtosIntoTextureMap() {
-        for (TextureDto textureDto : TextureManager.TEXTURE_DTOS) {
-            TEXTURE_MAP.put(textureDto.getName(), TextureScanner.toTexture(textureDto));
-        }
+    private static void putTextureDtosIntoTextureMap() {
+        TEXTURE_DTOS.forEach(textureDto -> TEXTURE_MAP.put(textureDto.getName(), TextureScanner.toTexture(textureDto)));
+    }
+
+    private static void loadTextureDtosFromJar(List<String> paths) {
+        TEXTURE_DTOS.addAll(paths.stream()
+                                 .map(TextureScanner::loadTextureDtoFromImage)
+                                 .toList());
     }
 
     private static void loadTextureDtosFromPackets(Packet[] packets) {
@@ -47,16 +53,12 @@ public class TextureManager {
     }
 
     // TODO: JAR texture loading.
-    private static void loadAndCompareTextureDtosFromImages()  {
-
-        List<File> files = FileUtils.findAllFilesInResources("texture", ".png");
+    private static void loadAndCompareTextureDtosFromImages(List<File> files)  {
         TextureDto empty = new TextureDto();
         for (File file : files) {
             empty.setName(file.getName().substring(0, file.getName().length() - 4));
             empty.setLastModified(file.lastModified());
             if (TEXTURE_DTOS.contains(empty)) {
-
-
                 int index = TEXTURE_DTOS.indexOf(empty);
                 if (TEXTURE_DTOS.get(index).getLastModified() != empty.getLastModified()) {
                     System.out.println("Resource: " + TEXTURE_DTOS.get(index).getName() + ", out of date");

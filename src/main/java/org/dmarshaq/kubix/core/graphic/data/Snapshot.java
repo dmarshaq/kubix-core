@@ -17,7 +17,7 @@ public class Snapshot {
     // TODO CameraDto for snapshot.
     @Getter
     @Setter
-    private Camera camera;
+    private CameraDto camera;
 
     public Snapshot() {
         quadRenderBuffer = new ArrayList<>();

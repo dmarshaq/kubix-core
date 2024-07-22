@@ -90,32 +90,29 @@ public interface FileUtils {
     }
 
     static List<File> findAllFilesInResources(String path, String fileType)  {
-        List<File> files = new ArrayList<>();
-        // Search files tree
-        Path dir = null;
+        List<File> result = new ArrayList<>();
+
         try {
-            dir = Paths.get(URLClassLoader.getSystemResource(path).toURI());
-        }
-        catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
-        try (Stream<Path> filePathStream= Files.walk(dir)) {
+            Path dir = Paths.get(URLClassLoader.getSystemResource(path).toURI());
+            Stream<Path> filePathStream = Files.walk(dir);
             filePathStream.forEach(filePath -> {
                 // Filter images with .png
                 if (Files.isRegularFile(filePath)) {
                     if (filePath.toString().endsWith(fileType)) {
-                        files.add(filePath.toFile());
+                        result.add(filePath.toFile());
                     }
                 }
             });
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (URISyntaxException | IOException e) {
+            System.out.println("Could not find resource file " + fileType + " in " + path + " due to: " + e.toString());
         }
-        return files;
+
+        return result;
     }
 
     static List<String> findAllFilesInResourcesJar(String path, String fileType)  {
         List<String> result = new ArrayList<>();
+
         try {
             List<Path> pathsFromJar = getPathsFromResourceJAR(path);
             for (int i = 0; i < pathsFromJar.size(); i++) {
@@ -127,11 +124,11 @@ public interface FileUtils {
                     result.add(pathsFromJar.get(i).toString());
                 }
             }
-            return result;
         } catch (URISyntaxException | IOException e) {
-            e.printStackTrace();
+            System.out.println("Could not find Jar resource file " + fileType + " in " + path + " due to: " + e.toString());
         }
-        return null;
+
+        return result;
     }
 
     // Get all paths from a folder that inside the JAR file
