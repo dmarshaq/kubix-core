@@ -1,13 +1,15 @@
-package org.dmarshaq.kubix.core.graphic;
+package org.dmarshaq.kubix.core.graphic.base;
 
 import org.dmarshaq.kubix.core.app.Context;
 import org.dmarshaq.kubix.core.graphic.data.Line;
 import org.dmarshaq.kubix.core.graphic.data.Quad;
 import org.dmarshaq.kubix.core.graphic.element.Sprite;
-import org.dmarshaq.kubix.core.graphic.resource.Texture;
-import org.dmarshaq.kubix.core.graphic.resource.TextureCroppedRegion;
+import org.dmarshaq.kubix.core.graphic.base.Texture;
+import org.dmarshaq.kubix.core.graphic.base.TextureCroppedRegion;
 import org.dmarshaq.kubix.core.math.AbstractRectangle;
 import org.dmarshaq.kubix.core.math.MathCore;
+import org.dmarshaq.kubix.core.math.function.AbstractFunction;
+import org.dmarshaq.kubix.core.math.function.Domain;
 import org.dmarshaq.kubix.core.math.matrix.Matrix3x3;
 import org.dmarshaq.kubix.core.math.matrix.Matrix4x4;
 import org.dmarshaq.kubix.core.math.vector.*;
@@ -256,6 +258,29 @@ public class GraphicCore {
         outline[3].setVertex(1, end, vector4);
 
         return outline;
+    }
+
+    /**
+     * Returns new line array from function.
+     */
+    public static <T extends AbstractFunction<Float>, E extends Domain<Float>> Line[] outline(T function, E domain, Color color, int detail) {
+        Line[] graph = new Line[detail];
+        Vector4 vector4 = MathCore.vector4(color);
+
+        float start = domain.getMin();
+        float step = (domain.getMax() - domain.getMin()) / detail;
+        float end;
+
+        for (int i = 0; i < detail; i++) {
+            end = start + step;
+
+            graph[i] = new Line(Context.shaders().get("basic_line"), Context.layers().get("gizmos"), 1.0f);
+            graph[i].setVertex(0, new Vector3(start, function.function(start), 0), vector4);
+            graph[i].setVertex(1, new Vector3(end, function.function(end), 0), vector4);
+
+            start = end;
+        }
+        return graph;
     }
 
 

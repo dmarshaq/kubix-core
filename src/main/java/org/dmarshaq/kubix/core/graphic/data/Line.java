@@ -2,8 +2,8 @@ package org.dmarshaq.kubix.core.graphic.data;
 
 import lombok.Getter;
 import lombok.ToString;
-import org.dmarshaq.kubix.core.graphic.resource.Layer;
-import org.dmarshaq.kubix.core.graphic.resource.Shader;
+import org.dmarshaq.kubix.core.graphic.base.Layer;
+import org.dmarshaq.kubix.core.graphic.base.Shader;
 import org.dmarshaq.kubix.core.math.vector.Vector3;
 import org.dmarshaq.kubix.core.math.vector.Vector4;
 

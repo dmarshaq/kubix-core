@@ -1,15 +1,15 @@
 package org.dmarshaq.kubix.core.app;
 
 import org.dmarshaq.kubix.core.graphic.element.Camera;
-import org.dmarshaq.kubix.core.graphic.resource.Shader;
-import org.dmarshaq.kubix.core.graphic.resource.Texture;
+import org.dmarshaq.kubix.core.graphic.base.Shader;
+import org.dmarshaq.kubix.core.graphic.base.Texture;
 import org.dmarshaq.kubix.core.input.InputManager;
 import org.dmarshaq.kubix.core.serialization.Packet;
 import org.dmarshaq.kubix.core.serialization.SerializationScanner;
 import org.dmarshaq.kubix.core.util.FileUtils;
 import org.dmarshaq.kubix.core.util.IndexedHashMap;
-import org.dmarshaq.kubix.core.graphic.resource.Layer;
-import org.dmarshaq.kubix.core.graphic.LayerManager;
+import org.dmarshaq.kubix.core.graphic.base.Layer;
+import org.dmarshaq.kubix.core.graphic.base.LayerManager;
 import org.dmarshaq.kubix.core.serialization.texture.TextureManager;
 import org.dmarshaq.kubix.core.serialization.shader.ShaderManager;
 

@@ -1,4 +1,4 @@
-package org.dmarshaq.kubix.core.graphic;
+package org.dmarshaq.kubix.core.graphic.base;
 
 import lombok.Getter;
 import org.lwjgl.BufferUtils;

@@ -1,5 +1,7 @@
 package org.dmarshaq.kubix.core.math;
 
+import org.dmarshaq.kubix.core.math.function.Domain;
+import org.dmarshaq.kubix.core.math.function.FloatFunction;
 import org.dmarshaq.kubix.core.math.matrix.*;
 import org.dmarshaq.kubix.core.math.processor.*;
 import org.dmarshaq.kubix.core.math.vector.*;
@@ -162,8 +164,8 @@ public class MathCore {
      * Returns new 2D transform based on the specified vector, rotation and scale values.
      */
     public static Matrix3x3 TRS(Vector2 vector, float angle, float scaleX, float scaleY) {
-        Matrix3x3 matrix3X3 = new Matrix3x3();
-        float[] elements = matrix3X3.getElements().floatArray();
+        Matrix3x3 matrix3x3 = new Matrix3x3();
+        float[] elements = matrix3x3.getElements().floatArray();
         float[] arr = vector.getValues().floatArray();
 
         elements[2 + 0 * 3] = arr[0];
@@ -179,29 +181,29 @@ public class MathCore {
         elements[0 + 1 * 3] = sin * scaleX;
         elements[1 + 1 * 3] = cos * scaleY;
 
-        return matrix3X3;
+        return matrix3x3;
     }
 
     /**
      * Returns new 2D translate transform based on the specified vector2 value.
      */
     public static Matrix3x3 translate(Vector2 vector) {
-        Matrix3x3 matrix3X3 = new Matrix3x3();
-        float[] elements = matrix3X3.getElements().floatArray();
+        Matrix3x3 matrix3x3 = new Matrix3x3();
+        float[] elements = matrix3x3.getElements().floatArray();
         float[] arr = vector.getValues().floatArray();
 
         elements[2 + 0 * 3] = arr[0];
         elements[2 + 1 * 3] = arr[1];
 
-        return matrix3X3;
+        return matrix3x3;
     }
 
     /**
      * Returns new 2D rotation transform based on the specified rotation value.
      */
     public static Matrix3x3 rotation(float angle) {
-        Matrix3x3 matrix3X3 = new Matrix3x3();
-        float[] elements = matrix3X3.getElements().floatArray();
+        Matrix3x3 matrix3x3 = new Matrix3x3();
+        float[] elements = matrix3x3.getElements().floatArray();
 
         float r = (float) Math.toRadians(angle);
         float cos = (float) Math.cos(r);
@@ -212,7 +214,7 @@ public class MathCore {
         elements[0 + 1 * 3] = sin;
         elements[1 + 1 * 3] = cos;
 
-        return matrix3X3;
+        return matrix3x3;
     }
 
     /**
@@ -220,15 +222,15 @@ public class MathCore {
      */
     public static Matrix3x3 scale(float scaleX, float scaleY) {
 
-        Matrix3x3 matrix3X3 = new Matrix3x3();
+        Matrix3x3 matrix3x3 = new Matrix3x3();
 
-        float[] elements = matrix3X3.getElements().floatArray();
+        float[] elements = matrix3x3.getElements().floatArray();
 
         elements[0 + 0 * 3] = scaleX;
         elements[1 + 1 * 3] = scaleY;
 
 
-        return matrix3X3;
+        return matrix3x3;
     }
 
     /**
@@ -251,5 +253,27 @@ public class MathCore {
     public static Vector3 forward() {
         return new Vector3(0.0f, 0.0f, 1.0f);
     }
+
+    /**
+     * Determines if value is outside of domain.
+     */
+    public static <T extends Number> boolean isOutsideDomain(Domain<T> domain, T value) {
+        return OPERATION_PROCESSOR.isOutsideDomain(domain, value);
+    }
+
+    /**
+     * Determines if value is inside of domain.
+     */
+    public static <T extends Number> boolean isInsideDomain(Domain<T> domain, T value) {
+        return OPERATION_PROCESSOR.isInsideDomain(domain, value);
+    }
+
+    /**
+     * Determines if value is on domain's boundary.
+     */
+    public static <T extends Number> boolean isOnDomainBoundary(Domain<T> domain, T value) {
+        return domain.isOnBoundary(value);
+    }
+
 
 }

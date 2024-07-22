@@ -1,6 +1,7 @@
 package org.dmarshaq.kubix.core.math.processor;
 
 import lombok.Getter;
+import org.dmarshaq.kubix.core.math.function.Domain;
 import org.dmarshaq.kubix.core.math.matrix.Matrix;
 import org.dmarshaq.kubix.core.math.vector.Vector;
 
@@ -29,5 +30,7 @@ public abstract class OperationProcessor {
     public abstract <T extends Number> Vector<T> buildVector(T x, T y, T z, T w);
     public abstract <T extends Number> Matrix<T> buildIdentityMatrix(Class<T> clas, int rows, int columns);
     public abstract <T extends Number> Vector<T> componentVector(Vector<T> vector, String axis);
+    public abstract <T extends Number> boolean isOutsideDomain(Domain<T> domain, T value);
+    public abstract <T extends Number> boolean isInsideDomain(Domain<T> domain, T value);
 
 }

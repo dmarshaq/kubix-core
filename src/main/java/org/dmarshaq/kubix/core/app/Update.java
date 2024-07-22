@@ -1,9 +1,9 @@
 package org.dmarshaq.kubix.core.app;
 
-import org.dmarshaq.kubix.core.graphic.Window;
+import org.dmarshaq.kubix.core.graphic.base.Window;
 import org.dmarshaq.kubix.core.input.InputManager;
 import org.dmarshaq.kubix.core.time.Time;
-import org.dmarshaq.kubix.core.graphic.LayerManager;
+import org.dmarshaq.kubix.core.graphic.base.LayerManager;
 import org.dmarshaq.kubix.core.graphic.data.Snapshot;
 
 

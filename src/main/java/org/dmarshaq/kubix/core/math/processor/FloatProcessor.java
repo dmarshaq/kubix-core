@@ -1,12 +1,14 @@
 package org.dmarshaq.kubix.core.math.processor;
 
 import org.dmarshaq.kubix.core.math.array.FloatArray;
+import org.dmarshaq.kubix.core.math.function.Domain;
 import org.dmarshaq.kubix.core.math.matrix.Matrix;
 import org.dmarshaq.kubix.core.math.vector.Vector;
 
 import java.util.Arrays;
 
 import static org.dmarshaq.kubix.core.math.MathCore.AXIS;
+import static org.dmarshaq.kubix.core.math.MathCore.vector;
 
 public class FloatProcessor extends OperationProcessor {
     public FloatProcessor(OperationProcessor nextProcessor) {
@@ -321,6 +323,30 @@ public class FloatProcessor extends OperationProcessor {
             }
         }
         return (Vector<T>) new Vector<>(new FloatArray(result));
+    }
+
+    /**
+     * Determines if value is outside of domain.
+     */
+    @Override
+    public <T extends Number> boolean isOutsideDomain(Domain<T> domain, T value) {
+        float min = domain.getMin().floatValue();
+        float max = domain.getMax().floatValue();
+        float val = value.floatValue();
+
+        return val < min || val > max;
+    }
+
+    /**
+     * Determines if value is inside of domain.
+     */
+    @Override
+    public <T extends Number> boolean isInsideDomain(Domain<T> domain, T value) {
+        float min = domain.getMin().floatValue();
+        float max = domain.getMax().floatValue();
+        float val = value.floatValue();
+
+        return val > min && val < max;
     }
 
 }

@@ -1,10 +1,10 @@
 package org.dmarshaq.kubix.core.graphic.render;
 
 import org.dmarshaq.kubix.core.app.Context;
-import org.dmarshaq.kubix.core.graphic.resource.Layer;
+import org.dmarshaq.kubix.core.graphic.base.Layer;
 import org.dmarshaq.kubix.core.graphic.data.Quad;
-import org.dmarshaq.kubix.core.graphic.resource.Shader;
-import org.dmarshaq.kubix.core.graphic.resource.Texture;
+import org.dmarshaq.kubix.core.graphic.base.Shader;
+import org.dmarshaq.kubix.core.graphic.base.Texture;
 
 import static org.dmarshaq.kubix.core.graphic.render.Render.BatchRenderer.*;
 import static org.lwjgl.opengl.GL11.GL_FRONT_AND_BACK;

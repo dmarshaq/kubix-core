@@ -1,8 +1,8 @@
 package org.dmarshaq.kubix.core.graphic.render;
 
 import org.dmarshaq.kubix.core.graphic.data.Line;
-import org.dmarshaq.kubix.core.graphic.resource.Layer;
-import org.dmarshaq.kubix.core.graphic.resource.Shader;
+import org.dmarshaq.kubix.core.graphic.base.Layer;
+import org.dmarshaq.kubix.core.graphic.base.Shader;
 
 import static org.dmarshaq.kubix.core.graphic.render.Render.BatchRenderer.*;
 import static org.lwjgl.opengl.GL11.*;

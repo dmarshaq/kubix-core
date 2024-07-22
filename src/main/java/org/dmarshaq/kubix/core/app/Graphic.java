@@ -3,7 +3,7 @@ package org.dmarshaq.kubix.core.app;
 import lombok.Getter;
 import lombok.Setter;
 import org.dmarshaq.kubix.core.audio.Audio;
-import org.dmarshaq.kubix.core.graphic.Window;
+import org.dmarshaq.kubix.core.graphic.base.Window;
 import org.dmarshaq.kubix.core.graphic.render.Render;
 import org.dmarshaq.kubix.core.input.Input;
 import org.dmarshaq.kubix.core.input.MouseInput;
@@ -36,38 +36,38 @@ public abstract class Graphic implements Runnable {
     @Setter
     private Context context;
 
-    @Override
-    public void run() {
-        init();
-        GL.createCapabilities();
+        @Override
+        public void run() {
+            init();
+            GL.createCapabilities();
 
-        context.loadResources();
-        initShaders();
-        render = new Render(window, Context.getClearColor());
+            context.loadResources();
+            initShaders();
+            render = new Render(window, Context.getClearColor());
 
-        Thread update = new Thread(updateTask);
-        update.start();
+            Thread update = new Thread(updateTask);
+            update.start();
 
 
-        while(Context.isRunning()) {
-            // do some graphic
-            synchronized (this) {
-                try {
-                    wait();
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
+            while(Context.isRunning()) {
+                // do some graphic
+                synchronized (this) {
+                    try {
+                        wait();
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
+                modifyShaders();
+                render.render(snapshot);
             }
-            modifyShaders();
-            render.render(snapshot);
-        }
 
-        // Destroy the audio Context
-        audio.destroyAudio();
+            // Destroy the audio Context
+            audio.destroyAudio();
 
-        // Free the window callbacks and destroy the window
-        window.freeCallbacks();
-        window.destroyWindow();
+            // Free the window callbacks and destroy the window
+            window.freeCallbacks();
+            window.destroyWindow();
 
         // Terminate GLFW and free the error callback
         glfwTerminate();

@@ -2,6 +2,7 @@ package org.dmarshaq.kubix.core.math.processor;
 
 import org.dmarshaq.kubix.core.math.array.ByteArray;
 import org.dmarshaq.kubix.core.math.array.LongArray;
+import org.dmarshaq.kubix.core.math.function.Domain;
 import org.dmarshaq.kubix.core.math.matrix.Matrix;
 import org.dmarshaq.kubix.core.math.vector.Vector;
 
@@ -320,5 +321,29 @@ public class ByteProcessor extends OperationProcessor {
             }
         }
         return (Vector<T>) new Vector<>(new ByteArray(result));
+    }
+
+    /**
+     * Determines if value is outside of domain.
+     */
+    @Override
+    public <T extends Number> boolean isOutsideDomain(Domain<T> domain, T value) {
+        byte min = domain.getMin().byteValue();
+        byte max = domain.getMax().byteValue();
+        byte val = value.byteValue();
+
+        return val < min || val > max;
+    }
+
+    /**
+     * Determines if value is inside of domain.
+     */
+    @Override
+    public <T extends Number> boolean isInsideDomain(Domain<T> domain, T value) {
+        byte min = domain.getMin().byteValue();
+        byte max = domain.getMax().byteValue();
+        byte val = value.byteValue();
+
+        return val > min && val < max;
     }
 }

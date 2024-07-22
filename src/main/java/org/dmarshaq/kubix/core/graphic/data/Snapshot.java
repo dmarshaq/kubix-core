@@ -24,7 +24,7 @@ public class Snapshot {
         lineRenderBuffer = new ArrayList<>();
     }
 
-    public void addQuadToRenderBuffer(Quad quad) {
+    public void addQuad(Quad quad) {
         quadRenderBuffer.add(quad);
     }
 
@@ -38,11 +38,11 @@ public class Snapshot {
         quadRenderBuffer.clear();
     }
 
-    public void addLineToRenderBuffer(Line line) {
+    public void addLine(Line line) {
         lineRenderBuffer.add(line);
     }
 
-    public void addLineToRenderBuffer(Line[] line) {
+    public void addLine(Line[] line) {
         Collections.addAll(lineRenderBuffer, line);
     }
 
