@@ -1,4 +1,4 @@
-package org.dmarshaq.kubix.core.math;
+package org.dmarshaq.kubix.core.math.base;
 
 import lombok.EqualsAndHashCode;
 import lombok.Setter;

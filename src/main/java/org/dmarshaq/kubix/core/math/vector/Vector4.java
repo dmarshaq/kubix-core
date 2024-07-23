@@ -1,9 +1,7 @@
 package org.dmarshaq.kubix.core.math.vector;
 
-import org.dmarshaq.kubix.core.math.MathCore;
+import org.dmarshaq.kubix.core.math.base.MathCore;
 import org.dmarshaq.kubix.core.math.array.FloatArray;
-
-import java.util.Arrays;
 
 
 public class Vector4 extends Vector<Float> implements  AbstractFloatVector<Vector4> {

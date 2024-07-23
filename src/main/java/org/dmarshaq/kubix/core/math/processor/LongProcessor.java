@@ -1,12 +1,11 @@
 package org.dmarshaq.kubix.core.math.processor;
 
-import org.dmarshaq.kubix.core.math.array.DoubleArray;
 import org.dmarshaq.kubix.core.math.array.LongArray;
 import org.dmarshaq.kubix.core.math.function.Domain;
 import org.dmarshaq.kubix.core.math.matrix.Matrix;
 import org.dmarshaq.kubix.core.math.vector.Vector;
 
-import static org.dmarshaq.kubix.core.math.MathCore.AXIS;
+import static org.dmarshaq.kubix.core.math.base.MathCore.AXIS;
 
 public class LongProcessor extends OperationProcessor {
     public LongProcessor(OperationProcessor nextProcessor) {

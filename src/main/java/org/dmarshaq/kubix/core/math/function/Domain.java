@@ -2,7 +2,7 @@ package org.dmarshaq.kubix.core.math.function;
 
 import lombok.Setter;
 import lombok.ToString;
-import org.dmarshaq.kubix.core.math.MathCore;
+import org.dmarshaq.kubix.core.math.base.MathCore;
 
 import java.util.Objects;
 

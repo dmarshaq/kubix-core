@@ -23,35 +23,25 @@ public abstract class Context {
     // SCREEN & TILE SETTINGS
     private static String TITLE = "";
     private static int UNIT_SIZE = 64; // 64 x 64 unit size
-
     private static boolean FULL_SCREEN = true;
     private static Color CLEAR_COLOR = new Color(100, 100, 100, 255);
     private static Camera MAIN_CAMERA;
-    public static int MIN_SCREEN_UNIT_WIDTH = 16;
-    public static int MIN_SCREEN_UNIT_HEIGHT = 9;
-
-
-
-    // FPS
-    private static int FPS_CAP = 10000; // frames per second
-
+    private static int MIN_SCREEN_UNIT_WIDTH = 16;
+    private static int MIN_SCREEN_UNIT_HEIGHT = 9;
+    // FPS CAP
+    private static int FPS_CAP = 240; // frames per second
     // STATES
-    private static boolean running = true;
-
+    private static boolean RUNNING = true;
     // RENDER
     private static boolean DRAW_GIZMOS = true;
     private static int MAX_QUADS_PER_BATCH = 256;
     private static int MAX_LINES_PER_BATCH = 1028;
-
     // PUBLIC METHODS
-    public static void stopRunning() {
-        running = false;
-    }
+
+    // Getters
     public static boolean isRunning() {
-        return running;
+        return RUNNING;
     }
-
-
     public static String getTitle() {
         return TITLE;
     }
@@ -86,31 +76,30 @@ public abstract class Context {
         return CLEAR_COLOR;
     }
 
-
-
+    // Setters
     protected static void setTitle(String title) {
-        Context.TITLE = title;
+        TITLE = title;
     }
     protected static void setUnitSize(int unitSize) {
-        Context.UNIT_SIZE = unitSize;
+        UNIT_SIZE = unitSize;
     }
     protected static void setFullScreen(boolean fullScreen) {
-        Context.FULL_SCREEN = fullScreen;
+        FULL_SCREEN = fullScreen;
     }
     protected static void setFpsCap(int fpsCap) {
-        Context.FPS_CAP = fpsCap;
+        FPS_CAP = fpsCap;
     }
     protected static void setDrawGizmos(boolean drawGizmos) {
-        Context.DRAW_GIZMOS = drawGizmos;
+        DRAW_GIZMOS = drawGizmos;
     }
     protected static void setMaxQuadsPerBatch(int maxQuadsPerBatch) {
-        Context.MAX_QUADS_PER_BATCH = maxQuadsPerBatch;
+        MAX_QUADS_PER_BATCH = maxQuadsPerBatch;
     }
     protected static void setMaxLinesPerBatch(int maxLinesPerBatch) {
-        Context.MAX_LINES_PER_BATCH = maxLinesPerBatch;
+        MAX_LINES_PER_BATCH = maxLinesPerBatch;
     }
     public static void setMainCamera(Camera camera) {
-        Context.MAIN_CAMERA = camera;
+        MAIN_CAMERA = camera;
     }
     protected static void setMinScreenUnitWidth(int minScreenUnitWidth) {
         MIN_SCREEN_UNIT_WIDTH = minScreenUnitWidth;
@@ -120,6 +109,9 @@ public abstract class Context {
     }
     protected static void setClearColor(Color color) {
         CLEAR_COLOR = color;
+    }
+    public static void setRunning(boolean state) {
+        RUNNING = state;
     }
 
     // Resources

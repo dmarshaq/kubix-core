@@ -1,10 +1,7 @@
 package org.dmarshaq.kubix.core.math.matrix;
 
-import org.dmarshaq.kubix.core.util.BufferUtils;
-import org.dmarshaq.kubix.core.math.MathCore;
+import org.dmarshaq.kubix.core.math.base.MathCore;
 import org.dmarshaq.kubix.core.math.vector.Vector;
-
-import java.nio.FloatBuffer;
 
 public interface AbstractFloatMatrixTransform<T extends Vector<Float>, E extends Matrix<Float>> extends AbstractFloatMatrix<E> {
 

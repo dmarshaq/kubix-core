@@ -36,7 +36,7 @@ public abstract class Update implements Runnable {
             // check if user closed the window
             Window window = graphic.getWindow();
             if (window.getWindow() != 0 && glfwWindowShouldClose(window.getWindow())) {
-                Context.stopRunning();
+                Context.setRunning(false);
             }
 
             // new snapshot

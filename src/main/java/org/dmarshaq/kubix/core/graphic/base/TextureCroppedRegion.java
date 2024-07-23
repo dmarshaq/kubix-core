@@ -1,7 +1,7 @@
 package org.dmarshaq.kubix.core.graphic.base;
 
 import lombok.Getter;
-import org.dmarshaq.kubix.core.math.AbstractRectangle;
+import org.dmarshaq.kubix.core.math.base.AbstractRectangle;
 import org.dmarshaq.kubix.core.math.vector.Vector2;
 
 @Getter

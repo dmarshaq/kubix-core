@@ -7,7 +7,7 @@ import org.dmarshaq.kubix.core.app.Context;
 import org.dmarshaq.kubix.core.graphic.base.Layer;
 import org.dmarshaq.kubix.core.graphic.base.Shader;
 import org.dmarshaq.kubix.core.graphic.base.TextureCroppedRegion;
-import org.dmarshaq.kubix.core.math.AbstractRectangle;
+import org.dmarshaq.kubix.core.math.base.AbstractRectangle;
 import org.dmarshaq.kubix.core.math.vector.Vector2;
 
 import java.awt.*;

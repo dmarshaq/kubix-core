@@ -1,4 +1,4 @@
-package org.dmarshaq.kubix.core.math;
+package org.dmarshaq.kubix.core.math.base;
 
 import org.dmarshaq.kubix.core.math.function.Domain;
 import org.dmarshaq.kubix.core.math.function.FloatFunction;

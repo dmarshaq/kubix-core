@@ -1,6 +1,6 @@
 package org.dmarshaq.kubix.core.math.matrix;
 
-import org.dmarshaq.kubix.core.math.MathCore;
+import org.dmarshaq.kubix.core.math.base.MathCore;
 import org.dmarshaq.kubix.core.math.array.FloatArray;
 import org.dmarshaq.kubix.core.math.vector.Vector2;
 

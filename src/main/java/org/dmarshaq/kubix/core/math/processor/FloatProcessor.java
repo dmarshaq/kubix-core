@@ -5,10 +5,7 @@ import org.dmarshaq.kubix.core.math.function.Domain;
 import org.dmarshaq.kubix.core.math.matrix.Matrix;
 import org.dmarshaq.kubix.core.math.vector.Vector;
 
-import java.util.Arrays;
-
-import static org.dmarshaq.kubix.core.math.MathCore.AXIS;
-import static org.dmarshaq.kubix.core.math.MathCore.vector;
+import static org.dmarshaq.kubix.core.math.base.MathCore.AXIS;
 
 public class FloatProcessor extends OperationProcessor {
     public FloatProcessor(OperationProcessor nextProcessor) {

@@ -7,7 +7,7 @@ import org.dmarshaq.kubix.core.graphic.data.Snapshot;
 import org.dmarshaq.kubix.core.graphic.base.Window;
 import org.dmarshaq.kubix.core.graphic.base.Shader;
 import org.dmarshaq.kubix.core.util.BufferUtils;
-import org.dmarshaq.kubix.core.math.MathCore;
+import org.dmarshaq.kubix.core.math.base.MathCore;
 import org.dmarshaq.kubix.core.math.matrix.Matrix4x4;
 import org.dmarshaq.kubix.core.math.vector.Vector4;
 

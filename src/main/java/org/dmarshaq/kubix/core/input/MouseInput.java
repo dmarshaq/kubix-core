@@ -2,7 +2,7 @@ package org.dmarshaq.kubix.core.input;
 
 import lombok.Getter;
 import org.dmarshaq.kubix.core.app.Graphic;
-import org.dmarshaq.kubix.core.math.MathCore;
+import org.dmarshaq.kubix.core.math.base.MathCore;
 import org.dmarshaq.kubix.core.math.vector.Vector;
 import org.lwjgl.glfw.GLFW;
 

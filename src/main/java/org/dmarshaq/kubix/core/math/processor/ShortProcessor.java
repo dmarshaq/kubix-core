@@ -1,12 +1,11 @@
 package org.dmarshaq.kubix.core.math.processor;
 
-import org.dmarshaq.kubix.core.math.array.ByteArray;
 import org.dmarshaq.kubix.core.math.array.ShortArray;
 import org.dmarshaq.kubix.core.math.function.Domain;
 import org.dmarshaq.kubix.core.math.matrix.Matrix;
 import org.dmarshaq.kubix.core.math.vector.Vector;
 
-import static org.dmarshaq.kubix.core.math.MathCore.AXIS;
+import static org.dmarshaq.kubix.core.math.base.MathCore.AXIS;
 
 public class ShortProcessor extends OperationProcessor {
     public ShortProcessor(OperationProcessor nextProcessor) {

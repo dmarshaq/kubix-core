@@ -52,7 +52,6 @@ public class TextureManager {
         }
     }
 
-    // TODO: JAR texture loading.
     private static void loadAndCompareTextureDtosFromImages(List<File> files)  {
         TextureDto empty = new TextureDto();
         for (File file : files) {

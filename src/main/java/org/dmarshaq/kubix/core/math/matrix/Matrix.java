@@ -2,8 +2,6 @@ package org.dmarshaq.kubix.core.math.matrix;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.Setter;
-import org.dmarshaq.kubix.core.math.MathCore;
 import org.dmarshaq.kubix.core.math.array.NumberArray;
 
 @Getter
