@@ -2,7 +2,7 @@
 .idea/
 out/
 libs/
-kubix-engine.iml
+kubix-core.iml
 target/
 !**/src/main/**/out/
 !**/src/test/**/out/
