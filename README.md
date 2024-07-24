@@ -1,5 +1,5 @@
 # kubix-core
-Based on Java and LWJGL, this engine will be used to create 2D RTS where the player will be set to overcome challenges of managing blockpost to its finest details.
+Based on Java and LWJGL, this library will provide core kubix engine functionality to create quality game.
 
 ## Requirements
 * Java (JDK 17+)
@@ -13,7 +13,7 @@ mvn clean install
 
 ## Start
 ```
-java -jar target/kubix-engine-{POM_VERSION}.jar
+java -jar target/kubix-core-{POM_VERSION}.jar
 ```
 
 ## License
