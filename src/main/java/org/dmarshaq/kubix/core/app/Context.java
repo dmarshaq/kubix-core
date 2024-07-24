@@ -1,15 +1,13 @@
 package org.dmarshaq.kubix.core.app;
 
+import org.dmarshaq.kubix.core.graphic.base.*;
 import org.dmarshaq.kubix.core.graphic.element.Camera;
-import org.dmarshaq.kubix.core.graphic.base.Shader;
-import org.dmarshaq.kubix.core.graphic.base.Texture;
 import org.dmarshaq.kubix.core.input.InputManager;
 import org.dmarshaq.kubix.core.serialization.Packet;
 import org.dmarshaq.kubix.core.serialization.SerializationScanner;
+import org.dmarshaq.kubix.core.serialization.animation.AnimationManager;
 import org.dmarshaq.kubix.core.util.FileUtils;
 import org.dmarshaq.kubix.core.util.IndexedHashMap;
-import org.dmarshaq.kubix.core.graphic.base.Layer;
-import org.dmarshaq.kubix.core.graphic.base.LayerManager;
 import org.dmarshaq.kubix.core.serialization.texture.TextureManager;
 import org.dmarshaq.kubix.core.serialization.shader.ShaderManager;
 
@@ -118,6 +116,7 @@ public abstract class Context {
     private static IndexedHashMap<String, Texture> TEXTURES;
     private static Map<String, Shader> SHADERS;
     private static Map<String, Layer> LAYERS;
+    private static Map<String, Animation> ANIMATIONS;
 
     public static IndexedHashMap<String, Texture> textures() {
         return TEXTURES;
@@ -127,6 +126,9 @@ public abstract class Context {
     }
     public static Map<String, Layer> layers() {
         return LAYERS;
+    }
+    public static Map<String, Animation> animations() {
+        return ANIMATIONS;
     }
 
     // Object methods
@@ -138,6 +140,7 @@ public abstract class Context {
         TEXTURES = TextureManager.TEXTURE_MAP;
         SHADERS = ShaderManager.SHADER_MAP;
         LAYERS = LayerManager.LAYER_MAP;
+        ANIMATIONS = AnimationManager.ANIMATION_MAP;
     }
 
     final List<Packet> loadResourcesFromPackets(Packet[] packets) {
@@ -147,6 +150,7 @@ public abstract class Context {
         TextureManager.loadPackets(packets, newPackets);
         ShaderManager.loadShadersFromFiles();
         InputManager.mapGLFWKeyCodes();
+        AnimationManager.loadAnimationsFromFiles();
 
         return newPackets;
     }

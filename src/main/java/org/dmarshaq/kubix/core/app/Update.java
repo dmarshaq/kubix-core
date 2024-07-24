@@ -1,6 +1,6 @@
 package org.dmarshaq.kubix.core.app;
 
-import org.dmarshaq.kubix.core.graphic.base.AnimationManager;
+import org.dmarshaq.kubix.core.serialization.animation.AnimationManager;
 import org.dmarshaq.kubix.core.graphic.base.Window;
 import org.dmarshaq.kubix.core.input.InputManager;
 import org.dmarshaq.kubix.core.time.Time;
@@ -43,7 +43,6 @@ public abstract class Update implements Runnable {
                 if (window.getWindow() != 0 && glfwWindowShouldClose(window.getWindow())) {
                     Context.setRunning(false);
                 }
-
                 // new snapshot
                 snapshot = new Snapshot();
                 // layers Clean Up

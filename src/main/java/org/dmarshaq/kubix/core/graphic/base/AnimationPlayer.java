@@ -2,8 +2,6 @@ package org.dmarshaq.kubix.core.graphic.base;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.dmarshaq.kubix.core.graphic.base.Animation;
-import org.dmarshaq.kubix.core.graphic.base.TextureCroppedRegion;
 import org.dmarshaq.kubix.core.math.function.AbstractFunction;
 import org.dmarshaq.kubix.core.math.function.FloatFunction;
 import org.dmarshaq.kubix.core.time.Time;
@@ -39,7 +37,7 @@ public abstract class AnimationPlayer {
     public void reset() {
         currentTime = 0.0f;
         currentIndex = 0;
-        nextFrameChangeTime = easing.function((1 / animation.getSpeed()) / rate);
+        nextFrameChangeTime = easing.function((1 / (animation.getFps() / 1000)) / rate);
     }
 
     public void update() {
@@ -47,7 +45,7 @@ public abstract class AnimationPlayer {
             currentTime += (float) Time.DeltaTime.getTickMilliseconds();
 
             if (easing.function(currentTime) >= nextFrameChangeTime) {
-                nextFrameChangeTime = easing.function((++currentIndex) * (1 / animation.getSpeed()) / rate);
+                nextFrameChangeTime = easing.function((++currentIndex) * (1 / (animation.getFps() / 1000)) / rate);
                 if (currentIndex >= animation.getFrames().length) {
                     reset();
                     if (!looped) {

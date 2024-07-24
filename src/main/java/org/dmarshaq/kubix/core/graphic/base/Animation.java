@@ -8,12 +8,15 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class Animation {
-    private float speed;
+    private float fps;
     private int[] frames;
     private Texture texture;
 
-    public float totalTime() {
-        return (1 / speed) * frames.length;
+    public float totalTimeSeconds() {
+        return (1 / fps) * frames.length;
+    }
+    public float totalTimeMilliseconds() {
+        return (1 / (fps / 1000)) * frames.length;
     }
 }
 

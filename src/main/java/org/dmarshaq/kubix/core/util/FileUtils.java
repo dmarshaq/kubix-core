@@ -1,5 +1,7 @@
 package org.dmarshaq.kubix.core.util;
 
+import org.json.JSONObject;
+
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
@@ -21,6 +23,14 @@ import java.util.stream.Stream;
 import static org.dmarshaq.kubix.core.util.BufferUtils.createByteBuffer;
 
 public interface FileUtils {
+
+    static JSONObject loadAsJSONObject(String filePath) {
+        return new JSONObject(loadAsString(filePath));
+    }
+
+    static JSONObject loadAsJSONObject(File file) {
+        return new JSONObject(loadAsString(file));
+    }
 
     static String loadAsString(String filePath) {
         String result;
