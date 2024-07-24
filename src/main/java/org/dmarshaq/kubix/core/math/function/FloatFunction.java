@@ -31,5 +31,10 @@ public enum FloatFunction implements AbstractFunction<Float> {
             return (float) Math.cos(x);
         }
     },
-    ;
+    EASE_IN_OUT_CUBIC {
+        @Override
+        public Float function(Float x) {
+            return x < 0.5 ? 4 * x * x * x : (float) (1 - Math.pow(-2 * x + 2, 3) / 2);
+        }
+    },
 }

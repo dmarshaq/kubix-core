@@ -16,7 +16,7 @@ public class Matrix3x3 extends Matrix<Float> implements AbstractFloatMatrixTrans
         super(new FloatArray(new float[] {
                 1f, 0f, 0f,
                 0f, 1f, 0f,
-                0f, 1f, 0f}), 3, 3);
+                0f, 0f, 1f}), 3, 3);
     }
 
     /**

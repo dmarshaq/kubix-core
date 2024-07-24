@@ -1,5 +1,8 @@
 package org.dmarshaq.kubix.core.time;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,18 +10,25 @@ public class Time {
     private static final List<Timer> timerList = new ArrayList<>();
 
     public static class DeltaTime {
-        private static float time = 0;
-
-        public static float getSeconds() {
-            return time;
+        private static double tick = 0;
+        /**
+         * @return time per one tick in seconds
+         */
+        public static double getTickSeconds() {
+            return tick / 1000;
         }
-        public static float getMilliseconds() {
-            return time * 1000f;
+        /**
+         * @return time per one tick in milliseconds
+         */
+        public static double getTickMilliseconds() {
+            return tick;
         }
-        public static void setTime(float t) {
-            time = t / 1000000000f;
+        /**
+         * @param t time per one tick in milliseconds
+         */
+        public static void setTickTime(double t) {
+            tick = t;
         }
-
     }
 
     public static void updateTimers() {
@@ -38,19 +48,24 @@ public class Time {
     }
 
     public abstract static class Timer {
-        private boolean repeatable, freezed;
+        @Setter
+        private boolean repeatable;
+        @Setter
+        private boolean frozen;
         private float totalTime;
+        @Setter
+        @Getter
         private float currentTime;
 
-        public Timer(float milliseconds, boolean freezed) {
+        public Timer(float milliseconds, boolean frozen) {
             timerList.add(this);
             totalTime = milliseconds;
             currentTime = milliseconds;
-            this.freezed = freezed;
+            this.frozen = frozen;
         }
 
         boolean iterateTimer() {
-            if (!freezed) {
+            if (!frozen) {
                 if ((currentTime = countTimer(currentTime)) == 0) {
                     timerOut();
                     return false;
@@ -63,14 +78,6 @@ public class Time {
             return totalTime - currentTime;
         }
 
-        public float getCurrentTime() {
-            return currentTime;
-        }
-
-        public void setCurrentTime(float milliseconds) {
-            currentTime = milliseconds;
-        }
-
         public void resetTimer() {
             currentTime = totalTime;
         }
@@ -80,20 +87,12 @@ public class Time {
             currentTime = milliseconds;
         }
 
-        public void freeze() {
-            freezed = true;
-        }
-
-        public void unfreeze() {
-            freezed = false;
-        }
-
         private float countTimer(float timer_time) {
             if (timer_time == -1) {
                 return -1;
             }
 
-            timer_time -= DeltaTime.getMilliseconds();
+            timer_time -= (float) DeltaTime.getTickMilliseconds();
             if (timer_time <= 0) {
                 return 0;
             }
@@ -101,9 +100,6 @@ public class Time {
             return timer_time;
         }
 
-        public void setRepeatable(boolean repeatable) {
-            this.repeatable = repeatable;
-        }
         public void setNextTime(float milliseconds) {
             totalTime = milliseconds;
             currentTime = totalTime;

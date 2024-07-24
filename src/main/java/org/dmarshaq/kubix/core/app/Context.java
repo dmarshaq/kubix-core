@@ -29,7 +29,7 @@ public abstract class Context {
     private static int MIN_SCREEN_UNIT_WIDTH = 16;
     private static int MIN_SCREEN_UNIT_HEIGHT = 9;
     // FPS CAP
-    private static int FPS_CAP = 240; // frames per second
+    private static double TICK_TIME = 5.0; // tick time in milliseconds
     // STATES
     private static boolean RUNNING = true;
     // RENDER
@@ -51,8 +51,8 @@ public abstract class Context {
     public static boolean isFullScreen() {
         return FULL_SCREEN;
     }
-    public static int getFPSCap() {
-        return FPS_CAP;
+    public static double getTickTime() {
+        return TICK_TIME;
     }
     public static boolean isDrawGizmos() {
         return DRAW_GIZMOS;
@@ -86,8 +86,8 @@ public abstract class Context {
     protected static void setFullScreen(boolean fullScreen) {
         FULL_SCREEN = fullScreen;
     }
-    protected static void setFpsCap(int fpsCap) {
-        FPS_CAP = fpsCap;
+    protected static void setTickTime(double tickTime) {
+        TICK_TIME = tickTime;
     }
     protected static void setDrawGizmos(boolean drawGizmos) {
         DRAW_GIZMOS = drawGizmos;
