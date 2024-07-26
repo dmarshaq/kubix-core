@@ -259,8 +259,11 @@ public class GraphicCore {
         Quad[] result = new Quad[chars.length];
 
         // Getting origin position of the sprite, width, height.
+        float lineLimit = text.getLineLimit();
         Vector3 cursor = new Vector3(MathCore.componentVector(text.getPosition(), "xyz"));
+        int threshold = 0;
         for (int i = 0; i < chars.length; i++) {
+            // Regular loading
             CharacterData data = atlas.get(chars[i]);
             TextureCroppedRegion textureCroppedRegion = data.getTextureCroppedRegion();
             // Position, width, height.
@@ -271,9 +274,40 @@ public class GraphicCore {
             Vector2 percentPosition = textureCroppedRegion.getPercentPosition();
             float percentWidth = textureCroppedRegion.getPercentWidth();
             float percentHeight = textureCroppedRegion.getPercentHeight();
-
+            // Creating quad
             result[i] = rectangularQuad(position, width, height, color, percentPosition, percentWidth, percentHeight, texIndex, MathCore.forward().negate(), text.getShader(), text.getLayer(), texture);
-            cursor.add(new Vector3((float) data.getXAdvance() / Context.getUnitSize(), 0, 0));
+            // Advancing
+            cursor.getArrayOfValues()[0] += (float) data.getXAdvance() / Context.getUnitSize();
+
+            if (chars[i] == ' ') {
+                int count = 1;
+                float length = 0;
+                while(i + count < chars.length && chars[i + count] != ' ') {
+                    length += (float) atlas.get(chars[i + count]).getXAdvance() / Context.getUnitSize();
+                    count++;
+                }
+                if (length + cursor.getArrayOfValues()[0] >= lineLimit) {
+                    cursor.getArrayOfValues()[0] = text.getPosition().x();
+                    cursor.getArrayOfValues()[1] -= (float) text.getFont().getLineHeight() / Context.getUnitSize();
+                }
+            }
+
+
+            // Checking if cursor past line limit, if it is, go back and recalculate word on the new line
+//            if (cursor.x() >= lineLimit && i > threshold) {
+//                cursor.getArrayOfValues()[0] = text.getPosition().x();
+//                cursor.getArrayOfValues()[1] -= (float) text.getFont().getLineHeight() / Context.getUnitSize();
+//                int stepBack = 0;
+//                while(chars[i - stepBack] != ' ') {
+//                    stepBack++;
+//                    if (i - stepBack == threshold) {
+//                        stepBack = 0;
+//                        break;
+//                    }
+//                }
+//                i -= stepBack;
+//                threshold = i + 1;
+//            }
         }
 
         return result;

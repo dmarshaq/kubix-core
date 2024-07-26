@@ -14,16 +14,18 @@ import org.dmarshaq.kubix.core.math.vector.Vector2;
 @ToString
 public class Text {
     private final Vector2 position;
+    private float lineLimit;
     private String text;
     private Font font;
     private Shader shader;
     private Layer layer;
 
 
-    public Text(Vector2 position, String text, Font font, Shader shader, Layer layer) {
+    public Text(Vector2 position, String text, Font font, float lineLimit, Shader shader, Layer layer) {
         this.position = position;
         this.text = text;
         this.font = font;
+        this.lineLimit = lineLimit;
         this.shader = shader;
         this.layer = layer;
     }
