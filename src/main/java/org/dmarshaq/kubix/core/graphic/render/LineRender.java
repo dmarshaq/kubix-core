@@ -1,7 +1,7 @@
 package org.dmarshaq.kubix.core.graphic.render;
 
 import org.dmarshaq.kubix.core.graphic.data.Line;
-import org.dmarshaq.kubix.core.graphic.base.Layer;
+import org.dmarshaq.kubix.core.graphic.base.layer.Layer;
 import org.dmarshaq.kubix.core.graphic.base.Shader;
 
 import static org.dmarshaq.kubix.core.graphic.render.Render.BatchRenderer.*;

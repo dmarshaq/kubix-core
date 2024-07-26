@@ -3,7 +3,6 @@ package org.dmarshaq.kubix.core.math.vector;
 import org.dmarshaq.kubix.core.math.base.MathCore;
 import org.dmarshaq.kubix.core.math.array.FloatArray;
 
-
 public class Vector2 extends Vector<Float> implements AbstractFloatVector<Vector2> {
 
     /**

@@ -1,10 +1,10 @@
 package org.dmarshaq.kubix.core.graphic.render;
 
 import org.dmarshaq.kubix.core.app.Context;
-import org.dmarshaq.kubix.core.graphic.base.Layer;
+import org.dmarshaq.kubix.core.graphic.base.layer.Layer;
 import org.dmarshaq.kubix.core.graphic.data.Quad;
 import org.dmarshaq.kubix.core.graphic.base.Shader;
-import org.dmarshaq.kubix.core.graphic.base.Texture;
+import org.dmarshaq.kubix.core.graphic.base.texture.Texture;
 
 import static org.dmarshaq.kubix.core.graphic.render.Render.BatchRenderer.*;
 import static org.lwjgl.opengl.GL11.GL_FRONT_AND_BACK;
@@ -73,7 +73,7 @@ public class QuadRender {
 
     private static void loadTextureGroup() {
         for (int i = 0; i < 32; i++) {
-            Texture texture = Context.textures().get(i + currentTextureGroup * 32);
+            Texture texture = Context.TEXTURES.get(i + currentTextureGroup * 32);
             if (texture == null) {
                 break;
             }

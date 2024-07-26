@@ -1,5 +1,6 @@
 package org.dmarshaq.kubix.core.math.array;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 @Getter

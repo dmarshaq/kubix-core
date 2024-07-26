@@ -1,4 +1,4 @@
-package org.dmarshaq.kubix.core.graphic.base;
+package org.dmarshaq.kubix.core.graphic.base.layer;
 
 import lombok.EqualsAndHashCode;
 import lombok.ToString;

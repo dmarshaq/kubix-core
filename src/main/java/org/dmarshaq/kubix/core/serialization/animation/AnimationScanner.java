@@ -1,20 +1,13 @@
 package org.dmarshaq.kubix.core.serialization.animation;
 
-import org.dmarshaq.kubix.core.app.Context;
-import org.dmarshaq.kubix.core.graphic.base.Animation;
+import org.dmarshaq.kubix.core.graphic.base.texture.TextureAtlas;
+import org.dmarshaq.kubix.core.graphic.base.animation.Animation;
 import org.dmarshaq.kubix.core.graphic.base.GraphicCore;
-import org.dmarshaq.kubix.core.graphic.base.Shader;
-import org.dmarshaq.kubix.core.graphic.base.Texture;
-import org.dmarshaq.kubix.core.serialization.shader.ShaderManager;
 import org.dmarshaq.kubix.core.serialization.texture.TextureManager;
-import org.dmarshaq.kubix.core.serialization.texture.TextureScanner;
-import org.dmarshaq.kubix.core.util.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.Scanner;
 
 import static org.dmarshaq.kubix.core.util.FileUtils.loadAsString;
 
@@ -25,12 +18,11 @@ public class AnimationScanner {
 
     public static AnimationDto[] loadAnimationDtosFromFile(String path) {
         // Getting JSON animations file into object
-        JSONObject jsonAnimations = FileUtils.loadAsJSONObject(path);
+        JSONObject jsonAnimations = new JSONObject(loadAsString(path));
 
         // Slicing texture for animation frames
         JSONObject jsonAtlas = jsonAnimations.getJSONObject(ATLAS_KEY);
-        Texture texture = TextureManager.TEXTURE_MAP.get(jsonAtlas.getString("texture"));
-        GraphicCore.sliceTexture(texture, jsonAtlas.getInt("rows"), jsonAtlas.getInt("columns"));
+        TextureAtlas textureAtlas = GraphicCore.sliceTexture(TextureManager.TEXTURE_MAP.get(jsonAtlas.getString("texture")), jsonAtlas.getInt("rows"), jsonAtlas.getInt("columns"));
 
         // Loading animations
         JSONArray jsonAnimationKeys = jsonAnimations.getJSONArray(ANIMATIONS_KEY);
@@ -46,7 +38,7 @@ public class AnimationScanner {
             animationDto.setName(name);
             animationDto.setFps(jsonAnimation.getFloat("fps"));
             animationDto.setFrames(getAllFramesInRange(jsonAnimation.getInt("firstFrame"), jsonAnimation.getInt("lastFrame")));
-            animationDto.setTexture(texture);
+            animationDto.setTextureAtlas(textureAtlas);
             animations[i] = animationDto;
         }
 
@@ -55,12 +47,11 @@ public class AnimationScanner {
 
     public static AnimationDto[] loadAnimationDtosFromFile(File file) {
         // Getting JSON animations file into object
-        JSONObject jsonAnimations = FileUtils.loadAsJSONObject(file);
+        JSONObject jsonAnimations = new JSONObject(loadAsString(file));
 
         // Slicing texture for animation frames
         JSONObject jsonAtlas = jsonAnimations.getJSONObject(ATLAS_KEY);
-        Texture texture = TextureManager.TEXTURE_MAP.get(jsonAtlas.getString("texture"));
-        GraphicCore.sliceTexture(texture, jsonAtlas.getInt("rows"), jsonAtlas.getInt("columns"));
+        TextureAtlas textureAtlas = GraphicCore.sliceTexture(TextureManager.TEXTURE_MAP.get(jsonAtlas.getString("texture")), jsonAtlas.getInt("rows"), jsonAtlas.getInt("columns"));
 
         // Loading animations
         JSONArray jsonAnimationKeys = jsonAnimations.getJSONArray(ANIMATIONS_KEY);
@@ -76,7 +67,7 @@ public class AnimationScanner {
             animationDto.setName(name);
             animationDto.setFps(jsonAnimation.getFloat("fps"));
             animationDto.setFrames(getAllFramesInRange(jsonAnimation.getInt("firstFrame"), jsonAnimation.getInt("lastFrame")));
-            animationDto.setTexture(texture);
+            animationDto.setTextureAtlas(textureAtlas);
             animations[i] = animationDto;
         }
 
@@ -92,6 +83,6 @@ public class AnimationScanner {
     }
 
     public static Animation toAnimation(AnimationDto animationDto) {
-        return new Animation(animationDto.getFps(), animationDto.getFrames(), animationDto.getTexture());
+        return new Animation(animationDto.getFps(), animationDto.getFrames(), animationDto.getTextureAtlas());
     }
 }

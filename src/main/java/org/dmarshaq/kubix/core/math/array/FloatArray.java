@@ -1,10 +1,12 @@
 package org.dmarshaq.kubix.core.math.array;
 
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import java.util.Arrays;
 
 @ToString
+@EqualsAndHashCode(callSuper = false)
 public class FloatArray extends NumberArray<Float>{
     private final float[] array;
 

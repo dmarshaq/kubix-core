@@ -1,16 +1,15 @@
-package org.dmarshaq.kubix.core.graphic.base;
+package org.dmarshaq.kubix.core.graphic.base.animation;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
+import org.dmarshaq.kubix.core.graphic.base.texture.TextureAtlas;
 
 @Getter
-@Setter
 @AllArgsConstructor
 public class Animation {
-    private float fps;
-    private int[] frames;
-    private Texture texture;
+    private final float fps;
+    private final int[] frames;
+    private final TextureAtlas textureAtlas;
 
     public float totalTimeSeconds() {
         return (1 / fps) * frames.length;

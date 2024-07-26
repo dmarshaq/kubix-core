@@ -1,7 +1,8 @@
-package org.dmarshaq.kubix.core.graphic.base;
+package org.dmarshaq.kubix.core.graphic.base.animation;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.dmarshaq.kubix.core.graphic.base.texture.TextureCroppedRegion;
 import org.dmarshaq.kubix.core.math.function.AbstractFunction;
 import org.dmarshaq.kubix.core.math.function.FloatFunction;
 import org.dmarshaq.kubix.core.time.Time;
@@ -58,7 +59,7 @@ public abstract class AnimationPlayer {
     }
 
     public TextureCroppedRegion frame() {
-        return animation.getTexture().getTileSet()[animation.getFrames()[currentIndex]];
+        return animation.getTextureAtlas().getTextureCroppedRegion(animation.getFrames()[currentIndex]);
     }
 
     /**

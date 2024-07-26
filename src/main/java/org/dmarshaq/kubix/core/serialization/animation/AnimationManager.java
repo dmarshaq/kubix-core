@@ -1,8 +1,7 @@
 package org.dmarshaq.kubix.core.serialization.animation;
 
-import org.dmarshaq.kubix.core.graphic.base.Animation;
+import org.dmarshaq.kubix.core.graphic.base.animation.Animation;
 import org.dmarshaq.kubix.core.graphic.element.Animator;
-import org.dmarshaq.kubix.core.serialization.texture.TextureScanner;
 
 import java.io.File;
 import java.util.Arrays;
@@ -16,7 +15,7 @@ public class AnimationManager {
     public static final HashMap<String, Animation> ANIMATION_MAP = new HashMap<>();
 
     public static void updateAnimators() {
-        Animator.animators.forEach(Animator::update);
+        Animator.ANIMATORS.forEach(Animator::update);
     }
 
     public static void loadAnimationsFromFiles()  {

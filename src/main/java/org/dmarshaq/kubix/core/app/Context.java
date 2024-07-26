@@ -1,11 +1,17 @@
 package org.dmarshaq.kubix.core.app;
 
 import org.dmarshaq.kubix.core.graphic.base.*;
+import org.dmarshaq.kubix.core.graphic.base.animation.Animation;
+import org.dmarshaq.kubix.core.graphic.base.layer.Layer;
+import org.dmarshaq.kubix.core.graphic.base.layer.LayerManager;
+import org.dmarshaq.kubix.core.graphic.base.text.Font;
+import org.dmarshaq.kubix.core.graphic.base.texture.Texture;
 import org.dmarshaq.kubix.core.graphic.element.Camera;
 import org.dmarshaq.kubix.core.input.InputManager;
 import org.dmarshaq.kubix.core.serialization.Packet;
 import org.dmarshaq.kubix.core.serialization.SerializationScanner;
 import org.dmarshaq.kubix.core.serialization.animation.AnimationManager;
+import org.dmarshaq.kubix.core.serialization.font.FontManager;
 import org.dmarshaq.kubix.core.util.FileUtils;
 import org.dmarshaq.kubix.core.util.IndexedHashMap;
 import org.dmarshaq.kubix.core.serialization.texture.TextureManager;
@@ -113,23 +119,12 @@ public abstract class Context {
     }
 
     // Resources
-    private static IndexedHashMap<String, Texture> TEXTURES;
-    private static Map<String, Shader> SHADERS;
-    private static Map<String, Layer> LAYERS;
-    private static Map<String, Animation> ANIMATIONS;
+    public static IndexedHashMap<String, Texture> TEXTURES;
+    public static Map<String, Shader> SHADERS;
+    public static Map<String, Layer> LAYERS;
+    public static Map<String, Animation> ANIMATIONS;
+    public static Map<String, Font> FONTS;
 
-    public static IndexedHashMap<String, Texture> textures() {
-        return TEXTURES;
-    }
-    public static Map<String, Shader> shaders() {
-        return SHADERS;
-    }
-    public static Map<String, Layer> layers() {
-        return LAYERS;
-    }
-    public static Map<String, Animation> animations() {
-        return ANIMATIONS;
-    }
 
     // Object methods
     public abstract void initContextProperties();
@@ -141,6 +136,7 @@ public abstract class Context {
         SHADERS = ShaderManager.SHADER_MAP;
         LAYERS = LayerManager.LAYER_MAP;
         ANIMATIONS = AnimationManager.ANIMATION_MAP;
+        FONTS = FontManager.FONT_MAP;
     }
 
     final List<Packet> loadResourcesFromPackets(Packet[] packets) {
@@ -151,6 +147,7 @@ public abstract class Context {
         ShaderManager.loadShadersFromFiles();
         InputManager.mapGLFWKeyCodes();
         AnimationManager.loadAnimationsFromFiles();
+        FontManager.loadFontsFromFiles();
 
         return newPackets;
     }

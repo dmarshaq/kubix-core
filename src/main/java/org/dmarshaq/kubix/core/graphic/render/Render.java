@@ -52,7 +52,7 @@ public class Render {
         // Setup shaders
         pr_matrix = MathCore.orthographic(-2f, 2f, -1.5f, 1.5f, -1f, 1f); // basically camera matrix
 
-        Shader basic = Context.shaders().get("basic_quad");
+        Shader basic = Context.SHADERS.get("basic_quad");
 
         basic.enable();
         basic.setUniformMatrix4x4("pr_matrix", pr_matrix);
@@ -60,7 +60,7 @@ public class Render {
         basic.setUniformMatrix4x4("ml_matrix", new Matrix4x4());
         basic.disable();
 
-        basic = Context.shaders().get("basic_line");
+        basic = Context.SHADERS.get("basic_line");
 
         basic.enable();
         basic.setUniformMatrix4x4("pr_matrix", pr_matrix);
@@ -151,13 +151,13 @@ public class Render {
         pr_matrix = snapshot.getCamera().getProjection();
 
         // Quad shader
-        Shader basic = Context.shaders().get("basic_quad");
+        Shader basic = Context.SHADERS.get("basic_quad");
         basic.enable();
         basic.setUniformMatrix4x4("pr_matrix", pr_matrix);
         basic.disable();
 
         // Line shader
-        basic = Context.shaders().get("basic_line");
+        basic = Context.SHADERS.get("basic_line");
         basic.enable();
         basic.setUniformMatrix4x4("pr_matrix", pr_matrix);
         basic.disable();

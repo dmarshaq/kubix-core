@@ -1,6 +1,6 @@
 package org.dmarshaq.kubix.core.serialization.texture;
 
-import org.dmarshaq.kubix.core.graphic.base.Texture;
+import org.dmarshaq.kubix.core.graphic.base.texture.Texture;
 import org.dmarshaq.kubix.core.serialization.Packet;
 import org.dmarshaq.kubix.core.util.FileUtils;
 import org.dmarshaq.kubix.core.util.IndexedHashMap;

@@ -1,10 +1,12 @@
 package org.dmarshaq.kubix.core.math.array;
 
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import java.util.Arrays;
 
 @ToString
+@EqualsAndHashCode(callSuper = false)
 public class DoubleArray extends NumberArray<Double>{
     private final double[] array;
 

@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.dmarshaq.kubix.core.math.array.NumberArray;
 
+import java.util.Objects;
+
 @Setter
 @Getter
 @EqualsAndHashCode
@@ -22,5 +24,4 @@ public class Vector<T extends Number> {
     public String toString() {
         return "Vector(" + "values=" + values.arrayToString() + ')';
     }
-
 }

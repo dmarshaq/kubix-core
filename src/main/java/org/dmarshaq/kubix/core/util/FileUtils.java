@@ -6,7 +6,6 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.URI;
-import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.net.URISyntaxException;
@@ -17,6 +16,7 @@ import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Scanner;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -24,12 +24,27 @@ import static org.dmarshaq.kubix.core.util.BufferUtils.createByteBuffer;
 
 public interface FileUtils {
 
-    static JSONObject loadAsJSONObject(String filePath) {
-        return new JSONObject(loadAsString(filePath));
+    static Scanner loadAsScanner(String filePath) {
+        Scanner result;
+        try {
+            InputStream inputStream = URLClassLoader.getSystemResourceAsStream(filePath);
+            result = new Scanner(inputStream);
+        } catch (Exception e) {
+            System.out.println("Could not read resource file " + filePath + " due to: " + e.toString());
+            throw new RuntimeException(e);
+        }
+        return result;
     }
 
-    static JSONObject loadAsJSONObject(File file) {
-        return new JSONObject(loadAsString(file));
+    static Scanner loadAsScanner(File file) {
+        Scanner result;
+        try {
+            result = new Scanner(file);
+        } catch (FileNotFoundException e) {
+            System.out.println("Could not read resource file " + file.getPath() + " due to: " + e.toString());
+            throw new RuntimeException(e);
+        }
+        return result;
     }
 
     static String loadAsString(String filePath) {

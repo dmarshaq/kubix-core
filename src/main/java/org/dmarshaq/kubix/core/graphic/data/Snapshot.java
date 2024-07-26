@@ -25,14 +25,17 @@ public class Snapshot {
     public void addQuad(Quad quad) {
         quadList.add(quad);
     }
+    public void addQuad(Quad[] quads) {
+        Collections.addAll(quadList, quads);
+    }
 
     public void addLine(Line line) {
         lineList.add(line);
     }
-
-    public void addLine(Line[] line) {
-        Collections.addAll(lineList, line);
+    public void addLine(Line[] lines) {
+        Collections.addAll(lineList, lines);
     }
+
 
 
     public void releaseLineRenderBuffer() {
