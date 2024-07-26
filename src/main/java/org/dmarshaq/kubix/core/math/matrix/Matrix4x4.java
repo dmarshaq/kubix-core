@@ -2,6 +2,7 @@ package org.dmarshaq.kubix.core.math.matrix;
 
 import org.dmarshaq.kubix.core.math.base.MathCore;
 import org.dmarshaq.kubix.core.math.array.FloatArray;
+import org.dmarshaq.kubix.core.math.vector.Vector2;
 import org.dmarshaq.kubix.core.math.vector.Vector3;
 
 /**
@@ -80,6 +81,21 @@ public class Matrix4x4 extends Matrix<Float> implements AbstractFloatMatrixTrans
     @Override
     public Vector3 originVector() {
         return new Vector3(getArrayOfElements()[3], getArrayOfElements()[7], getArrayOfElements()[11]);
+    }
+
+    @Override
+    public Vector3 right() {
+        return axisVectorX().normalize();
+    }
+
+    @Override
+    public Vector3 up() {
+        return axisVectorY().normalize();
+    }
+
+    @Override
+    public Vector3 forward() {
+        return axisVectorZ().normalize();
     }
 
     @Override

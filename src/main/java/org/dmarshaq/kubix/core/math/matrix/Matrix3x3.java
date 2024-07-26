@@ -75,6 +75,16 @@ public class Matrix3x3 extends Matrix<Float> implements AbstractFloatMatrixTrans
     }
 
     @Override
+    public Vector2 right() {
+        return axisVectorX().normalize();
+    }
+
+    @Override
+    public Vector2 up() {
+        return axisVectorY().normalize();
+    }
+
+    @Override
     public Vector2 localToWorld(Vector2 localVector) {
         Vector2 xVector = axisVectorX().multiply(localVector.getValues().floatArray()[0]);
         Vector2 yVector = axisVectorY().multiply(localVector.getValues().floatArray()[1]);

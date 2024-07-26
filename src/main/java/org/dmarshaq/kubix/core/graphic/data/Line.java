@@ -10,7 +10,7 @@ import org.dmarshaq.kubix.core.math.vector.Vector4;
 /**
  * Line is a wrapper class for simple vertex float array that describes line's geometry.
  * It contains float array for storing each of 2 vertices data, as well as shader that is used in render to draw the line.
- * It also stores layer it supposed to render on.
+ * It also stores layer it supposed to render on. Can be used same way as Quad, but for line rendering.
  */
 @ToString
 public class Line implements Renderable {

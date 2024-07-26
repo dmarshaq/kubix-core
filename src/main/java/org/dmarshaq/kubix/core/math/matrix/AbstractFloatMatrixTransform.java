@@ -35,8 +35,6 @@ public interface AbstractFloatMatrixTransform<T extends Vector<Float>, E extends
      * Returns new vector direction of x-axis in transform matrix, if axisVectorX() is defined.
      */
     default T right() {
-        if (axisVectorX() != null)
-            return (T) MathCore.normalization(axisVectorX());
         return null;
     }
 
@@ -44,8 +42,6 @@ public interface AbstractFloatMatrixTransform<T extends Vector<Float>, E extends
      * Returns new vector direction of y-axis in transform matrix, if axisVectorY() is defined.
      */
     default T up() {
-        if (axisVectorY() != null)
-            return (T) MathCore.normalization(axisVectorY());
         return null;
     }
 
@@ -53,8 +49,6 @@ public interface AbstractFloatMatrixTransform<T extends Vector<Float>, E extends
      * Returns new vector direction of z-axis in transform matrix, if axisVectorZ() is defined.
      */
     default T forward() {
-        if (axisVectorZ() != null)
-            return (T) MathCore.normalization(axisVectorZ());
         return null;
     }
 

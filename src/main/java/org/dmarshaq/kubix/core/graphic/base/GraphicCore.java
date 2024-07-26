@@ -27,115 +27,49 @@ public class GraphicCore {
      * Returns new quad from sprite without additional matrix transformations.
      */
     public static Quad quad(Sprite sprite) {
-        // Getting color.
-        Vector4 color = MathCore.vector4(sprite.getColor());
-        // Calculating texture index.
-        Texture texture = sprite.getTexture().getHost();
-        int texIndex = texture.ordinal() % 32;
-        // Getting origin position of the sprite, width, height.
-        Vector3 position = new Vector3(MathCore.componentVector(sprite.getPosition(), "xyz"));
-        float width = sprite.getWidth();
-        float height = sprite.getHeight();
-        // Texture region percent position, width, height
-        Vector2 percentPosition = sprite.getTexture().getPercentPosition();
-        float percentWidth = sprite.getTexture().getPercentWidth();
-        float percentHeight = sprite.getTexture().getPercentHeight();
-
-        return rectangularQuad(position, width, height, color, percentPosition, percentWidth, percentHeight, texIndex, MathCore.forward().negate(), sprite.getShader(), sprite.getLayer(), texture);
-    }
-
-    private static Quad rectangularQuad(Vector3 position, float width, float height, Vector4 color, Vector2 percentPosition, float percentWidth, float percentHeight, int texIndex, Vector3 normal, Shader shader, Layer layer, Texture texture) {
-        // Creating quad with shader defined in sprite.
-        Quad quad = new Quad(shader, layer, texture);
-
-        // Setting vertices through 0 to 3.
-        quad.setVertex(0, position,                                    color, percentPosition,                                               texIndex, normal);
-        quad.setVertex(1, new Vector3(width, 0, 0).add(position),      color, new Vector2(percentWidth, 0).add(percentPosition),             texIndex, normal);
-        quad.setVertex(2, new Vector3(0, height, 0).add(position),     color, new Vector2(0, percentHeight).add(percentPosition),            texIndex, normal);
-        quad.setVertex(3, new Vector3(width, height, 0).add(position), color, new Vector2(percentWidth, percentHeight).add(percentPosition), texIndex, normal);
-
-        return quad;
+        return rectangularQuad(
+                new Vector3(MathCore.componentVector(sprite.getPosition(), "xyz")),
+                sprite.getWidth(),
+                sprite.getHeight(),
+                MathCore.vector4(sprite.getColor()),
+                sprite.getTexture(),
+                sprite.getShader(),
+                sprite.getLayer()
+        );
     }
 
     /**
      * Returns new quad from sprite, with additional Matrix4x4 transformation.
      */
     public static Quad quad(Sprite sprite, Matrix4x4 transformation) {
-        // Getting color.
-        Vector4 color = MathCore.vector4(sprite.getColor());
-        // Calculating texture index.
-        Texture texture = sprite.getTexture().getHost();
-        int texIndex = texture.ordinal() % 32;
-        // Getting width, height.
-        float width = sprite.getWidth();
-        float height = sprite.getHeight();
-        // Texture region percent position, width, height
-        Vector2 percentPosition = sprite.getTexture().getPercentPosition();
-        float percentWidth = sprite.getTexture().getPercentWidth();
-        float percentHeight = sprite.getTexture().getPercentHeight();
-
-        // Getting vertices positions by matrix vector multiplication.
-        Vector4 position = new Vector4(sprite.getPosition().x(), sprite.getPosition().y(), 0.0f, 1.0f);
-
-        Vector3 vertex0 = new Vector3(MathCore.multiplication(transformation, position));
-        Vector3 vertex1 = new Vector3(MathCore.multiplication(transformation, new Vector4(width, 0, 0, 0).add(position)));
-        Vector3 vertex2 = new Vector3(MathCore.multiplication(transformation, new Vector4(0, height, 0, 0).add(position)));
-        Vector3 vertex3 = new Vector3(MathCore.multiplication(transformation, new Vector4(width, height, 0, 0).add(position)));
-
-        // Getting normal vector.
-        Vector3 normal = transformation.axisVectorZ().normalize().negate();
-
-        // Creating quad with shader defined in sprite.
-        Quad quad = new Quad(sprite.getShader(), sprite.getLayer(), texture);
-
-        // Setting vertices through 0 to 3.
-        quad.setVertex(0, vertex0, color, percentPosition,                                               texIndex, normal);
-        quad.setVertex(1, vertex1, color, new Vector2(percentWidth, 0).add(percentPosition),             texIndex, normal);
-        quad.setVertex(2, vertex2, color, new Vector2(0, percentHeight).add(percentPosition),            texIndex, normal);
-        quad.setVertex(3, vertex3, color, new Vector2(percentWidth, percentHeight).add(percentPosition), texIndex, normal);
-
-        return quad;
+        return rectangularQuad(
+                new Vector3(MathCore.componentVector(sprite.getPosition(), "xyz")),
+                sprite.getWidth(),
+                sprite.getHeight(),
+                MathCore.vector4(sprite.getColor()),
+                sprite.getTexture(),
+                sprite.getShader(),
+                sprite.getLayer(),
+                transformation
+        );
     }
 
     /**
      * Returns new quad from sprite, with additional Matrix3x3 transformation.
      */
     public static Quad quad(Sprite sprite, Matrix3x3 transformation) {
-        // Getting color.
-        Vector4 color = MathCore.vector4(sprite.getColor());
-        // Calculating texture index.
-        Texture texture = sprite.getTexture().getHost();
-        int texIndex = texture.ordinal() % 32;
-        // Getting width, height.
-        float width = sprite.getWidth();
-        float height = sprite.getHeight();
-        // Texture region percent position, width, height
-        Vector2 percentPosition = sprite.getTexture().getPercentPosition();
-        float percentWidth = sprite.getTexture().getPercentWidth();
-        float percentHeight = sprite.getTexture().getPercentHeight();
-
-        // Getting vertices positions by matrix vector multiplication.
-        Vector3 position = new Vector3(sprite.getPosition().x(), sprite.getPosition().y(), 1.0f);
-
-        Vector3 vertex0 = new Vector3(MathCore.componentVector(MathCore.multiplication(transformation, position), "xyz"));
-        Vector3 vertex1 = new Vector3(MathCore.componentVector(MathCore.multiplication(transformation, new Vector3(width, 0, 0).add(position)), "xyz"));
-        Vector3 vertex2 = new Vector3(MathCore.componentVector(MathCore.multiplication(transformation, new Vector3(0, height, 0).add(position)), "xyz"));
-        Vector3 vertex3 = new Vector3(MathCore.componentVector(MathCore.multiplication(transformation, new Vector3(width, height, 0).add(position)), "xyz"));
-
-        // Getting normal vector.
-        Vector3 normal = MathCore.forward().negate();
-
-        // Creating quad with shader defined in sprite.
-        Quad quad = new Quad(sprite.getShader(), sprite.getLayer(), texture);
-
-        // Setting vertices through 0 to 3.
-        quad.setVertex(0, vertex0, color, percentPosition,                                               texIndex, normal);
-        quad.setVertex(1, vertex1, color, new Vector2(percentWidth, 0).add(percentPosition),             texIndex, normal);
-        quad.setVertex(2, vertex2, color, new Vector2(0, percentHeight).add(percentPosition),            texIndex, normal);
-        quad.setVertex(3, vertex3, color, new Vector2(percentWidth, percentHeight).add(percentPosition), texIndex, normal);
-
-        return quad;
+        return rectangularQuad(
+                new Vector3(MathCore.componentVector(sprite.getPosition(), "xyz")),
+                sprite.getWidth(),
+                sprite.getHeight(),
+                MathCore.vector4(sprite.getColor()),
+                sprite.getTexture(),
+                sprite.getShader(),
+                sprite.getLayer(),
+                MathCore.transform4x4(transformation)
+        );
     }
+
     
     /**
      * Slices texture by grid, by creating new TextureCroppedRegion[].
@@ -247,38 +181,36 @@ public class GraphicCore {
      * Returns new quad array from text object.
      */
     public static Quad[] text(Text text) {
-        // Getting color.
+        // Getting color
         Vector4 color = new Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-        // Calculating texture index.
-        Texture texture = text.getFont().getAtlas().get(' ').getTextureCroppedRegion().getHost();
-        int texIndex = texture.ordinal() % 32;
 
         char[] chars = text.getText().toCharArray();
         HashMap<Character, CharacterData> atlas = text.getFont().getAtlas();
 
         Quad[] result = new Quad[chars.length];
 
-        // Getting origin position of the sprite, width, height.
         float lineLimit = text.getLineLimit();
         Vector3 cursor = new Vector3(MathCore.componentVector(text.getPosition(), "xyz"));
-        int threshold = 0;
+
         for (int i = 0; i < chars.length; i++) {
             // Regular loading
             CharacterData data = atlas.get(chars[i]);
             TextureCroppedRegion textureCroppedRegion = data.getTextureCroppedRegion();
-            // Position, width, height.
-            Vector3 position = new Vector3((float) data.getXOffset() / Context.getUnitSize(), -(data.getYOffset() + textureCroppedRegion.getHeight()) / Context.getUnitSize(), 0).add(cursor);
-            float width = textureCroppedRegion.getWidth() / Context.getUnitSize();
-            float height = textureCroppedRegion.getHeight() / Context.getUnitSize();
-            // Getting percent position, width, height
-            Vector2 percentPosition = textureCroppedRegion.getPercentPosition();
-            float percentWidth = textureCroppedRegion.getPercentWidth();
-            float percentHeight = textureCroppedRegion.getPercentHeight();
+
             // Creating quad
-            result[i] = rectangularQuad(position, width, height, color, percentPosition, percentWidth, percentHeight, texIndex, MathCore.forward().negate(), text.getShader(), text.getLayer(), texture);
+            result[i] = rectangularQuad(
+                    new Vector3((float) data.getXOffset() / Context.getUnitSize(), -(data.getYOffset() + textureCroppedRegion.getHeight()) / Context.getUnitSize(), 0).add(cursor),
+                    textureCroppedRegion.getWidth() / Context.getUnitSize(),
+                    textureCroppedRegion.getHeight() / Context.getUnitSize(),
+                    color,
+                    textureCroppedRegion,
+                    text.getShader(),
+                    text.getLayer()
+                    );
             // Advancing
             cursor.getArrayOfValues()[0] += (float) data.getXAdvance() / Context.getUnitSize();
 
+            // Checking if it ends the line with the word
             if (chars[i] == ' ') {
                 int count = 1;
                 float length = 0;
@@ -291,26 +223,126 @@ public class GraphicCore {
                     cursor.getArrayOfValues()[1] -= (float) text.getFont().getLineHeight() / Context.getUnitSize();
                 }
             }
-
-
-            // Checking if cursor past line limit, if it is, go back and recalculate word on the new line
-//            if (cursor.x() >= lineLimit && i > threshold) {
-//                cursor.getArrayOfValues()[0] = text.getPosition().x();
-//                cursor.getArrayOfValues()[1] -= (float) text.getFont().getLineHeight() / Context.getUnitSize();
-//                int stepBack = 0;
-//                while(chars[i - stepBack] != ' ') {
-//                    stepBack++;
-//                    if (i - stepBack == threshold) {
-//                        stepBack = 0;
-//                        break;
-//                    }
-//                }
-//                i -= stepBack;
-//                threshold = i + 1;
-//            }
         }
 
         return result;
     }
+
+    /**
+     * Returns new quad array from text object, transformed by matrix4x4.
+     */
+    public static Quad[] text(Text text, Matrix4x4 matrix4x4) {
+        // Getting color
+        Vector4 color = new Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+
+        char[] chars = text.getText().toCharArray();
+        HashMap<Character, CharacterData> atlas = text.getFont().getAtlas();
+
+        Quad[] result = new Quad[chars.length];
+
+        float lineLimit = text.getLineLimit();
+        Vector3 cursor = new Vector3(MathCore.componentVector(text.getPosition(), "xyz"));
+
+        for (int i = 0; i < chars.length; i++) {
+            // Regular loading
+            CharacterData data = atlas.get(chars[i]);
+            TextureCroppedRegion textureCroppedRegion = data.getTextureCroppedRegion();
+
+            // Creating quad
+            result[i] = rectangularQuad(
+                    new Vector3((float) data.getXOffset() / Context.getUnitSize(), -(data.getYOffset() + textureCroppedRegion.getHeight()) / Context.getUnitSize(), 0).add(cursor),
+                    textureCroppedRegion.getWidth() / Context.getUnitSize(),
+                    textureCroppedRegion.getHeight() / Context.getUnitSize(),
+                    color,
+                    textureCroppedRegion,
+                    text.getShader(),
+                    text.getLayer(),
+                    matrix4x4
+            );
+            // Advancing
+            cursor.getArrayOfValues()[0] += (float) data.getXAdvance() / Context.getUnitSize();
+
+            // Checking if it ends the line with the word
+            if (chars[i] == ' ') {
+                int count = 1;
+                float length = 0;
+                while (i + count < chars.length && chars[i + count] != ' ') {
+                    length += (float) atlas.get(chars[i + count]).getXAdvance() / Context.getUnitSize();
+                    count++;
+                }
+                if (length + cursor.getArrayOfValues()[0] >= lineLimit) {
+                    cursor.getArrayOfValues()[0] = text.getPosition().x();
+                    cursor.getArrayOfValues()[1] -= (float) text.getFont().getLineHeight() / Context.getUnitSize();
+                }
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Returns new quad array from text object, transformed by matrix3x3.
+     */
+    public static Quad[] text(Text text, Matrix3x3 matrix3x3) {
+        return text(text, MathCore.transform4x4(matrix3x3));
+    }
+
+
+
+
+    private static Quad rectangularQuad(Vector3 offset, float width, float height, Vector4 color, TextureCroppedRegion texture, Shader shader, Layer layer) {
+        // Creating quad with shader defined in sprite.
+        Quad quad = new Quad(shader, layer, texture.getHost());
+
+        // Texture region percent position, width, height
+        Vector2 percentPosition = texture.getPercentPosition();
+        float percentWidth = texture.getPercentWidth();
+        float percentHeight = texture.getPercentHeight();
+
+        // Calculating texture index.
+        int texIndex = texture.getHost().ordinal() % 32;
+
+        // Default 2D normal
+        Vector3 normal = MathCore.forward().negate();
+
+        // Setting vertices through 0 to 3.
+        quad.setVertex(0, offset,                                       color, percentPosition,                                               texIndex, normal);
+        quad.setVertex(1, new Vector3(width, 0, 0).add(offset),         color, new Vector2(percentWidth, 0).add(percentPosition),             texIndex, normal);
+        quad.setVertex(2, new Vector3(0, height, 0).add(offset),        color, new Vector2(0, percentHeight).add(percentPosition),            texIndex, normal);
+        quad.setVertex(3, new Vector3(width, height, 0).add(offset),    color, new Vector2(percentWidth, percentHeight).add(percentPosition), texIndex, normal);
+
+        return quad;
+    }
+
+    private static Quad rectangularQuad(Vector3 offset, float width, float height, Vector4 color, TextureCroppedRegion texture, Shader shader, Layer layer, Matrix4x4 matrix4x4) {
+        // Creating quad with shader defined in sprite.
+        Quad quad = new Quad(shader, layer, texture.getHost());
+
+        // Calculating vertex positions
+        Vector3 vertex0 = matrix4x4.localToWorld(offset);
+        Vector3 vertex1 = matrix4x4.localToWorld(new Vector3(width, 0, 0).add(offset));
+        Vector3 vertex2 = matrix4x4.localToWorld(new Vector3(0, height, 0).add(offset));
+        Vector3 vertex3 = matrix4x4.localToWorld(new Vector3(width, height, 0).add(offset));
+
+        // Texture region percent position, width, height
+        Vector2 percentPosition = texture.getPercentPosition();
+        float percentWidth = texture.getPercentWidth();
+        float percentHeight = texture.getPercentHeight();
+
+        // Calculating texture index.
+        int texIndex = texture.getHost().ordinal() % 32;
+
+        // Default 2D normal
+        Vector3 normal = matrix4x4.forward().negate();
+
+        // Setting vertices through 0 to 3.
+        quad.setVertex(0, vertex0,  color, percentPosition,                                               texIndex, normal);
+        quad.setVertex(1, vertex1,  color, new Vector2(percentWidth, 0).add(percentPosition),             texIndex, normal);
+        quad.setVertex(2, vertex2,  color, new Vector2(0, percentHeight).add(percentPosition),            texIndex, normal);
+        quad.setVertex(3, vertex3,  color, new Vector2(percentWidth, percentHeight).add(percentPosition), texIndex, normal);
+
+        return quad;
+    }
+
 
 }

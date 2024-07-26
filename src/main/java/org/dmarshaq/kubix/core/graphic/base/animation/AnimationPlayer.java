@@ -29,6 +29,13 @@ public abstract class AnimationPlayer {
     private int currentIndex;
     private float nextFrameChangeTime;
 
+    /**
+     * Animation Player is an animation runner, it has update() method, that should be called if you animation to play at current tick.
+     * reset() to fully reset animation, to continue playing from beginning, frame() to get current TextureCroppedRegion that can be assigned to sprite.
+     * You can also set rate of animation, easing curve, make animation looped, or stop it.
+     * Note: If animation is not lopped it will be stopped after first cycle and animationCycleFinishCallback() will be called.
+     * Also, when each cycle is finished reset() method is called automatically.
+     */
     public AnimationPlayer(Animation animation) {
         this.animation = animation;
         this.rate = 1.0f;

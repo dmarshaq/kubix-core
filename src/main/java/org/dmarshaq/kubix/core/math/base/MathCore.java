@@ -275,5 +275,20 @@ public class MathCore {
         return domain.isOnBoundary(value);
     }
 
+    /**
+     * Returns new Matrix4x4 from Matrix3x3 specified.
+     * Note: This function only copies transform properties.
+     */
+    public static Matrix4x4 transform4x4(Matrix3x3 transform3x3) {
+        float[] src = transform3x3.getArrayOfElements();
+        return new Matrix4x4(new float[] {
+                src[0], src[1], 0, src[2],
+                src[3], src[4], 0, src[5],
+                0,      0,      1,      0,
+                0,      0,      0,      1,
+        });
+    }
+
+
 
 }

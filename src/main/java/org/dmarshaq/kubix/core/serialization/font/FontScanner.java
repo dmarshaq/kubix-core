@@ -16,81 +16,46 @@ import static org.dmarshaq.kubix.core.util.FileUtils.loadAsString;
 
 public class FontScanner {
 
-
+    private static final String FONT_LINE_HEIGHT_KEY = "lineHeight";
+    private static final String FONT_BASE_KEY = "base";
+    private static final String FONT_FILE_KEY = "file";
+    private static final String FONT_CHARACTERS_COUNT_KEY = "count";
+    private static final String CHARACTER_ID_KEY = "id";
+    private static final String CHARACTER_X_KEY = "x";
+    private static final String CHARACTER_Y_KEY = "y";
+    private static final String CHARACTER_WIDTH_KEY = "width";
+    private static final String CHARACTER_HEIGHT_KEY = "height";
+    private static final String CHARACTER_X_OFFSET_KEY = "xoffset";
+    private static final String CHARACTER_Y_OFFSET_KEY = "yoffset";
+    private static final String CHARACTER_X_ADVANCE_KEY = "xadvance";
 
     public static Font loadFontFromFile(String path) {
-        Scanner scanner = FileUtils.loadAsScanner(path);
+        return fontFromScanner(FileUtils.loadAsScanner(path));
 
-        int lineHeight = scanIntValueOf(scanner, "lineHeight");
-        int base = scanIntValueOf(scanner, "base");
-        String textureFileName = scanStringValueOf(scanner, "file");
-        Texture texture = TextureManager.TEXTURE_MAP.get(textureFileName.substring(0, textureFileName.lastIndexOf('.')));
-
-        String idKey = "id";
-        String xKey = "x";
-        String yKey = "y";
-        String widthKey = "width";
-        String heightKey = "height";
-        String xoffsetKey = "xoffset";
-        String yoffsetKey = "yoffset";
-        String xadvanceKey = "xadvance";
-        int count = scanIntValueOf(scanner, "count");
-        HashMap<Character, CharacterData> atlas = new HashMap<>(count, 1.0f);
-        for (int i = 0; i < count; i++) {
-            Character key = scanCharValueOf(scanner, idKey);
-            int x = scanIntValueOf(scanner, xKey);
-            int y = scanIntValueOf(scanner, yKey);
-            int width = scanIntValueOf(scanner, widthKey);
-            int height = scanIntValueOf(scanner, heightKey);
-            int xoffset = scanIntValueOf(scanner, xoffsetKey);
-            int yoffset = scanIntValueOf(scanner, yoffsetKey);
-            int xadvance = scanIntValueOf(scanner, xadvanceKey);
-            CharacterData value = new CharacterData(
-                    new TextureCroppedRegion(
-                            new Vector2(
-                                    x,
-                                    texture.getHeight() - y - height
-                            ),
-                            width,
-                            height,
-                            texture
-                    ),
-                    xoffset,
-                    yoffset,
-                    xadvance
-            );
-            atlas.put(key, value);
-        }
-        return new Font(atlas, lineHeight, base);
     }
 
     public static Font loadFontFromFile(File file) {
-        Scanner scanner = FileUtils.loadAsScanner(file);
+        return fontFromScanner(FileUtils.loadAsScanner(file));
 
-        int lineHeight = scanIntValueOf(scanner, "lineHeight");
-        int base = scanIntValueOf(scanner, "base");
-        String textureFileName = scanStringValueOf(scanner, "file");
+    }
+
+    private static Font fontFromScanner(Scanner scanner) {
+        int lineHeight = scanIntValueOf(scanner, FONT_LINE_HEIGHT_KEY);
+        int base = scanIntValueOf(scanner, FONT_BASE_KEY);
+        String textureFileName = scanStringValueOf(scanner, FONT_FILE_KEY);
         Texture texture = TextureManager.TEXTURE_MAP.get(textureFileName.substring(0, textureFileName.lastIndexOf('.')));
 
-        String idKey = "id";
-        String xKey = "x";
-        String yKey = "y";
-        String widthKey = "width";
-        String heightKey = "height";
-        String xoffsetKey = "xoffset";
-        String yoffsetKey = "yoffset";
-        String xadvanceKey = "xadvance";
-        int count = scanIntValueOf(scanner, "count");
+        int count = scanIntValueOf(scanner, FONT_CHARACTERS_COUNT_KEY);
         HashMap<Character, CharacterData> atlas = new HashMap<>(count, 1.0f);
         for (int i = 0; i < count; i++) {
-            Character key = scanCharValueOf(scanner, idKey);
-            int x = scanIntValueOf(scanner, xKey);
-            int y = scanIntValueOf(scanner, yKey);
-            int width = scanIntValueOf(scanner, widthKey);
-            int height = scanIntValueOf(scanner, heightKey);
-            int xoffset = scanIntValueOf(scanner, xoffsetKey);
-            int yoffset = scanIntValueOf(scanner, yoffsetKey);
-            int xadvance = scanIntValueOf(scanner, xadvanceKey);
+            Character key = scanCharValueOf(scanner, CHARACTER_ID_KEY);
+            int x = scanIntValueOf(scanner, CHARACTER_X_KEY);
+            int y = scanIntValueOf(scanner, CHARACTER_Y_KEY);
+            int width = scanIntValueOf(scanner, CHARACTER_WIDTH_KEY);
+            int height = scanIntValueOf(scanner, CHARACTER_HEIGHT_KEY);
+            int xoffset = scanIntValueOf(scanner, CHARACTER_X_OFFSET_KEY);
+            int yoffset = scanIntValueOf(scanner, CHARACTER_Y_OFFSET_KEY);
+            int xadvance = scanIntValueOf(scanner, CHARACTER_X_ADVANCE_KEY);
             CharacterData value = new CharacterData(
                     new TextureCroppedRegion(
                             new Vector2(
@@ -122,6 +87,7 @@ public class FontScanner {
     private static char scanCharValueOf(Scanner scanner, String key) {
         return (char) scanIntValueOf(scanner, key);
     }
+
     private static String scanStringValueOf(Scanner scanner, String key) {
         while (scanner.hasNext()) {
             String pair = scanner.next();

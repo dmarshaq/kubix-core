@@ -16,36 +16,21 @@ public class ShaderScanner extends SerializationScanner {
     static final String HEADER = "SHAD";
 
     public static Shader loadShaderFromFile(String path) {
-        String shader = loadAsString(path);
-        StringBuilder vertex = new StringBuilder();
-        StringBuilder fragment = new StringBuilder();
+        return shaderFromString(loadAsString(path));
 
-
-        Scanner scanner = new Scanner(shader);
-        String line;
-
-        while(true) {
-            line = scanner.nextLine();
-            if (line.startsWith("#version")) {
-                vertex.append(line);
-                fragment.append(line);
-                break;
-            }
-        }
-
-        vertex.append(shader, shader.indexOf("#vert") + 5, shader.indexOf("#frag"));
-        fragment.append(shader, shader.indexOf("#frag") + 5, shader.length());
-
-        return new Shader(buildShaderId(vertex.toString(), fragment.toString()), ShaderManager.shaderCounter++);
     }
 
     public static Shader loadShaderFromFile(File file) {
-        String shader = loadAsString(file);
+        return shaderFromString(loadAsString(file));
+
+    }
+
+    private static Shader shaderFromString(String program) {
         StringBuilder vertex = new StringBuilder();
         StringBuilder fragment = new StringBuilder();
 
 
-        Scanner scanner = new Scanner(shader);
+        Scanner scanner = new Scanner(program);
         String line;
 
         while(true) {
@@ -57,8 +42,8 @@ public class ShaderScanner extends SerializationScanner {
             }
         }
 
-        vertex.append(shader, shader.indexOf("#vert") + 5, shader.indexOf("#frag"));
-        fragment.append(shader, shader.indexOf("#frag") + 5, shader.length());
+        vertex.append(program, program.indexOf("#vert") + 5, program.indexOf("#frag"));
+        fragment.append(program, program.indexOf("#frag") + 5, program.length());
 
         return new Shader(buildShaderId(vertex.toString(), fragment.toString()), ShaderManager.shaderCounter++);
     }

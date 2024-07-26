@@ -70,81 +70,16 @@ public class TextureScanner extends SerializationScanner {
         return new Packet("TEX", stream);
     }
 
-    private static byte[] getBytes(List<TextureDto> textureDtoList) {
-        int textureCount = textureDtoList.size();
-        int namesLength = textureCount * Short.BYTES;
-        int pixelsLength = 0;
-        for (TextureDto t : textureDtoList) {
-            namesLength += t.getName().length();
-            pixelsLength += t.getWidth() * t.getHeight();
-        }
-        return new byte[Short.BYTES + HEADER.length() + Short.BYTES + namesLength + (textureCount * (Long.BYTES + Integer.BYTES + Integer.BYTES + Integer.BYTES)) + pixelsLength * Integer.BYTES];
-    }
-
     static TextureDto loadTextureDtoFromImage(File file) {
-        TextureDto textureDto = new TextureDto();
-        int[] pixels = null;
-
-        BufferedImage image = loadAsImage(file);
-        int width = image.getWidth();
-        int height = image.getHeight();
-        pixels = new int[width * height];
-        image.getRGB(0 ,0, width, height, pixels, 0 , width);
-
-        int[] data = new int[width * height];
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                int index = x + y * width;
-                int a = (pixels[index] & 0xff000000) >> 24;
-                int r = (pixels[index] & 0xff0000) >> 16;
-                int g = (pixels[index] & 0xff00) >> 8;
-                int b = (pixels[index] & 0xff);
-                data[x + (height - 1 - y) * width] = a << 24 | b << 16 | g << 8 | r;
-            }
-        }
-
-        textureDto.setName(file.getName().substring(0, file.getName().length() - 4));
-        textureDto.setLastModified(file.lastModified());
-        textureDto.setWidth(width);
-        textureDto.setHeight(height);
-        textureDto.setData(data);
-        return textureDto;
+        String name = file.getName();
+        return textureDtoFromImage(loadAsImage(file), name.substring(0, name.length() - 4));
     }
 
-    public static TextureDto loadTextureDtoFromImage(String string) {
-        TextureDto textureDto = new TextureDto();
-        int[] pixels = null;
-
-        BufferedImage image = loadAsImage(string);
-        int width = image.getWidth();
-        int height = image.getHeight();
-        pixels = new int[width * height];
-        image.getRGB(0 ,0, width, height, pixels, 0 , width);
-
-        int[] data = new int[width * height];
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                int index = x + y * width;
-                int a = (pixels[index] & 0xff000000) >> 24;
-                int r = (pixels[index] & 0xff0000) >> 16;
-                int g = (pixels[index] & 0xff00) >> 8;
-                int b = (pixels[index] & 0xff);
-                data[x + (height - 1 - y) * width] = a << 24 | b << 16 | g << 8 | r;
-            }
-        }
-
-        StringBuilder name = new StringBuilder(string);
-        name.delete(name.length() - 4, name.length());
-        name.delete(0, name.lastIndexOf("/") + 1);
-
-        textureDto.setName(name.toString());
-        textureDto.setWidth(width);
-        textureDto.setHeight(height);
-        textureDto.setData(data);
-        return textureDto;
+    static TextureDto loadTextureDtoFromImage(String string) {
+        return textureDtoFromImage(loadAsImage(string), string.substring(string.lastIndexOf('/') + 1, string.length() - 4));
     }
 
-    public static Texture toTexture(TextureDto textureDto) {
+    static Texture toTexture(TextureDto textureDto) {
         return new Texture(buildTextureId(textureDto.getData(), textureDto.getWidth(), textureDto.getHeight()), textureDto.getWidth(), textureDto.getHeight(), TextureManager.textureCounter++);
     }
 
@@ -156,6 +91,44 @@ public class TextureScanner extends SerializationScanner {
         glTexImage2D(GL_TEXTURE_2D, 0 , GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, BufferUtils.createIntBuffer(data));
         glBindTexture(GL_TEXTURE_2D, 0);
         return id;
+    }
+
+    private static TextureDto textureDtoFromImage(BufferedImage image, String textureName) {
+        TextureDto textureDto = new TextureDto();
+        int[] pixels = null;
+        int width = image.getWidth();
+        int height = image.getHeight();
+        pixels = new int[width * height];
+        image.getRGB(0 ,0, width, height, pixels, 0 , width);
+
+        int[] data = new int[width * height];
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                int index = x + y * width;
+                int a = (pixels[index] & 0xff000000) >> 24;
+                int r = (pixels[index] & 0xff0000) >> 16;
+                int g = (pixels[index] & 0xff00) >> 8;
+                int b = (pixels[index] & 0xff);
+                data[x + (height - 1 - y) * width] = a << 24 | b << 16 | g << 8 | r;
+            }
+        }
+
+        textureDto.setName(textureName);
+        textureDto.setWidth(width);
+        textureDto.setHeight(height);
+        textureDto.setData(data);
+        return textureDto;
+    }
+
+    private static byte[] getBytes(List<TextureDto> textureDtoList) {
+        int textureCount = textureDtoList.size();
+        int namesLength = textureCount * Short.BYTES;
+        int pixelsLength = 0;
+        for (TextureDto t : textureDtoList) {
+            namesLength += t.getName().length();
+            pixelsLength += t.getWidth() * t.getHeight();
+        }
+        return new byte[Short.BYTES + HEADER.length() + Short.BYTES + namesLength + (textureCount * (Long.BYTES + Integer.BYTES + Integer.BYTES + Integer.BYTES)) + pixelsLength * Integer.BYTES];
     }
 
 

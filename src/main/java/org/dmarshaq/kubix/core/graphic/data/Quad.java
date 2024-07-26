@@ -13,6 +13,9 @@ import org.dmarshaq.kubix.core.math.vector.Vector4;
  * Quad is a wrapper class for simple vertex float array that describes quad's figure.
  * It contains float array for storing each of 4 vertices data, as well as shader that is used in render to draw the quad.
  * It also stores layer it supposed to render on.
+ * It is not data heavy class, since vertices are stored in fixed array.
+ * All heavy computational procedures are processed in graphic processors.
+ * Quad can be saved and reused from one update to another but cannot be modified. Yet...
  */
 @ToString
 public class Quad implements Renderable {

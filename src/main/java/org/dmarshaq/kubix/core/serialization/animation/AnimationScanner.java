@@ -15,43 +15,28 @@ public class AnimationScanner {
 
     private static final String ANIMATIONS_KEY = "animations";
     private static final String ATLAS_KEY = "atlas";
+    private static final String ATLAS_TEXTURE_NAME_KEY = "texture";
+    private static final String ATLAS_ROWS_KEY = "rows";
+    private static final String ATLAS_COLUMNS_KEY = "columns";
+    private static final String ANIMATION_FPS_KEY = "fps";
+    private static final String ANIMATION_FIRST_FRAME_KEY = "firstFrame";
+    private static final String ANIMATION_LAST_FRAME_KEY = "lastFrame";
 
     public static AnimationDto[] loadAnimationDtosFromFile(String path) {
-        // Getting JSON animations file into object
-        JSONObject jsonAnimations = new JSONObject(loadAsString(path));
-
-        // Slicing texture for animation frames
-        JSONObject jsonAtlas = jsonAnimations.getJSONObject(ATLAS_KEY);
-        TextureAtlas textureAtlas = GraphicCore.sliceTexture(TextureManager.TEXTURE_MAP.get(jsonAtlas.getString("texture")), jsonAtlas.getInt("rows"), jsonAtlas.getInt("columns"));
-
-        // Loading animations
-        JSONArray jsonAnimationKeys = jsonAnimations.getJSONArray(ANIMATIONS_KEY);
-        int length = jsonAnimationKeys.length();
-
-        AnimationDto[] animations = new AnimationDto[length];
-
-        for (int i = 0; i < length; i++) {
-            String name = jsonAnimationKeys.getString(i);
-            JSONObject jsonAnimation = jsonAnimations.getJSONObject(name);
-
-            AnimationDto animationDto = new AnimationDto();
-            animationDto.setName(name);
-            animationDto.setFps(jsonAnimation.getFloat("fps"));
-            animationDto.setFrames(getAllFramesInRange(jsonAnimation.getInt("firstFrame"), jsonAnimation.getInt("lastFrame")));
-            animationDto.setTextureAtlas(textureAtlas);
-            animations[i] = animationDto;
-        }
-
-        return animations;
+        return animationDtosFromString(loadAsString(path));
     }
 
     public static AnimationDto[] loadAnimationDtosFromFile(File file) {
+        return animationDtosFromString(loadAsString(file));
+    }
+
+    private static AnimationDto[] animationDtosFromString(String jsonFile) {
         // Getting JSON animations file into object
-        JSONObject jsonAnimations = new JSONObject(loadAsString(file));
+        JSONObject jsonAnimations = new JSONObject(jsonFile);
 
         // Slicing texture for animation frames
         JSONObject jsonAtlas = jsonAnimations.getJSONObject(ATLAS_KEY);
-        TextureAtlas textureAtlas = GraphicCore.sliceTexture(TextureManager.TEXTURE_MAP.get(jsonAtlas.getString("texture")), jsonAtlas.getInt("rows"), jsonAtlas.getInt("columns"));
+        TextureAtlas textureAtlas = GraphicCore.sliceTexture(TextureManager.TEXTURE_MAP.get(jsonAtlas.getString(ATLAS_TEXTURE_NAME_KEY)), jsonAtlas.getInt(ATLAS_ROWS_KEY), jsonAtlas.getInt(ATLAS_COLUMNS_KEY));
 
         // Loading animations
         JSONArray jsonAnimationKeys = jsonAnimations.getJSONArray(ANIMATIONS_KEY);
@@ -65,8 +50,8 @@ public class AnimationScanner {
 
             AnimationDto animationDto = new AnimationDto();
             animationDto.setName(name);
-            animationDto.setFps(jsonAnimation.getFloat("fps"));
-            animationDto.setFrames(getAllFramesInRange(jsonAnimation.getInt("firstFrame"), jsonAnimation.getInt("lastFrame")));
+            animationDto.setFps(jsonAnimation.getFloat(ANIMATION_FPS_KEY));
+            animationDto.setFrames(getAllFramesInRange(jsonAnimation.getInt(ANIMATION_FIRST_FRAME_KEY), jsonAnimation.getInt(ANIMATION_LAST_FRAME_KEY)));
             animationDto.setTextureAtlas(textureAtlas);
             animations[i] = animationDto;
         }
