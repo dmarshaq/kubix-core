@@ -72,11 +72,11 @@ public class TextureScanner extends SerializationScanner {
 
     static TextureDto loadTextureDtoFromImage(File file) {
         String name = file.getName();
-        return textureDtoFromImage(loadAsImage(file), name.substring(0, name.length() - 4));
+        return textureDtoFromImage(loadAsImage(file), name.substring(0, name.length() - 4), file.lastModified());
     }
 
     static TextureDto loadTextureDtoFromImage(String string) {
-        return textureDtoFromImage(loadAsImage(string), string.substring(string.lastIndexOf('/') + 1, string.length() - 4));
+        return textureDtoFromImage(loadAsImage(string), string.substring(string.lastIndexOf('/') + 1, string.length() - 4), 0);
     }
 
     static Texture toTexture(TextureDto textureDto) {
@@ -93,7 +93,7 @@ public class TextureScanner extends SerializationScanner {
         return id;
     }
 
-    private static TextureDto textureDtoFromImage(BufferedImage image, String textureName) {
+    private static TextureDto textureDtoFromImage(BufferedImage image, String textureName, long lastModified) {
         TextureDto textureDto = new TextureDto();
         int[] pixels = null;
         int width = image.getWidth();
@@ -116,6 +116,7 @@ public class TextureScanner extends SerializationScanner {
         textureDto.setName(textureName);
         textureDto.setWidth(width);
         textureDto.setHeight(height);
+        textureDto.setLastModified(lastModified);
         textureDto.setData(data);
         return textureDto;
     }
