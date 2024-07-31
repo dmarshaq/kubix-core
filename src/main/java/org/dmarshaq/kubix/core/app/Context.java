@@ -1,5 +1,6 @@
 package org.dmarshaq.kubix.core.app;
 
+import lombok.Getter;
 import org.dmarshaq.kubix.core.graphic.base.*;
 import org.dmarshaq.kubix.core.graphic.base.animation.Animation;
 import org.dmarshaq.kubix.core.graphic.base.layer.Layer;
@@ -23,6 +24,15 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class Context {
+    @Getter
+    private static Context instance;
+
+    public Context() {
+        if (instance == null) {
+            instance = this;
+        }
+    }
+
 
     // SCREEN & TILE SETTINGS
     private static String TITLE = "";

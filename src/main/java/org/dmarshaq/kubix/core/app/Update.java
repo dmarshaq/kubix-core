@@ -1,5 +1,6 @@
 package org.dmarshaq.kubix.core.app;
 
+import lombok.Getter;
 import org.dmarshaq.kubix.core.serialization.animation.AnimationManager;
 import org.dmarshaq.kubix.core.graphic.base.Window;
 import org.dmarshaq.kubix.core.input.InputManager;
@@ -11,7 +12,15 @@ import org.dmarshaq.kubix.core.graphic.data.Snapshot;
 import static org.lwjgl.glfw.GLFW.*;
 
 public abstract class Update implements Runnable {
-    private Graphic graphic;
+    @Getter
+    private static Update instance;
+
+    public Update() {
+        if (instance == null) {
+            instance = this;
+        }
+    }
+
     private boolean start = true;
 
     double lastTime = System.currentTimeMillis();
@@ -20,10 +29,6 @@ public abstract class Update implements Runnable {
     double deltaTime;
 
     protected Snapshot snapshot;
-
-    public void setRenderTask(Graphic graphicTask) {
-        this.graphic = graphicTask;
-    }
 
     @Override
     public void run() {
@@ -61,12 +66,12 @@ public abstract class Update implements Runnable {
                 snapshot.releaseLineRenderBuffer();
                 InputManager.resetReleasedKeyStates();
                 // loading snapshot into graphic
-                graphic.loadData(snapshot);
+                Graphic.getInstance().loadData(snapshot);
 
                 accumulatorTime -= sliceTime;
             }
 
-
+            Graphic graphic = Graphic.getInstance();
             synchronized (graphic) {
                 graphic.notify();
             }

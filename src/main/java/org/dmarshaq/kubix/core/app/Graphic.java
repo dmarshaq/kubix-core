@@ -19,6 +19,14 @@ import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.openal.ALC10.*;
 
 public abstract class Graphic implements Runnable {
+    @Getter
+    private static Graphic instance;
+
+    public Graphic() {
+        if (instance == null) {
+            instance = this;
+        }
+    }
 
     public static final Dimension SCREEN_DIMENSION = Toolkit.getDefaultToolkit().getScreenSize();
 
@@ -31,22 +39,16 @@ public abstract class Graphic implements Runnable {
 
     private Snapshot snapshot;
 
-    @Setter
-    private Update updateTask;
-    @Setter
-    private Context context;
-
         @Override
         public void run() {
             init();
             GL.createCapabilities();
 
-            context.loadResources();
+            Context.getInstance().loadResources();
             initShaders();
             render = new Render(window, Context.getClearColor());
 
-            Thread update = new Thread(updateTask);
-            update.start();
+            new Thread(Update.getInstance()).start();
 
 
             while(Context.isRunning()) {
