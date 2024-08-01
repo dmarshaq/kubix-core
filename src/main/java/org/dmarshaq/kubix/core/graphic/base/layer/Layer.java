@@ -1,20 +1,17 @@
 package org.dmarshaq.kubix.core.graphic.base.layer;
 
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import lombok.Getter;
 import org.dmarshaq.kubix.core.util.Ordarable;
 
-@ToString
-@EqualsAndHashCode
-public class Layer implements Ordarable {
-    private final int order;
+public abstract class Layer implements Ordarable {
+    @Getter
+    private static int maxOrder;
+    @Getter
+    private static int minOrder;
 
     public Layer(int order) {
-        this.order = order;
+        maxOrder = Math.max(maxOrder, order);
+        minOrder = Math.min(minOrder, order);
     }
 
-    @Override
-    public int ordinal() {
-        return order;
-    }
 }

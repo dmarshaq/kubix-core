@@ -32,8 +32,8 @@ public class Shader implements Ordarable {
     private final HashMap<String, Integer> locationCache = new HashMap<>();
 
     public Shader(int id, int order) {
-        this.order = order;
         this.id = id;
+        this.order = order;
     }
 
     private int getUniform(String name) {

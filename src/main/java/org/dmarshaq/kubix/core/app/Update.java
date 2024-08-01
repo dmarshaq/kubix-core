@@ -1,6 +1,8 @@
 package org.dmarshaq.kubix.core.app;
 
 import lombok.Getter;
+import org.dmarshaq.kubix.core.graphic.base.layer.Layer;
+import org.dmarshaq.kubix.core.graphic.base.layer.StaticLayer;
 import org.dmarshaq.kubix.core.serialization.animation.AnimationManager;
 import org.dmarshaq.kubix.core.graphic.base.Window;
 import org.dmarshaq.kubix.core.input.InputManager;

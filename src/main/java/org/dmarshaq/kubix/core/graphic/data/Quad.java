@@ -24,7 +24,7 @@ public class Quad implements Renderable {
     public static final int STRIDE = VERTEX_STRIDE * VERTICES;
 
     private final float[] vertices;
-    private final Shader shader;
+    private final Shader shader;     
     private final Layer layer;
     @Getter
     private final Texture texture;
@@ -69,7 +69,6 @@ public class Quad implements Renderable {
         return shader;
     }
 
-    @Override
     public Layer getLayer() {
         return layer;
     }

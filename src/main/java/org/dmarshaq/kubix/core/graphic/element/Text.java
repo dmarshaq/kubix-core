@@ -6,7 +6,6 @@ import lombok.ToString;
 import org.dmarshaq.kubix.core.graphic.base.Shader;
 import org.dmarshaq.kubix.core.graphic.base.layer.Layer;
 import org.dmarshaq.kubix.core.graphic.base.text.Font;
-import org.dmarshaq.kubix.core.graphic.base.texture.TextureCroppedRegion;
 import org.dmarshaq.kubix.core.math.vector.Vector2;
 
 @Getter

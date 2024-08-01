@@ -59,7 +59,6 @@ public class Line implements Renderable {
         return shader;
     }
 
-    @Override
     public Layer getLayer() {
         return layer;
     }

@@ -20,6 +20,7 @@ import org.dmarshaq.kubix.core.serialization.shader.ShaderManager;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -131,7 +132,7 @@ public abstract class Context {
     // Resources
     public static IndexedHashMap<String, Texture> TEXTURES;
     public static Map<String, Shader> SHADERS;
-    public static Map<String, Layer> LAYERS;
+    public static HashMap<String, Layer> LAYERS;
     public static Map<String, Animation> ANIMATIONS;
     public static Map<String, Font> FONTS;
 
