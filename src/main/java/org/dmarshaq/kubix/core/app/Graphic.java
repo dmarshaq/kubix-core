@@ -1,7 +1,6 @@
 package org.dmarshaq.kubix.core.app;
 
 import lombok.Getter;
-import lombok.Setter;
 import org.dmarshaq.kubix.core.audio.Audio;
 import org.dmarshaq.kubix.core.graphic.base.Window;
 import org.dmarshaq.kubix.core.graphic.render.Render;
@@ -19,6 +18,7 @@ import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.openal.ALC10.*;
 
 public abstract class Graphic implements Runnable {
+
     @Getter
     private static Graphic instance;
 
@@ -31,11 +31,11 @@ public abstract class Graphic implements Runnable {
     public static final Dimension SCREEN_DIMENSION = Toolkit.getDefaultToolkit().getScreenSize();
 
     @Getter
-    private static Window window;
+    private Window window;
     @Getter
-    private static Audio audio;
+    private Audio audio;
     @Getter
-    private static Render render;
+    private Render render;
 
     private Snapshot snapshot;
 

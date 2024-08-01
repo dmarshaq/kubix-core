@@ -29,8 +29,8 @@ public class Camera {
 
     public Vector2 screenToWorld(Vector<Integer> screenPosition) {
         return new Vector2(
-                fov.getPosition().x() + (float) screenPosition.getValues().intArray()[0] * fov.getWidth() / Graphic.getWindow().width(),
-                fov.getPosition().y() + (float) screenPosition.getValues().intArray()[1] * fov.getHeight() / Graphic.getWindow().height()
+                fov.getPosition().x() + (float) screenPosition.getValues().intArray()[0] * fov.getWidth() / Graphic.getInstance().getWindow().width(),
+                fov.getPosition().y() + (float) screenPosition.getValues().intArray()[1] * fov.getHeight() / Graphic.getInstance().getWindow().height()
                 );
     }
 

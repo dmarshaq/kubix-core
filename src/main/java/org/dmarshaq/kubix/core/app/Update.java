@@ -44,7 +44,7 @@ public abstract class Update implements Runnable {
                 Time.DeltaTime.setTickTime(sliceTime);
 
                 // check if user closed the window
-                Window window = Graphic.getWindow();
+                Window window = Graphic.getInstance().getWindow();
                 if (window.getWindow() != 0 && glfwWindowShouldClose(window.getWindow())) {
                     Context.setRunning(false);
                 }

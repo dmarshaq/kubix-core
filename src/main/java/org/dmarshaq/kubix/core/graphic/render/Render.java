@@ -172,6 +172,5 @@ public class Render {
         public static int indexBufferObject;
 
         public static final float[] LINE_RENDER_VERTICES = new float[getMaxLinesPerBatch() * Line.STRIDE];
-
     }
 }

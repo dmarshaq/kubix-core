@@ -17,7 +17,7 @@ public class MouseInput  {
     public void init(long windowHandle) {
         GLFW.glfwSetCursorPosCallback(windowHandle, (window, xpos, ypos) -> {
             POSITION.getValues().intArray()[0] = (int) xpos;
-            POSITION.getValues().intArray()[1] = (int) (Graphic.getWindow().height() - ypos);
+            POSITION.getValues().intArray()[1] = (int) (Graphic.getInstance().getWindow().height() - ypos);
         });
 
         GLFW.glfwSetCursorEnterCallback(windowHandle, (window, entered) -> {
