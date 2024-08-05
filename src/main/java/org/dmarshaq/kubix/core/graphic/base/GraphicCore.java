@@ -27,7 +27,7 @@ public class GraphicCore {
      * Returns new quad from sprite without additional matrix transformations.
      */
     public static Quad quad(Sprite sprite) {
-        return rectangularQuad(
+        return quad(
                 new Vector3(MathCore.componentVector(sprite.getPosition(), "xyz")),
                 sprite.getWidth(),
                 sprite.getHeight(),
@@ -42,7 +42,7 @@ public class GraphicCore {
      * Returns new quad from sprite, with additional Matrix4x4 transformation.
      */
     public static Quad quad(Sprite sprite, Matrix4x4 transformation) {
-        return rectangularQuad(
+        return quad(
                 new Vector3(MathCore.componentVector(sprite.getPosition(), "xyz")),
                 sprite.getWidth(),
                 sprite.getHeight(),
@@ -58,7 +58,7 @@ public class GraphicCore {
      * Returns new quad from sprite, with additional Matrix3x3 transformation.
      */
     public static Quad quad(Sprite sprite, Matrix3x3 transformation) {
-        return rectangularQuad(
+        return quad(
                 new Vector3(MathCore.componentVector(sprite.getPosition(), "xyz")),
                 sprite.getWidth(),
                 sprite.getHeight(),
@@ -198,7 +198,7 @@ public class GraphicCore {
             TextureCroppedRegion textureCroppedRegion = data.getTextureCroppedRegion();
 
             // Creating quad
-            result[i] = rectangularQuad(
+            result[i] = quad(
                     new Vector3((float) data.getXOffset() / Context.getUnitSize(), -(data.getYOffset() + textureCroppedRegion.getHeight()) / Context.getUnitSize(), 0).add(cursor),
                     textureCroppedRegion.getWidth() / Context.getUnitSize(),
                     textureCroppedRegion.getHeight() / Context.getUnitSize(),
@@ -249,7 +249,7 @@ public class GraphicCore {
             TextureCroppedRegion textureCroppedRegion = data.getTextureCroppedRegion();
 
             // Creating quad
-            result[i] = rectangularQuad(
+            result[i] = quad(
                     new Vector3((float) data.getXOffset() / Context.getUnitSize(), -(data.getYOffset() + textureCroppedRegion.getHeight()) / Context.getUnitSize(), 0).add(cursor),
                     textureCroppedRegion.getWidth() / Context.getUnitSize(),
                     textureCroppedRegion.getHeight() / Context.getUnitSize(),
@@ -287,10 +287,7 @@ public class GraphicCore {
         return text(text, MathCore.transform4x4(matrix3x3));
     }
 
-
-
-
-    private static Quad rectangularQuad(Vector3 offset, float width, float height, Vector4 color, TextureCroppedRegion texture, Shader shader, Layer layer) {
+    public static Quad quad(Vector3 offset, float width, float height, Vector4 color, TextureCroppedRegion texture, Shader shader, Layer layer) {
         // Creating quad with shader defined in sprite.
         Quad quad = new Quad(shader, layer, texture.getHost());
 
@@ -314,7 +311,7 @@ public class GraphicCore {
         return quad;
     }
 
-    private static Quad rectangularQuad(Vector3 offset, float width, float height, Vector4 color, TextureCroppedRegion texture, Shader shader, Layer layer, Matrix4x4 matrix4x4) {
+    public static Quad quad(Vector3 offset, float width, float height, Vector4 color, TextureCroppedRegion texture, Shader shader, Layer layer, Matrix4x4 matrix4x4) {
         // Creating quad with shader defined in sprite.
         Quad quad = new Quad(shader, layer, texture.getHost());
 

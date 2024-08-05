@@ -13,7 +13,7 @@ import org.dmarshaq.kubix.core.graphic.data.Snapshot;
 
 import static org.lwjgl.glfw.GLFW.*;
 
-public abstract class Update implements Runnable {
+public abstract class Update implements Runnable, Updatable {
     @Getter
     private static Update instance;
 
@@ -30,10 +30,12 @@ public abstract class Update implements Runnable {
 
     double deltaTime;
 
-    protected Snapshot snapshot;
+    @Getter
+    private Snapshot snapshot;
 
     @Override
     public void run() {
+
         while (Context.isRunning()) {
             // delta time is collected
             double current = System.currentTimeMillis();
@@ -53,16 +55,19 @@ public abstract class Update implements Runnable {
                 // new snapshot
                 snapshot = new Snapshot();
                 // layers Clean Up
+
                 // only in before first update (start method is called)
                 if (start) {
                     LayerManager.buildLayers();
                     start();
                     start = false;
                 }
+
                 // update method called, as well as inputs and time
                 Time.updateTimers();
                 AnimationManager.updateAnimators();
                 update();
+
                 // snapshot packing up, as well as resetting key states
                 snapshot.releaseQuadRenderBuffer();
                 snapshot.releaseLineRenderBuffer();
@@ -77,14 +82,8 @@ public abstract class Update implements Runnable {
             synchronized (graphic) {
                 graphic.notify();
             }
-
-
         }
     }
-
-    protected abstract void start();
-
-    protected abstract void update();
 }
 
 
