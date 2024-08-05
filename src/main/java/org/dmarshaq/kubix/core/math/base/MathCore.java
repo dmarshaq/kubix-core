@@ -1,7 +1,6 @@
 package org.dmarshaq.kubix.core.math.base;
 
 import org.dmarshaq.kubix.core.math.function.Domain;
-import org.dmarshaq.kubix.core.math.function.FloatFunction;
 import org.dmarshaq.kubix.core.math.matrix.*;
 import org.dmarshaq.kubix.core.math.processor.*;
 import org.dmarshaq.kubix.core.math.vector.*;
@@ -289,6 +288,12 @@ public class MathCore {
         });
     }
 
+    /**
+     * Determines if first number equals, less or greater than the second number.
+     */
+    public static <T extends Number> int compareNumbers(T first, T second) {
+        return OPERATION_PROCESSOR.compareNumbers(first, second);
+    }
 
 
 }

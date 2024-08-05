@@ -346,4 +346,12 @@ public class FloatProcessor extends OperationProcessor {
         return val > min && val < max;
     }
 
+    /**
+     * Determines if first number equals, less or greater than the second number.
+     */
+    @Override
+    public <T extends Number> int compareNumbers(T first, T second) {
+        return Float.compare(first.floatValue(), second.floatValue());
+    }
+
 }

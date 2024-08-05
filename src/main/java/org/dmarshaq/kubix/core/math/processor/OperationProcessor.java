@@ -32,5 +32,6 @@ public abstract class OperationProcessor {
     public abstract <T extends Number> Vector<T> componentVector(Vector<T> vector, String axis);
     public abstract <T extends Number> boolean isOutsideDomain(Domain<T> domain, T value);
     public abstract <T extends Number> boolean isInsideDomain(Domain<T> domain, T value);
+    public abstract <T extends Number> int compareNumbers(T fisrt, T second);
 
 }

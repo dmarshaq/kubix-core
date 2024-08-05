@@ -41,4 +41,29 @@ public class Domain<T extends Number> implements AbstractDomain<T> {
     public boolean isOnBoundary(T value) {
         return Objects.equals(value, min) || Objects.equals(value, max);
     }
+
+    /**
+     * @param value value that is going to be tested
+     * @return 0 if value is inside domain or is on the boundary, -1 if value is outside to the left of the domain, 1 if value is outside to the right of the domain.
+     */
+    public int stateOfValueInclusive(T value) {
+        if (isOnBoundary(value)) {
+            return 0;
+        }
+        return stateOfValueExclusive(value);
+    }
+
+    /**
+     * @param value value that is going to be tested
+     * @return 0 if value is inside domain, -1 if value is outside to the left of the domain, 1 if value is outside to the right of the domain.
+     */
+    public int stateOfValueExclusive(T value) {
+        if (isInside(value)) {
+            return 0;
+        }
+        else if (MathCore.compareNumbers(value, max) < 0) {
+            return -1;
+        }
+        return 1;
+    }
 }

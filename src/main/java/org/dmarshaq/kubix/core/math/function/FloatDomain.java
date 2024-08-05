@@ -15,4 +15,20 @@ public class FloatDomain extends Domain<Float> {
         return value > getMin() && value < getMax();
     }
 
+    @Override
+    public int stateOfValueInclusive(Float value) {
+        return super.stateOfValueInclusive(value);
+    }
+
+    @Override
+    public int stateOfValueExclusive(Float value) {
+        if (isInside(value)) {
+            return 0;
+        }
+        else if (value < getMax()) {
+            return -1;
+        }
+        return 1;
+    }
+
 }
