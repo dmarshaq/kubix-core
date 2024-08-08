@@ -72,6 +72,7 @@ public class Render {
 
         shader.enable();
         shader.setUniformMatrix4x4("pr_matrix", pr_matrix);
+        shader.setUniform1iv("u_Textures", samplers);
         shader.setUniformMatrix4x4("ml_matrix", identity);
         shader.disable();
 

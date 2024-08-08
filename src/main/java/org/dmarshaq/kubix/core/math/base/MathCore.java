@@ -1,9 +1,11 @@
 package org.dmarshaq.kubix.core.math.base;
 
 import org.dmarshaq.kubix.core.math.function.Domain;
+import org.dmarshaq.kubix.core.math.function.FloatDomain;
 import org.dmarshaq.kubix.core.math.matrix.*;
 import org.dmarshaq.kubix.core.math.processor.*;
 import org.dmarshaq.kubix.core.math.vector.*;
+import org.dmarshaq.kubix.core.ui.math.Vector2Int;
 
 import java.awt.*;
 
@@ -293,6 +295,22 @@ public class MathCore {
      */
     public static <T extends Number> int compareNumbers(T first, T second) {
         return OPERATION_PROCESSOR.compareNumbers(first, second);
+    }
+
+    public static <T extends AbstractRectangle<Float, Vector2>> FloatDomain xDomainFloat(T rectangle) {
+        return new FloatDomain(rectangle.getPosition().x(), rectangle.getPosition().x() + rectangle.getWidth());
+    }
+
+    public static <T extends AbstractRectangle<Float, Vector2>> FloatDomain yDomainFloat(T rectangle) {
+        return new FloatDomain(rectangle.getPosition().y(), rectangle.getPosition().y() + rectangle.getHeight());
+    }
+
+    public static <T extends AbstractRectangle<Integer, Vector2Int>> FloatDomain xDomainInt(T rectangle) {
+        return new FloatDomain(rectangle.getPosition().x(), rectangle.getPosition().x() + rectangle.getWidth());
+    }
+
+    public static <T extends AbstractRectangle<Integer, Vector2Int>> FloatDomain yDomainInt(T rectangle) {
+        return new FloatDomain(rectangle.getPosition().y(), rectangle.getPosition().y() + rectangle.getHeight());
     }
 
 
