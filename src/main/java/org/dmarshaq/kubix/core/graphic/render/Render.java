@@ -68,6 +68,14 @@ public class Render {
         shader.setUniformMatrix4x4("ml_matrix", identity);
         shader.disable();
 
+        shader = Context.SHADERS.get("basic_circle");
+
+        shader.enable();
+        shader.setUniformMatrix4x4("pr_matrix", pr_matrix);
+        shader.setUniform1iv("u_Textures", samplers);
+        shader.setUniformMatrix4x4("ml_matrix", identity);
+        shader.disable();
+
         shader = Context.SHADERS.get("ui_quad");
 
         shader.enable();
@@ -75,6 +83,7 @@ public class Render {
         shader.setUniform1iv("u_Textures", samplers);
         shader.setUniformMatrix4x4("ml_matrix", identity);
         shader.disable();
+
 
 
         // Quad Array Object
@@ -167,6 +176,12 @@ public class Render {
 
         // Line shader
         shader = Context.SHADERS.get("basic_line");
+        shader.enable();
+        shader.setUniformMatrix4x4("pr_matrix", pr_matrix);
+        shader.disable();
+
+        // Circle shader
+        shader = Context.SHADERS.get("basic_circle");
         shader.enable();
         shader.setUniformMatrix4x4("pr_matrix", pr_matrix);
         shader.disable();

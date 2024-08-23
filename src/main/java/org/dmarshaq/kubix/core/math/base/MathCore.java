@@ -102,6 +102,13 @@ public class MathCore {
     }
 
     /**
+     * Solves for the distance between the two input vectors.
+     */
+    public static <T extends Number> T distance(Vector<T> first, Vector<T> second) {
+        return magnitude(subtraction(first, second));
+    }
+
+    /**
      * Solves for the new vector from scalar multiplication of the input vector.
      */
     public static <T extends Number> Vector<T> multiplication(Vector<T> vector, T scalar) {

@@ -6,10 +6,15 @@ import lombok.ToString;
 
 import org.dmarshaq.kubix.core.math.vector.Vector2;
 
+
+/**
+ * This class help to define any float Axis Aligned Rectangle.
+ * By implementing AbstractRectangle interface.
+ */
 @Setter
 @ToString
 @EqualsAndHashCode
-public class Rectangle implements AbstractRectangle<Float, Vector2> {
+public class Rectangle implements AbstractRectangle<Float, Vector2>, AbstractShape {
     private Vector2 position;
     private float width;
     private float height;
@@ -25,7 +30,7 @@ public class Rectangle implements AbstractRectangle<Float, Vector2> {
     }
 
     /**
-     * Returns new Vector2 that
+     * Returns new Vector2 that represents the center of the rectangle.
      */
     public Vector2 center() {
         return new Vector2(width/2, height/2).add(position);
@@ -50,4 +55,13 @@ public class Rectangle implements AbstractRectangle<Float, Vector2> {
         return position;
     }
 
+    @Override
+    public Vector2[] getVertices() {
+        return new Vector2[] {
+                position,
+                new Vector2(width, 0).add(position),
+                new Vector2(0, height).add(position),
+                new Vector2(width, height).add(position)
+        };
+    }
 }

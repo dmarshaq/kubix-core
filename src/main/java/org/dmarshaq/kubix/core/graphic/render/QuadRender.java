@@ -18,6 +18,7 @@ import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
 public class QuadRender {
     private static Shader currentShader;
     private static int currentTextureGroup;
+    private static int currentTextureGroupRenderOrder;
     private static int quadsInBatch;
 
     public static void renderInBatch(Quad[] sortedQuads, int maxQuadsPerBatch) {
@@ -28,7 +29,6 @@ public class QuadRender {
             // Enabling shader
             currentShader.enable();
             // Textures loading
-            loadTextureGroup();
             loadTexturesUsedIntoSlots();
             // Binding dynamic draw vertex buffer
             glBindBuffer(GL_ARRAY_BUFFER, vertexQuadBufferObject);
@@ -47,15 +47,19 @@ public class QuadRender {
     private static int nextBatch(int pointer, Quad[] sortedQuads, int threshold) {
         Layer currentLayer = sortedQuads[pointer].getLayer();
         currentShader = sortedQuads[pointer].getShader();
-        currentTextureGroup = sortedQuads[pointer].getTexture().ordinal() / 32;
-
+        currentTextureGroup = sortedQuads[pointer].getTextureGroup();
+        currentTextureGroupRenderOrder = -1;
 
         while(quadsInBatch < threshold
                 && pointer < sortedQuads.length
                 && currentLayer == sortedQuads[pointer].getLayer()
                 && currentShader == sortedQuads[pointer].getShader()
-                && currentTextureGroup == sortedQuads[pointer].getTexture().ordinal() / 32) {
+                && currentTextureGroup == sortedQuads[pointer].getTextureGroup()) {
 
+            if (currentTextureGroupRenderOrder != sortedQuads[pointer].getTextureGroupRenderOrder()) {
+                currentTextureGroupRenderOrder = sortedQuads[pointer].getTextureGroupRenderOrder();
+                QUAD_RENDER_TEXTURES_USED[currentTextureGroupRenderOrder] = sortedQuads[pointer].getTexture().getTextureId();
+            }
             copyQuadVertices(quadsInBatch * Quad.STRIDE, sortedQuads[pointer].getVertexData());
 
             quadsInBatch++;
@@ -71,17 +75,17 @@ public class QuadRender {
         }
     }
 
-    private static void loadTextureGroup() {
-        for (int i = 0; i < 32; i++) {
-            Texture texture = Context.TEXTURES.get(i + currentTextureGroup * 32);
-            if (texture == null) {
-                break;
-            }
-            else {
-                QUAD_RENDER_TEXTURES_USED[i] = texture.getTextureId();
-            }
-        }
-    }
+//    private static void loadTextureGroup() {
+//        for (int i = 0; i < 32; i++) {
+//            Texture texture = Context.TEXTURES.get(i + currentTextureGroup * 32);
+//            if (texture == null) {
+//                break;
+//            }
+//            else {
+//                QUAD_RENDER_TEXTURES_USED[i] = texture.getTextureId();
+//            }
+//        }
+//    }
 
     private static void loadTexturesUsedIntoSlots() {
         for (int i = 0; i < QUAD_RENDER_TEXTURES_USED.length; i++) {

@@ -1,6 +1,7 @@
 package org.dmarshaq.kubix.core.graphic.data;
 
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 import org.dmarshaq.kubix.core.graphic.base.layer.Layer;
 import org.dmarshaq.kubix.core.graphic.base.Shader;
@@ -28,6 +29,10 @@ public class Quad implements Renderable {
     private final Layer layer;
     @Getter
     private final Texture texture;
+    @Getter
+    private int textureGroup;
+    @Getter
+    private int textureGroupRenderOrder;
 
     /**
      * Builds the quad with float array describing all 4 vertices each taking 13 floats in array.
@@ -43,7 +48,7 @@ public class Quad implements Renderable {
     /**
      * Sets any quad vertex from 0 to 3 to specified properties.
      */
-    public void setVertex(int vertex, Vector3 position, Vector4 color, Vector2 texCoordinates, int texSlotIndex, Vector3 normal) {
+    public void setVertex(int vertex, Vector3 position, Vector4 color, Vector2 texCoordinates, Vector3 normal) {
         vertices[0 + vertex * VERTEX_STRIDE] = position.x();
         vertices[1 + vertex * VERTEX_STRIDE] = position.y();
         vertices[2 + vertex * VERTEX_STRIDE] = position.z();
@@ -53,7 +58,7 @@ public class Quad implements Renderable {
         vertices[6 + vertex * VERTEX_STRIDE] = color.w();
         vertices[7 + vertex * VERTEX_STRIDE] = texCoordinates.x();
         vertices[8 + vertex * VERTEX_STRIDE] = texCoordinates.y();
-        vertices[9 + vertex * VERTEX_STRIDE] = texSlotIndex;
+        vertices[9 + vertex * VERTEX_STRIDE] = 0;
         vertices[10 + vertex * VERTEX_STRIDE] = normal.x();
         vertices[11 + vertex * VERTEX_STRIDE] = normal.y();
         vertices[12 + vertex * VERTEX_STRIDE] = normal.z();
@@ -84,8 +89,22 @@ public class Quad implements Renderable {
             if (shaderCompare != 0) {
                 return shaderCompare;
             }
-            return texture.compareTo(((Quad) o).getTexture());
+            int textureGroupCompare = Integer.compare(textureGroup, ((Quad) o).getTextureGroup());
+            if (textureGroupCompare != 0) {
+                return shaderCompare;
+            }
+            return Integer.compare(textureGroupRenderOrder, ((Quad) o).getTextureGroupRenderOrder());
         }
         return 0;
+    }
+
+    public void setTextureGroup(int textureGroup, int textureRenderOrder) {
+        this.textureGroup = textureGroup;
+        this.textureGroupRenderOrder = textureRenderOrder;
+        vertices[9 + 0 * VERTEX_STRIDE] = textureRenderOrder;
+        vertices[9 + 1 * VERTEX_STRIDE] = textureRenderOrder;
+        vertices[9 + 2 * VERTEX_STRIDE] = textureRenderOrder;
+        vertices[9 + 3 * VERTEX_STRIDE] = textureRenderOrder;
+
     }
 }

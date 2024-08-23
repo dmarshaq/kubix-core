@@ -13,6 +13,7 @@ import org.dmarshaq.kubix.core.graphic.element.Text;
 import org.dmarshaq.kubix.core.math.base.AbstractRectangle;
 import org.dmarshaq.kubix.core.math.base.MathCore;
 import org.dmarshaq.kubix.core.math.function.AbstractFunction;
+import org.dmarshaq.kubix.core.math.function.AbstractParametric;
 import org.dmarshaq.kubix.core.math.function.Domain;
 import org.dmarshaq.kubix.core.math.matrix.Matrix3x3;
 import org.dmarshaq.kubix.core.math.matrix.Matrix4x4;
@@ -176,11 +177,41 @@ public class GraphicCore {
         return graph;
     }
 
+    /**
+     * Returns new line array from function.
+     */
+    public static <T extends AbstractParametric<Float, Vector2>, E extends Domain<Float>> Line[] outline(T parametric, E domain, Color color, int detail) {
+        Line[] graph = new Line[detail];
+        Vector4 vector4 = MathCore.vector4(color);
+
+        float start = domain.getMin();
+        float step = (domain.getMax() - domain.getMin()) / detail;
+        float end;
+        Vector2 v0;
+        Vector2 v1;
+
+        for (int i = 0; i < detail; i++) {
+            end = start + step;
+
+            graph[i] = new Line(Context.SHADERS.get("basic_line"), Context.LAYERS.get("gizmos"), 1.0f);
+
+            v0 = parametric.parametric(start);
+            v1 = parametric.parametric(end);
+            graph[i].setVertex(0, new Vector3(v0.x(), v0.y(), 0), vector4);
+            graph[i].setVertex(1, new Vector3(v1.x(), v1.y(), 0), vector4);
+
+            start = end;
+        }
+        return graph;
+    }
+
 
     /**
      * Returns new quad array from text object.
+     *
+     * @param unitSize is a number that specifies how much pixels are stored in single unit, if you want 1 pixel per 1 unit, set this equal to one.
      */
-    public static Quad[] text(Text text) {
+    public static Quad[] text(Text text, int unitSize) {
         // Getting color
         Vector4 color = new Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 
@@ -199,28 +230,28 @@ public class GraphicCore {
 
             // Creating quad
             result[i] = quad(
-                    new Vector3((float) data.getXOffset() / Context.getUnitSize(), -(data.getYOffset() + textureCroppedRegion.getHeight()) / Context.getUnitSize(), 0).add(cursor),
-                    textureCroppedRegion.getWidth() / Context.getUnitSize(),
-                    textureCroppedRegion.getHeight() / Context.getUnitSize(),
+                    new Vector3((float) data.getXOffset() / unitSize, -(data.getYOffset() + textureCroppedRegion.getHeight()) / unitSize, 0).add(cursor),
+                    textureCroppedRegion.getWidth() / unitSize,
+                    textureCroppedRegion.getHeight() / unitSize,
                     color,
                     textureCroppedRegion,
                     text.getShader(),
                     text.getLayer()
                     );
             // Advancing
-            cursor.getArrayOfValues()[0] += (float) data.getXAdvance() / Context.getUnitSize();
+            cursor.getArrayOfValues()[0] += (float) data.getXAdvance() / unitSize;
 
             // Checking if it ends the line with the word
             if (chars[i] == ' ') {
                 int count = 1;
                 float length = 0;
                 while(i + count < chars.length && chars[i + count] != ' ') {
-                    length += (float) atlas.get(chars[i + count]).getXAdvance() / Context.getUnitSize();
+                    length += (float) atlas.get(chars[i + count]).getXAdvance() / unitSize;
                     count++;
                 }
                 if (length + cursor.getArrayOfValues()[0] >= lineLimit) {
                     cursor.getArrayOfValues()[0] = text.getPosition().x();
-                    cursor.getArrayOfValues()[1] -= (float) text.getFont().getLineHeight() / Context.getUnitSize();
+                    cursor.getArrayOfValues()[1] -= (float) text.getFont().getLineHeight() / unitSize;
                 }
             }
         }
@@ -230,8 +261,10 @@ public class GraphicCore {
 
     /**
      * Returns new quad array from text object, transformed by matrix4x4.
+     *
+     * @param unitSize is a number that specifies how much pixels are stored in single unit, if you want 1 pixel per 1 unit, set this equal to one.
      */
-    public static Quad[] text(Text text, Matrix4x4 matrix4x4) {
+    public static Quad[] text(Text text, Matrix4x4 matrix4x4, int unitSize) {
         // Getting color
         Vector4 color = new Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 
@@ -250,9 +283,9 @@ public class GraphicCore {
 
             // Creating quad
             result[i] = quad(
-                    new Vector3((float) data.getXOffset() / Context.getUnitSize(), -(data.getYOffset() + textureCroppedRegion.getHeight()) / Context.getUnitSize(), 0).add(cursor),
-                    textureCroppedRegion.getWidth() / Context.getUnitSize(),
-                    textureCroppedRegion.getHeight() / Context.getUnitSize(),
+                    new Vector3((float) data.getXOffset() / unitSize, -(data.getYOffset() + textureCroppedRegion.getHeight()) / unitSize, 0).add(cursor),
+                    textureCroppedRegion.getWidth() / unitSize,
+                    textureCroppedRegion.getHeight() / unitSize,
                     color,
                     textureCroppedRegion,
                     text.getShader(),
@@ -260,19 +293,19 @@ public class GraphicCore {
                     matrix4x4
             );
             // Advancing
-            cursor.getArrayOfValues()[0] += (float) data.getXAdvance() / Context.getUnitSize();
+            cursor.getArrayOfValues()[0] += (float) data.getXAdvance() / unitSize;
 
             // Checking if it ends the line with the word
             if (chars[i] == ' ') {
                 int count = 1;
                 float length = 0;
                 while (i + count < chars.length && chars[i + count] != ' ') {
-                    length += (float) atlas.get(chars[i + count]).getXAdvance() / Context.getUnitSize();
+                    length += (float) atlas.get(chars[i + count]).getXAdvance() / unitSize;
                     count++;
                 }
                 if (length + cursor.getArrayOfValues()[0] >= lineLimit) {
                     cursor.getArrayOfValues()[0] = text.getPosition().x();
-                    cursor.getArrayOfValues()[1] -= (float) text.getFont().getLineHeight() / Context.getUnitSize();
+                    cursor.getArrayOfValues()[1] -= (float) text.getFont().getLineHeight() / unitSize;
                 }
             }
         }
@@ -282,9 +315,11 @@ public class GraphicCore {
 
     /**
      * Returns new quad array from text object, transformed by matrix3x3.
+     *
+     * @param unitSize is a number that specifies how much pixels are stored in single unit, if you want 1 pixel per 1 unit, set this equal to one.
      */
-    public static Quad[] text(Text text, Matrix3x3 matrix3x3) {
-        return text(text, MathCore.transform4x4(matrix3x3));
+    public static Quad[] text(Text text, Matrix3x3 matrix3x3, int unitSize) {
+        return text(text, MathCore.transform4x4(matrix3x3), unitSize);
     }
 
     public static Quad quad(Vector3 offset, float width, float height, Vector4 color, TextureCroppedRegion texture, Shader shader, Layer layer) {
@@ -303,10 +338,10 @@ public class GraphicCore {
         Vector3 normal = MathCore.forward().negate();
 
         // Setting vertices through 0 to 3.
-        quad.setVertex(0, offset,                                       color, percentPosition,                                               texIndex, normal);
-        quad.setVertex(1, new Vector3(width, 0, 0).add(offset),         color, new Vector2(percentWidth, 0).add(percentPosition),             texIndex, normal);
-        quad.setVertex(2, new Vector3(0, height, 0).add(offset),        color, new Vector2(0, percentHeight).add(percentPosition),            texIndex, normal);
-        quad.setVertex(3, new Vector3(width, height, 0).add(offset),    color, new Vector2(percentWidth, percentHeight).add(percentPosition), texIndex, normal);
+        quad.setVertex(0, offset,                                       color, percentPosition,                                                  normal);
+        quad.setVertex(1, new Vector3(width, 0, 0).add(offset),         color, new Vector2(percentWidth, 0).add(percentPosition),      normal);
+        quad.setVertex(2, new Vector3(0, height, 0).add(offset),        color, new Vector2(0, percentHeight).add(percentPosition),     normal);
+        quad.setVertex(3, new Vector3(width, height, 0).add(offset),    color, new Vector2(percentWidth, percentHeight).add(percentPosition), normal);
 
         return quad;
     }
@@ -333,10 +368,10 @@ public class GraphicCore {
         Vector3 normal = matrix4x4.forward().negate();
 
         // Setting vertices through 0 to 3.
-        quad.setVertex(0, vertex0,  color, percentPosition,                                               texIndex, normal);
-        quad.setVertex(1, vertex1,  color, new Vector2(percentWidth, 0).add(percentPosition),             texIndex, normal);
-        quad.setVertex(2, vertex2,  color, new Vector2(0, percentHeight).add(percentPosition),            texIndex, normal);
-        quad.setVertex(3, vertex3,  color, new Vector2(percentWidth, percentHeight).add(percentPosition), texIndex, normal);
+        quad.setVertex(0, vertex0,  color, percentPosition, normal);
+        quad.setVertex(1, vertex1,  color, new Vector2(percentWidth, 0).add(percentPosition), normal);
+        quad.setVertex(2, vertex2,  color, new Vector2(0, percentHeight).add(percentPosition), normal);
+        quad.setVertex(3, vertex3,  color, new Vector2(percentWidth, percentHeight).add(percentPosition), normal);
 
         return quad;
     }

@@ -11,7 +11,7 @@ import org.dmarshaq.kubix.core.math.vector.Vector2;
 @Getter
 @Setter
 @ToString
-public class Text {
+public class Text implements AbstractText {
     private final Vector2 position;
     private float lineLimit;
     private String text;

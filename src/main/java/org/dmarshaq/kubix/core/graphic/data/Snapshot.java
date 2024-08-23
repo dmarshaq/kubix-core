@@ -2,10 +2,14 @@ package org.dmarshaq.kubix.core.graphic.data;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.dmarshaq.kubix.core.graphic.base.texture.Texture;
 
 import java.util.*;
 
 public class Snapshot {
+    private final List<Texture> textureUsedList;
+    private int currentTextureGroup;
+
     private final List<Quad> quadList;
     private final List<Line> lineList;
     @Getter
@@ -18,15 +22,33 @@ public class Snapshot {
     private CameraDto camera;
 
     public Snapshot() {
+        currentTextureGroup = 0;
+        textureUsedList = new ArrayList<>();
+        textureUsedList.add(Texture.NO_TEXTURE);
         quadList = new ArrayList<>();
         lineList = new ArrayList<>();
     }
 
     public void addQuad(Quad quad) {
+        if (textureUsedList.contains(quad.getTexture())) {
+            quad.setTextureGroup(currentTextureGroup, textureUsedList.indexOf(quad.getTexture()));
+        }
+        else if (textureUsedList.size() < 32) {
+            textureUsedList.add(quad.getTexture());
+            quad.setTextureGroup(currentTextureGroup, textureUsedList.size() - 1);
+        }
+        else {
+            textureUsedList.clear();
+            textureUsedList.add(Texture.NO_TEXTURE);
+            textureUsedList.add(quad.getTexture());
+            quad.setTextureGroup(++currentTextureGroup, 1);
+        }
         quadList.add(quad);
     }
     public void addQuad(Quad[] quads) {
-        Collections.addAll(quadList, quads);
+        for (Quad quad : quads) {
+            addQuad(quad);
+        }
     }
 
     public void addLine(Line line) {
