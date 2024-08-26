@@ -1,7 +1,5 @@
 package org.dmarshaq.kubix.core.util;
 
-import org.json.JSONObject;
-
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
@@ -23,6 +21,11 @@ import java.util.stream.Stream;
 import static org.dmarshaq.kubix.core.util.BufferUtils.createByteBuffer;
 
 public interface FileUtils {
+
+    String IMAGE_TYPE = ".png";
+    String FONT_TYPE = ".fnt";
+    String SHADER_TYPE = ".glsl";
+    String JSON_TYPE = ".json";
 
     static Scanner loadAsScanner(String filePath) {
         Scanner result;
@@ -114,32 +117,11 @@ public interface FileUtils {
 
     }
 
-    static List<File> findAllFilesInResources(String path, String fileType)  {
-        List<File> result = new ArrayList<>();
-
-        try {
-            Path dir = Paths.get(URLClassLoader.getSystemResource(path).toURI());
-            Stream<Path> filePathStream = Files.walk(dir);
-            filePathStream.forEach(filePath -> {
-                // Filter images with .png
-                if (Files.isRegularFile(filePath)) {
-                    if (filePath.toString().endsWith(fileType)) {
-                        result.add(filePath.toFile());
-                    }
-                }
-            });
-        } catch (URISyntaxException | IOException e) {
-            System.out.println("Could not find resource file " + fileType + " in " + path + " due to: " + e.toString());
-        }
-
-        return result;
-    }
-
     static List<String> findAllFilesInResourcesJar(String path, String fileType)  {
         List<String> result = new ArrayList<>();
 
         try {
-            List<Path> pathsFromJar = getPathsFromResourceJAR(path);
+            List<Path> pathsFromJar = getPathsFromResourceJar(path);
             for (int i = 0; i < pathsFromJar.size(); i++) {
                 if (!pathsFromJar.get(i).toString().endsWith(fileType)) {
                     pathsFromJar.remove(i);
@@ -156,8 +138,8 @@ public interface FileUtils {
         return result;
     }
 
-    // Get all paths from a folder that inside the JAR file
-    private static List<Path> getPathsFromResourceJAR(String folder) throws URISyntaxException, IOException {
+    // Get all paths from a folder that inside the Jar file
+    private static List<Path> getPathsFromResourceJar(String folder) throws URISyntaxException, IOException {
         List<Path> result;
 
         // get path of the current running JAR
@@ -176,6 +158,5 @@ public interface FileUtils {
         }
 
         return result;
-
     }
 }

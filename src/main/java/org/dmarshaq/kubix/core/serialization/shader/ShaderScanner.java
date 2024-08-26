@@ -1,9 +1,8 @@
 package org.dmarshaq.kubix.core.serialization.shader;
 
+import org.dmarshaq.kubix.core.app.Context;
 import org.dmarshaq.kubix.core.graphic.base.Shader;
-import org.dmarshaq.kubix.core.serialization.SerializationScanner;
 
-import java.io.File;
 import java.util.Scanner;
 
 import static org.dmarshaq.kubix.core.util.FileUtils.loadAsString;
@@ -11,24 +10,16 @@ import static org.lwjgl.opengl.GL11.GL_FALSE;
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL20.glDeleteShader;
 
-public class ShaderScanner extends SerializationScanner {
-
-    static final String HEADER = "SHAD";
+public class ShaderScanner {
 
     public static Shader loadShaderFromFile(String path) {
         return shaderFromString(loadAsString(path));
 
     }
 
-    public static Shader loadShaderFromFile(File file) {
-        return shaderFromString(loadAsString(file));
-
-    }
-
     private static Shader shaderFromString(String program) {
         StringBuilder vertex = new StringBuilder();
         StringBuilder fragment = new StringBuilder();
-
 
         Scanner scanner = new Scanner(program);
         String line;
@@ -45,7 +36,7 @@ public class ShaderScanner extends SerializationScanner {
         vertex.append(program, program.indexOf("#vert") + 5, program.indexOf("#frag"));
         fragment.append(program, program.indexOf("#frag") + 5, program.length());
 
-        return new Shader(buildShaderId(vertex.toString(), fragment.toString()), ShaderManager.shaderCounter++);
+        return new Shader(buildShaderId(vertex.toString(), fragment.toString()), Context.getInstance().SHADER_MANAGER.shaderCounter++);
     }
 
     private static int buildShaderId(String vert, String frag) {

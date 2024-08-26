@@ -54,8 +54,6 @@ public abstract class Update implements Runnable, Updatable {
                 }
                 // new snapshot
                 snapshot = new Snapshot();
-                // layers Clean Up
-
                 // only in before first update (start method is called)
                 if (start) {
                     LayerManager.buildLayers();
@@ -65,7 +63,7 @@ public abstract class Update implements Runnable, Updatable {
 
                 // update method called, as well as inputs and time
                 Time.updateTimers();
-                AnimationManager.updateAnimators();
+                Context.getInstance().ANIMATION_MANAGER.updateAnimators();
                 update();
 
                 // snapshot packing up, as well as resetting key states

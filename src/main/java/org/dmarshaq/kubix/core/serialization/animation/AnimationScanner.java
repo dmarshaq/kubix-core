@@ -1,5 +1,6 @@
 package org.dmarshaq.kubix.core.serialization.animation;
 
+import org.dmarshaq.kubix.core.app.Context;
 import org.dmarshaq.kubix.core.graphic.base.texture.TextureAtlas;
 import org.dmarshaq.kubix.core.graphic.base.animation.Animation;
 import org.dmarshaq.kubix.core.graphic.base.GraphicCore;
@@ -26,17 +27,13 @@ public class AnimationScanner {
         return animationDtosFromString(loadAsString(path));
     }
 
-    public static AnimationDto[] loadAnimationDtosFromFile(File file) {
-        return animationDtosFromString(loadAsString(file));
-    }
-
     private static AnimationDto[] animationDtosFromString(String jsonFile) {
         // Getting JSON animations file into object
         JSONObject jsonAnimations = new JSONObject(jsonFile);
 
         // Slicing texture for animation frames
         JSONObject jsonAtlas = jsonAnimations.getJSONObject(ATLAS_KEY);
-        TextureAtlas textureAtlas = GraphicCore.sliceTexture(TextureManager.TEXTURE_MAP.get(jsonAtlas.getString(ATLAS_TEXTURE_NAME_KEY)), jsonAtlas.getInt(ATLAS_ROWS_KEY), jsonAtlas.getInt(ATLAS_COLUMNS_KEY));
+        TextureAtlas textureAtlas = GraphicCore.sliceTexture(Context.getInstance().TEXTURE_MANAGER.TEXTURE_MAP.get(jsonAtlas.getString(ATLAS_TEXTURE_NAME_KEY)), jsonAtlas.getInt(ATLAS_ROWS_KEY), jsonAtlas.getInt(ATLAS_COLUMNS_KEY));
 
         // Loading animations
         JSONArray jsonAnimationKeys = jsonAnimations.getJSONArray(ANIMATIONS_KEY);

@@ -1,18 +1,16 @@
 package org.dmarshaq.kubix.core.serialization.font;
 
+import org.dmarshaq.kubix.core.app.Context;
 import org.dmarshaq.kubix.core.graphic.base.text.CharacterData;
 import org.dmarshaq.kubix.core.graphic.base.text.Font;
 import org.dmarshaq.kubix.core.graphic.base.texture.Texture;
 import org.dmarshaq.kubix.core.graphic.base.texture.TextureCroppedRegion;
 import org.dmarshaq.kubix.core.math.vector.Vector2;
-import org.dmarshaq.kubix.core.serialization.texture.TextureManager;
 import org.dmarshaq.kubix.core.util.FileUtils;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Scanner;
 
-import static org.dmarshaq.kubix.core.util.FileUtils.loadAsString;
 
 public class FontScanner {
 
@@ -34,16 +32,11 @@ public class FontScanner {
 
     }
 
-    public static Font loadFontFromFile(File file) {
-        return fontFromScanner(FileUtils.loadAsScanner(file));
-
-    }
-
     private static Font fontFromScanner(Scanner scanner) {
         int lineHeight = scanIntValueOf(scanner, FONT_LINE_HEIGHT_KEY);
         int base = scanIntValueOf(scanner, FONT_BASE_KEY);
         String textureFileName = scanStringValueOf(scanner, FONT_FILE_KEY);
-        Texture texture = TextureManager.TEXTURE_MAP.get(textureFileName.substring(0, textureFileName.lastIndexOf('.')));
+        Texture texture = Context.getInstance().TEXTURE_MANAGER.TEXTURE_MAP.get(textureFileName);
 
         int count = scanIntValueOf(scanner, FONT_CHARACTERS_COUNT_KEY);
         HashMap<Character, CharacterData> atlas = new HashMap<>(count, 1.0f);

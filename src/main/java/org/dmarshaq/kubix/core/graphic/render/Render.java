@@ -13,8 +13,7 @@ import org.dmarshaq.kubix.core.math.vector.Vector4;
 
 import java.awt.*;
 
-import static org.dmarshaq.kubix.core.app.Context.getMaxLinesPerBatch;
-import static org.dmarshaq.kubix.core.app.Context.getMaxQuadsPerBatch;
+import static org.dmarshaq.kubix.core.app.Context.*;
 import static org.dmarshaq.kubix.core.graphic.render.Render.BatchRenderer.*;
 import static org.lwjgl.glfw.GLFW.glfwPollEvents;
 import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
@@ -53,7 +52,7 @@ public class Render {
         pr_matrix = MathCore.orthographic(-2f, 2f, -1.5f, 1.5f, -1f, 1f); // basically camera matrix
         Matrix4x4 identity = new Matrix4x4();
 
-        Shader shader = Context.SHADERS.get("basic_quad");
+        Shader shader = Context.SHADERS.get(SHADER_BASIC_QUAD);
 
         shader.enable();
         shader.setUniformMatrix4x4("pr_matrix", pr_matrix);
@@ -61,14 +60,14 @@ public class Render {
         shader.setUniformMatrix4x4("ml_matrix", identity);
         shader.disable();
 
-        shader = Context.SHADERS.get("basic_line");
+        shader = Context.SHADERS.get(SHADER_BASIC_LINE);
 
         shader.enable();
         shader.setUniformMatrix4x4("pr_matrix", pr_matrix);
         shader.setUniformMatrix4x4("ml_matrix", identity);
         shader.disable();
 
-        shader = Context.SHADERS.get("basic_circle");
+        shader = Context.SHADERS.get(SHADER_BASIC_CIRCLE);
 
         shader.enable();
         shader.setUniformMatrix4x4("pr_matrix", pr_matrix);
@@ -76,7 +75,7 @@ public class Render {
         shader.setUniformMatrix4x4("ml_matrix", identity);
         shader.disable();
 
-        shader = Context.SHADERS.get("ui_quad");
+        shader = Context.SHADERS.get(SHADER_UI_QUAD);
 
         shader.enable();
         shader.setUniformMatrix4x4("pr_matrix", pr_matrix);
@@ -169,25 +168,25 @@ public class Render {
         pr_matrix = snapshot.getCamera().getProjection();
 
         // Quad shader
-        Shader shader = Context.SHADERS.get("basic_quad");
+        Shader shader = Context.SHADERS.get(SHADER_BASIC_QUAD);
         shader.enable();
         shader.setUniformMatrix4x4("pr_matrix", pr_matrix);
         shader.disable();
 
         // Line shader
-        shader = Context.SHADERS.get("basic_line");
+        shader = Context.SHADERS.get(SHADER_BASIC_LINE);
         shader.enable();
         shader.setUniformMatrix4x4("pr_matrix", pr_matrix);
         shader.disable();
 
         // Circle shader
-        shader = Context.SHADERS.get("basic_circle");
+        shader = Context.SHADERS.get(SHADER_BASIC_CIRCLE);
         shader.enable();
         shader.setUniformMatrix4x4("pr_matrix", pr_matrix);
         shader.disable();
 
         // UI Quad shader
-        shader = Context.SHADERS.get("ui_quad");
+        shader = Context.SHADERS.get(SHADER_UI_QUAD);
         shader.enable();
         shader.setUniformMatrix4x4("pr_matrix", MathCore.orthographic(0f, window.width(), 0f, window.height(), -1f, 1f));
         shader.disable();

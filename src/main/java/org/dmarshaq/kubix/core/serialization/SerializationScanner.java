@@ -4,13 +4,13 @@ import java.io.*;
 import java.util.List;
 
 public class SerializationScanner {
-    public static Packet[] deserializeResourcesIntoPackets(List<File> files) {
+    public static Packet[] deserializeResourcesIntoPackets(List<String> files) {
         Packet[] packets = new Packet[files.size()];
 
         byte[] data = null;
         int i = 0;
-        for (File file : files) {
-            data = readFromFile(file.getPath());
+        for (String file : files) {
+            data = readFromFile(file);
             packets[i] = new Packet(readStringASCII(data, 0), data);
             i++;
         }

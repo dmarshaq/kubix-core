@@ -22,6 +22,8 @@ import org.dmarshaq.kubix.core.math.vector.*;
 import java.awt.*;
 import java.util.HashMap;
 
+import static org.dmarshaq.kubix.core.app.Context.SHADER_BASIC_LINE;
+
 public class GraphicCore {
 
     /**
@@ -94,7 +96,7 @@ public class GraphicCore {
      * Returns new line from vector.
      */
     public static <T extends Vector<Float>> Line line(T vector, Color color) {
-        Line line = new Line(Context.SHADERS.get("basic_line"), Context.LAYERS.get("gizmos"), 1.0f);
+        Line line = new Line(Context.SHADERS.get(SHADER_BASIC_LINE), Context.LAYERS.get("gizmos"), 1.0f);
 
         Vector4 vector4 = MathCore.vector4(color);
         line.setVertex(0, new Vector3(0, 0, 0), vector4);
@@ -107,7 +109,7 @@ public class GraphicCore {
      * Returns new line from two points.
      */
     public static <T extends Vector<Float>> Line line(T start, T end, Color color) {
-        Line line = new Line(Context.SHADERS.get("basic_line"), Context.LAYERS.get("gizmos"), 1.0f);
+        Line line = new Line(Context.SHADERS.get(SHADER_BASIC_LINE), Context.LAYERS.get("gizmos"), 1.0f);
 
         Vector4 vector4 = MathCore.vector4(color);
         line.setVertex(0, new Vector3(MathCore.componentVector(start, "xyz")), vector4);
@@ -124,7 +126,7 @@ public class GraphicCore {
         Vector4 vector4 = MathCore.vector4(color);
 
         for (int i = 0; i < outline.length; i++) {
-            outline[i] = new Line(Context.SHADERS.get("basic_line"), Context.LAYERS.get("gizmos"), 1.0f);
+            outline[i] = new Line(Context.SHADERS.get(SHADER_BASIC_LINE), Context.LAYERS.get("gizmos"), 1.0f);
         }
 
         Vector3 start = new Vector3(MathCore.componentVector(rectangle.getPosition(), "xyz"));
@@ -168,7 +170,7 @@ public class GraphicCore {
         for (int i = 0; i < detail; i++) {
             end = start + step;
 
-            graph[i] = new Line(Context.SHADERS.get("basic_line"), Context.LAYERS.get("gizmos"), 1.0f);
+            graph[i] = new Line(Context.SHADERS.get(SHADER_BASIC_LINE), Context.LAYERS.get("gizmos"), 1.0f);
             graph[i].setVertex(0, new Vector3(start, function.function(start), 0), vector4);
             graph[i].setVertex(1, new Vector3(end, function.function(end), 0), vector4);
 
@@ -193,7 +195,7 @@ public class GraphicCore {
         for (int i = 0; i < detail; i++) {
             end = start + step;
 
-            graph[i] = new Line(Context.SHADERS.get("basic_line"), Context.LAYERS.get("gizmos"), 1.0f);
+            graph[i] = new Line(Context.SHADERS.get(SHADER_BASIC_LINE), Context.LAYERS.get("gizmos"), 1.0f);
 
             v0 = parametric.parametric(start);
             v1 = parametric.parametric(end);

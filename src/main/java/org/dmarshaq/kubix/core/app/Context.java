@@ -9,31 +9,35 @@ import org.dmarshaq.kubix.core.graphic.base.text.Font;
 import org.dmarshaq.kubix.core.graphic.base.texture.Texture;
 import org.dmarshaq.kubix.core.graphic.element.Camera;
 import org.dmarshaq.kubix.core.input.InputManager;
-import org.dmarshaq.kubix.core.serialization.Packet;
-import org.dmarshaq.kubix.core.serialization.SerializationScanner;
 import org.dmarshaq.kubix.core.serialization.animation.AnimationManager;
 import org.dmarshaq.kubix.core.serialization.font.FontManager;
-import org.dmarshaq.kubix.core.util.FileUtils;
-import org.dmarshaq.kubix.core.util.IndexedHashMap;
 import org.dmarshaq.kubix.core.serialization.texture.TextureManager;
 import org.dmarshaq.kubix.core.serialization.shader.ShaderManager;
 
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.function.Supplier;
 
 public abstract class Context {
     @Getter
     private static Context instance;
 
-    public Context() {
+    public Context(Supplier<List<String>> resourcesSupplier) {
         if (instance == null) {
+            this.resourcesSupplier = resourcesSupplier;
             instance = this;
         }
     }
 
+    private Supplier<List<String>> resourcesSupplier;
+
+    public final static String TEXTURE_BASIC_PUP_BLACK = "texture/font/basic_pup_black.png";
+    public final static String SHADER_BASIC_QUAD = "shader/basic_quad.glsl";
+    public final static String SHADER_BASIC_LINE = "shader/basic_line.glsl";
+    public final static String SHADER_BASIC_CIRCLE = "shader/basic_circle.glsl";
+    public final static String SHADER_UI_QUAD = "shader/ui_quad.glsl";
+    public final static String FONT_BASIC_PUP_BLACK = "font/basic_pup_black.fnt";
 
     // SCREEN & TILE SETTINGS
     private static String TITLE = "";
@@ -130,36 +134,43 @@ public abstract class Context {
     }
 
     // Resources
-    public static IndexedHashMap<String, Texture> TEXTURES;
-    public static Map<String, Shader> SHADERS;
+    public static HashMap<String, Texture> TEXTURES;
+    public static HashMap<String, Shader> SHADERS;
     public static HashMap<String, Layer> LAYERS;
-    public static Map<String, Animation> ANIMATIONS;
-    public static Map<String, Font> FONTS;
-
+    public static HashMap<String, Animation> ANIMATIONS;
+    public static HashMap<String, Font> FONTS;
 
     // Object methods
     public abstract void initContextProperties();
 
     final void loadResources() {
-        SerializationScanner.serializeResourcesIntoPackets(loadResourcesFromPackets(SerializationScanner.deserializeResourcesIntoPackets(FileUtils.findAllFilesInResources("packet", ".kub"))));
+        List<String> resources = resourcesSupplier.get();
 
-        TEXTURES = TextureManager.TEXTURE_MAP;
-        SHADERS = ShaderManager.SHADER_MAP;
+        TEXTURE_MANAGER.loadResourcesJar();
+        TEXTURE_MANAGER.loadResources(resources);
+
+        SHADER_MANAGER.loadResourcesJar();
+        SHADER_MANAGER.loadResources(resources);
+
+        ANIMATION_MANAGER.loadResourcesJar();
+        ANIMATION_MANAGER.loadResources(resources);
+
+        FONT_MANAGER.loadResourcesJar();
+        FONT_MANAGER.loadResources(resources);
+
+        TEXTURES = TEXTURE_MANAGER.TEXTURE_MAP;
+        SHADERS = SHADER_MANAGER.SHADER_MAP;
         LAYERS = LayerManager.LAYER_MAP;
-        ANIMATIONS = AnimationManager.ANIMATION_MAP;
-        FONTS = FontManager.FONT_MAP;
-    }
+        ANIMATIONS = ANIMATION_MANAGER.ANIMATION_MAP;
+        FONTS = FONT_MANAGER.FONT_MAP;
 
-    final List<Packet> loadResourcesFromPackets(Packet[] packets) {
-        List<Packet> newPackets = new ArrayList<>();
-
-        // Manager / Loaders, loading respective packets one by one, adding their new packets to new packets list.
-        TextureManager.loadPackets(packets, newPackets);
-        ShaderManager.loadShadersFromFiles();
         InputManager.mapGLFWKeyCodes();
-        AnimationManager.loadAnimationsFromFiles();
-        FontManager.loadFontsFromFiles();
-
-        return newPackets;
     }
+
+    public final TextureManager TEXTURE_MANAGER = new TextureManager();
+    public final ShaderManager SHADER_MANAGER = new ShaderManager();
+    public final AnimationManager ANIMATION_MANAGER = new AnimationManager();
+    public final FontManager FONT_MANAGER = new FontManager();
+
+
 }

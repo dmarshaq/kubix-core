@@ -1,76 +1,31 @@
 package org.dmarshaq.kubix.core.serialization.texture;
 
 import org.dmarshaq.kubix.core.graphic.base.texture.Texture;
-import org.dmarshaq.kubix.core.serialization.Packet;
-import org.dmarshaq.kubix.core.util.FileUtils;
-import org.dmarshaq.kubix.core.util.IndexedHashMap;
+import org.dmarshaq.kubix.core.serialization.ResourceManager;
 
-
-import java.io.File;
 import java.util.*;
 
+import static org.dmarshaq.kubix.core.util.FileUtils.IMAGE_TYPE;
+import static org.dmarshaq.kubix.core.util.FileUtils.findAllFilesInResourcesJar;
 
-public class TextureManager {
-    public static final IndexedHashMap<String, Texture> TEXTURE_MAP = new IndexedHashMap<>();
-    private static final List<TextureDto> TEXTURE_DTOS = new ArrayList<>();
+
+public class TextureManager implements ResourceManager {
+    public final HashMap<String, Texture> TEXTURE_MAP = new HashMap<>();
     // Ordinal 0 is for NO_TEXTURE.
-    static int textureCounter = 0;
+    int textureCounter = 0;
 
-    public static void loadPackets(Packet[] inputPackets, List<Packet> outputPackets) {
-        // No texture 4
-        TEXTURE_MAP.put("notexture", Texture.NO_TEXTURE);
-        textureCounter++;
-
-        // Jar loading, doesn't serialize
-        loadTextureDtosFromJar(FileUtils.findAllFilesInResourcesJar("texture", ".png"));
-        putTextureDtosIntoTextureMap();
-        TEXTURE_DTOS.clear();
-        // Game loading, does serialize
-        loadTextureDtosFromPackets(inputPackets);
-        loadAndCompareTextureDtosFromImages(FileUtils.findAllFilesInResources("texture", ".png"));
-        putTextureDtosIntoTextureMap();
-        outputPackets.add(TextureScanner.serializeTexturePacket(TEXTURE_DTOS));
-        TEXTURE_DTOS.clear();
-    }
-
-    private static void putTextureDtosIntoTextureMap() {
-        TEXTURE_DTOS.forEach(textureDto -> TEXTURE_MAP.put(textureDto.getName(), TextureScanner.toTexture(textureDto)));
-    }
-
-    private static void loadTextureDtosFromJar(List<String> paths) {
-        TEXTURE_DTOS.addAll(paths.stream()
-                                 .map(TextureScanner::loadTextureDtoFromImage)
-                                 .toList());
-    }
-
-    private static void loadTextureDtosFromPackets(Packet[] packets) {
-        for (int i = 0; i < packets.length; i++) {
-            if (packets[i] != null && packets[i].getHeader().equals(TextureScanner.HEADER)) {
-                Collections.addAll(TEXTURE_DTOS, TextureScanner.deserializeTexturePacket(packets[i]));
-                packets[i] = null;
-            }
+    @Override
+    public void loadResources(List<String> resources) {
+        for (String name : ResourceManager.extractResourcesOfFiletype(resources, IMAGE_TYPE)) {
+            TEXTURE_MAP.put(name, TextureScanner.loadTextureFromImage(name));
         }
     }
 
-    private static void loadAndCompareTextureDtosFromImages(List<File> files)  {
-        TextureDto empty = new TextureDto();
-        for (File file : files) {
-            empty.setName(file.getName().substring(0, file.getName().length() - 4));
-            empty.setLastModified(file.lastModified());
-            if (TEXTURE_DTOS.contains(empty)) {
-                int index = TEXTURE_DTOS.indexOf(empty);
-                if (TEXTURE_DTOS.get(index).getLastModified() != empty.getLastModified()) {
-                    System.out.println("Resource: " + TEXTURE_DTOS.get(index).getName() + ", out of date");
-                    TEXTURE_DTOS.set(index, TextureScanner.loadTextureDtoFromImage(file));
-                }
-            }
-            else {
-                TEXTURE_DTOS.add(TextureScanner.loadTextureDtoFromImage(file));
-            }
+    @Override
+    public void loadResourcesJar() {
+        List<String> paths = findAllFilesInResourcesJar("texture", IMAGE_TYPE);
+        for (String path : paths) {
+            TEXTURE_MAP.put(path, TextureScanner.loadTextureFromImage(path));
         }
     }
-
-
-
-
 }
