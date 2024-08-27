@@ -89,11 +89,11 @@ public class Quad implements Renderable {
             if (shaderCompare != 0) {
                 return shaderCompare;
             }
-            int textureGroupCompare = Integer.compare(textureGroup, ((Quad) o).getTextureGroup());
-            if (textureGroupCompare != 0) {
-                return shaderCompare;
-            }
-            return Integer.compare(textureGroupRenderOrder, ((Quad) o).getTextureGroupRenderOrder());
+//            int textureGroupCompare = Integer.compare(textureGroup, ((Quad) o).getTextureGroup());
+//            if (textureGroupCompare != 0) {
+//                return textureGroupCompare;
+//            }
+            return Integer.compare(textureGroup, ((Quad) o).getTextureGroup());
         }
         return 0;
     }

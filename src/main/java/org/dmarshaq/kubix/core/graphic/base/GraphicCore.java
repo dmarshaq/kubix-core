@@ -210,10 +210,8 @@ public class GraphicCore {
 
     /**
      * Returns new quad array from text object.
-     *
-     * @param unitSize is a number that specifies how much pixels are stored in single unit, if you want 1 pixel per 1 unit, set this equal to one.
      */
-    public static Quad[] text(Text text, int unitSize) {
+    public static Quad[] text(Text text) {
         // Getting color
         Vector4 color = new Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 
@@ -232,28 +230,28 @@ public class GraphicCore {
 
             // Creating quad
             result[i] = quad(
-                    new Vector3((float) data.getXOffset() / unitSize, -(data.getYOffset() + textureCroppedRegion.getHeight()) / unitSize, 0).add(cursor),
-                    textureCroppedRegion.getWidth() / unitSize,
-                    textureCroppedRegion.getHeight() / unitSize,
+                    new Vector3((float) data.getXOffset() / Context.getUnitSize(), -(data.getYOffset() + textureCroppedRegion.getHeight()) / Context.getUnitSize(), 0).add(cursor),
+                    textureCroppedRegion.getWidth() / Context.getUnitSize(),
+                    textureCroppedRegion.getHeight() / Context.getUnitSize(),
                     color,
                     textureCroppedRegion,
                     text.getShader(),
                     text.getLayer()
-                    );
+            );
             // Advancing
-            cursor.getArrayOfValues()[0] += (float) data.getXAdvance() / unitSize;
+            cursor.getArrayOfValues()[0] += (float) data.getXAdvance() / Context.getUnitSize();
 
             // Checking if it ends the line with the word
             if (chars[i] == ' ') {
                 int count = 1;
                 float length = 0;
                 while(i + count < chars.length && chars[i + count] != ' ') {
-                    length += (float) atlas.get(chars[i + count]).getXAdvance() / unitSize;
+                    length += (float) atlas.get(chars[i + count]).getXAdvance() / Context.getUnitSize();
                     count++;
                 }
                 if (length + cursor.getArrayOfValues()[0] >= lineLimit) {
                     cursor.getArrayOfValues()[0] = text.getPosition().x();
-                    cursor.getArrayOfValues()[1] -= (float) text.getFont().getLineHeight() / unitSize;
+                    cursor.getArrayOfValues()[1] -= (float) text.getFont().getLineHeight() / Context.getUnitSize();
                 }
             }
         }
@@ -263,10 +261,8 @@ public class GraphicCore {
 
     /**
      * Returns new quad array from text object, transformed by matrix4x4.
-     *
-     * @param unitSize is a number that specifies how much pixels are stored in single unit, if you want 1 pixel per 1 unit, set this equal to one.
      */
-    public static Quad[] text(Text text, Matrix4x4 matrix4x4, int unitSize) {
+    public static Quad[] text(Text text, Matrix4x4 matrix4x4) {
         // Getting color
         Vector4 color = new Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 
@@ -285,9 +281,9 @@ public class GraphicCore {
 
             // Creating quad
             result[i] = quad(
-                    new Vector3((float) data.getXOffset() / unitSize, -(data.getYOffset() + textureCroppedRegion.getHeight()) / unitSize, 0).add(cursor),
-                    textureCroppedRegion.getWidth() / unitSize,
-                    textureCroppedRegion.getHeight() / unitSize,
+                    new Vector3((float) data.getXOffset() / Context.getUnitSize(), -(data.getYOffset() + textureCroppedRegion.getHeight()) / Context.getUnitSize(), 0).add(cursor),
+                    textureCroppedRegion.getWidth() / Context.getUnitSize(),
+                    textureCroppedRegion.getHeight() / Context.getUnitSize(),
                     color,
                     textureCroppedRegion,
                     text.getShader(),
@@ -295,19 +291,19 @@ public class GraphicCore {
                     matrix4x4
             );
             // Advancing
-            cursor.getArrayOfValues()[0] += (float) data.getXAdvance() / unitSize;
+            cursor.getArrayOfValues()[0] += (float) data.getXAdvance() / Context.getUnitSize();
 
             // Checking if it ends the line with the word
             if (chars[i] == ' ') {
                 int count = 1;
                 float length = 0;
                 while (i + count < chars.length && chars[i + count] != ' ') {
-                    length += (float) atlas.get(chars[i + count]).getXAdvance() / unitSize;
+                    length += (float) atlas.get(chars[i + count]).getXAdvance() / Context.getUnitSize();
                     count++;
                 }
                 if (length + cursor.getArrayOfValues()[0] >= lineLimit) {
                     cursor.getArrayOfValues()[0] = text.getPosition().x();
-                    cursor.getArrayOfValues()[1] -= (float) text.getFont().getLineHeight() / unitSize;
+                    cursor.getArrayOfValues()[1] -= (float) text.getFont().getLineHeight() / Context.getUnitSize();
                 }
             }
         }
@@ -317,11 +313,9 @@ public class GraphicCore {
 
     /**
      * Returns new quad array from text object, transformed by matrix3x3.
-     *
-     * @param unitSize is a number that specifies how much pixels are stored in single unit, if you want 1 pixel per 1 unit, set this equal to one.
      */
-    public static Quad[] text(Text text, Matrix3x3 matrix3x3, int unitSize) {
-        return text(text, MathCore.transform4x4(matrix3x3), unitSize);
+    public static Quad[] text(Text text, Matrix3x3 matrix3x3) {
+        return text(text, MathCore.transform4x4(matrix3x3));
     }
 
     public static Quad quad(Vector3 offset, float width, float height, Vector4 color, TextureCroppedRegion texture, Shader shader, Layer layer) {

@@ -21,36 +21,42 @@ public class Sprite implements AbstractRectangle<Float, Vector2> {
     public static final Color DEFAULT_COLOR = new Color(255, 255, 255, 255);
 
     private final Vector2 position;
+    private float width;
+    private float height;
     private TextureCroppedRegion texture;
+    private Color color;
     private Shader shader;
     private Layer layer;
-    private Color color;
-
 
     public Sprite(Vector2 position, TextureCroppedRegion texture, Shader shader, Layer layer) {
-        this.color = DEFAULT_COLOR;
-        this.texture = texture;
         this.position = position;
+        this.width = texture.getWidth() / Context.getUnitSize();
+        this.height = texture.getHeight() / Context.getUnitSize();
+        this.texture = texture;
+        this.color = DEFAULT_COLOR;
         this.shader = shader;
         this.layer = layer;
+
     }
 
-    public Sprite(Vector2 position, Color color, Shader shader, Layer layer) {
-        this.color = color;
-        this.texture = Texture.NO_TEXTURE_REGION;
+    public Sprite(Vector2 position, float width, float height, Color color, Shader shader, Layer layer) {
         this.position = position;
+        this.width = width;
+        this.height = height;
+        this.texture = Texture.NO_TEXTURE_REGION;
+        this.color = color;
         this.shader = shader;
         this.layer = layer;
     }
 
     @Override
     public Float getWidth() {
-        return texture.getWidth() / Context.getUnitSize();
+        return width;
     }
 
     @Override
     public Float getHeight() {
-        return texture.getHeight() / Context.getUnitSize();
+        return height;
     }
 
     @Override
