@@ -340,65 +340,6 @@ public class GraphicCore {
         return result;
     }
 
-//    /**
-//     * Returns new quad array from text object, transformed by matrix4x4.
-//     */
-//    public static Quad[] text(Text text, Matrix4x4 matrix4x4) {
-//        // Getting color
-//        Vector4 color = new Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-//
-//        char[] chars = text.getText().toCharArray();
-//        HashMap<Character, CharacterData> atlas = text.getFont().getAtlas();
-//
-//        Quad[] result = new Quad[chars.length];
-//
-//        float lineLimit = text.getLineLimit();
-//        Vector3 cursor = new Vector3(MathCore.componentVector(text.getPosition(), "xyz"));
-//
-//        for (int i = 0; i < chars.length; i++) {
-//            // Regular loading
-//            CharacterData data = atlas.get(chars[i]);
-//            TextureCroppedRegion textureCroppedRegion = data.getTextureCroppedRegion();
-//
-//            // Creating quad
-//            result[i] = quad(
-//                    new Vector3((float) data.getXOffset() / Context.getUnitSize(), -(data.getYOffset() + textureCroppedRegion.getHeight()) / Context.getUnitSize(), 0).add(cursor),
-//                    textureCroppedRegion.getWidth() / Context.getUnitSize(),
-//                    textureCroppedRegion.getHeight() / Context.getUnitSize(),
-//                    color,
-//                    textureCroppedRegion,
-//                    text.getShader(),
-//                    text.getLayer(),
-//                    matrix4x4
-//            );
-//            // Advancing
-//            cursor.getArrayOfValues()[0] += (float) data.getXAdvance() / Context.getUnitSize();
-//
-//            // Checking if it ends the line with the word
-//            if (chars[i] == ' ') {
-//                int count = 1;
-//                float length = 0;
-//                while (i + count < chars.length && chars[i + count] != ' ') {
-//                    length += (float) atlas.get(chars[i + count]).getXAdvance() / Context.getUnitSize();
-//                    count++;
-//                }
-//                if (length + cursor.getArrayOfValues()[0] >= lineLimit) {
-//                    cursor.getArrayOfValues()[0] = text.getPosition().x();
-//                    cursor.getArrayOfValues()[1] -= (float) text.getFont().getLineHeight() / Context.getUnitSize();
-//                }
-//            }
-//        }
-//
-//        return result;
-//    }
-//
-//    /**
-//     * Returns new quad array from text object, transformed by matrix3x3.
-//     */
-//    public static Quad[] text(Text text, Matrix3x3 matrix3x3) {
-//        return text(text, MathCore.transform4x4(matrix3x3));
-//    }
-
     public static Quad quad(Vector3 offset, float width, float height, Vector4 color, TextureCroppedRegion texture, Shader shader, Layer layer) {
         // Creating quad with shader defined in sprite.
         Quad quad = new Quad(shader, layer, texture.getHost());

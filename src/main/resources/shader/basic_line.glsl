@@ -1,5 +1,7 @@
 #version 400 core
 
+#render_order 2
+
 #vert
 
 layout (location = 0) in vec3 position;

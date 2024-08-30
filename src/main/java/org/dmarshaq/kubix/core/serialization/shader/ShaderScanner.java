@@ -17,18 +17,31 @@ public class ShaderScanner {
 
     }
 
+    private static final String TAG_VERSION = "#version";
+    private static final String TAG_RENDER_ORDER = "#render_order";
+    private static final String TAG_VERTEX_SHADER = "#vert";
+    private static final String TAG_FRAGMENT_SHADER = "#frag";
     private static Shader shaderFromString(String program) {
+        // Actual program
         StringBuilder vertex = new StringBuilder();
         StringBuilder fragment = new StringBuilder();
+        // Params
+        int order = Context.getInstance().SHADER_MANAGER.shaderCounter++;
 
+        // Reading shader
         Scanner scanner = new Scanner(program);
         String line;
 
         while(true) {
             line = scanner.nextLine();
-            if (line.startsWith("#version")) {
+            if (line.startsWith(TAG_VERSION)) {
                 vertex.append(line);
                 fragment.append(line);
+            }
+            else if (line.startsWith(TAG_RENDER_ORDER)) {
+                order = Integer.parseInt(line.substring(TAG_RENDER_ORDER.length() + 1));
+            }
+            else if (line.startsWith(TAG_VERTEX_SHADER)) {
                 break;
             }
         }
@@ -36,7 +49,7 @@ public class ShaderScanner {
         vertex.append(program, program.indexOf("#vert") + 5, program.indexOf("#frag"));
         fragment.append(program, program.indexOf("#frag") + 5, program.length());
 
-        return new Shader(buildShaderId(vertex.toString(), fragment.toString()), Context.getInstance().SHADER_MANAGER.shaderCounter++);
+        return new Shader(buildShaderId(vertex.toString(), fragment.toString()), order);
     }
 
     private static int buildShaderId(String vert, String frag) {
