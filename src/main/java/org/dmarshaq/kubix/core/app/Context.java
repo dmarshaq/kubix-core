@@ -53,6 +53,7 @@ public abstract class Context {
     private static boolean RUNNING = true;
     // RENDER
     private static boolean DRAW_GIZMOS = true;
+    private static boolean DEBUG_RENDER = false;
     private static int MAX_QUADS_PER_BATCH = 256;
     private static int MAX_LINES_PER_BATCH = 1028;
     // PUBLIC METHODS
@@ -75,6 +76,9 @@ public abstract class Context {
     }
     public static boolean isDrawGizmos() {
         return DRAW_GIZMOS;
+    }
+    public static boolean isDebugRender() {
+        return DEBUG_RENDER;
     }
     public static int getMaxQuadsPerBatch() {
         return MAX_QUADS_PER_BATCH;
@@ -113,6 +117,9 @@ public abstract class Context {
     }
     protected static void setMaxQuadsPerBatch(int maxQuadsPerBatch) {
         MAX_QUADS_PER_BATCH = maxQuadsPerBatch;
+    }
+    protected static void setMaxQuadsPerBatch(boolean debugRender) {
+        DEBUG_RENDER = debugRender;
     }
     protected static void setMaxLinesPerBatch(int maxLinesPerBatch) {
         MAX_LINES_PER_BATCH = maxLinesPerBatch;

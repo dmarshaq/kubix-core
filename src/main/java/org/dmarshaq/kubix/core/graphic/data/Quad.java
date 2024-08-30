@@ -1,7 +1,6 @@
 package org.dmarshaq.kubix.core.graphic.data;
 
 import lombok.Getter;
-import lombok.Setter;
 import lombok.ToString;
 import org.dmarshaq.kubix.core.graphic.base.layer.Layer;
 import org.dmarshaq.kubix.core.graphic.base.Shader;
@@ -19,20 +18,13 @@ import org.dmarshaq.kubix.core.math.vector.Vector4;
  * Quad can be saved and reused from one update to another but cannot be modified. Yet...
  */
 @ToString
-public class Quad implements Renderable {
-    public static final int VERTEX_STRIDE = 13;
-    public static final int VERTICES = 4;
-    public static final int STRIDE = VERTEX_STRIDE * VERTICES;
-
+public class Quad implements QuadStructure {
     private final float[] vertices;
     private final Shader shader;     
     private final Layer layer;
-    @Getter
     private final Texture texture;
-    @Getter
     private int textureGroup;
-    @Getter
-    private int textureGroupRenderOrder;
+    private int textureGroupIndex;
 
     /**
      * Builds the quad with float array describing all 4 vertices each taking 13 floats in array.
@@ -42,13 +34,26 @@ public class Quad implements Renderable {
         this.shader = shader;
         this.layer = layer;
         this.texture = texture;
-        vertices = new float[VERTICES * VERTEX_STRIDE];
+        vertices = new float[QUAD_STRIDE];
     }
 
-    /**
-     * Sets any quad vertex from 0 to 3 to specified properties.
-     */
-    public void setVertex(int vertex, Vector3 position, Vector4 color, Vector2 texCoordinates, Vector3 normal) {
+    @Override
+    public float[] getVertexData() {
+        return vertices;
+    }
+
+    @Override
+    public Shader getShader() {
+        return shader;
+    }
+
+    @Override
+    public Layer getLayer() {
+        return layer;
+    }
+
+    @Override
+    public void setVertex(int quad, int vertex, Vector3 position, Vector4 color, Vector2 texCoordinates, Vector3 normal) {
         vertices[0 + vertex * VERTEX_STRIDE] = position.x();
         vertices[1 + vertex * VERTEX_STRIDE] = position.y();
         vertices[2 + vertex * VERTEX_STRIDE] = position.z();
@@ -65,46 +70,32 @@ public class Quad implements Renderable {
     }
 
     @Override
-    public float[] getVertexData() {
-        return vertices;
+    public int getQuadCount() {
+        return 1;
     }
 
     @Override
-    public Shader getShader() {
-        return shader;
-    }
-
-    public Layer getLayer() {
-        return layer;
+    public Texture getTexture() {
+        return texture;
     }
 
     @Override
-    public int compareTo(Renderable o) {
-        if (o instanceof Quad) {
-            int layerCompare = layer.compareTo(o.getLayer());
-            if (layerCompare != 0) {
-                return layerCompare;
-            }
-            int shaderCompare = shader.compareTo(o.getShader());
-            if (shaderCompare != 0) {
-                return shaderCompare;
-            }
-//            int textureGroupCompare = Integer.compare(textureGroup, ((Quad) o).getTextureGroup());
-//            if (textureGroupCompare != 0) {
-//                return textureGroupCompare;
-//            }
-            return Integer.compare(textureGroup, ((Quad) o).getTextureGroup());
-        }
-        return 0;
+    public int getTextureGroup() {
+        return textureGroup;
     }
 
-    public void setTextureGroup(int textureGroup, int textureRenderOrder) {
+    @Override
+    public int getTextureGroupIndex() {
+        return textureGroupIndex;
+    }
+
+    @Override
+    public void setTextureGroup(int textureGroup, int textureGroupIndex) {
         this.textureGroup = textureGroup;
-        this.textureGroupRenderOrder = textureRenderOrder;
-        vertices[9 + 0 * VERTEX_STRIDE] = textureRenderOrder;
-        vertices[9 + 1 * VERTEX_STRIDE] = textureRenderOrder;
-        vertices[9 + 2 * VERTEX_STRIDE] = textureRenderOrder;
-        vertices[9 + 3 * VERTEX_STRIDE] = textureRenderOrder;
-
+        this.textureGroupIndex = textureGroupIndex;
+        vertices[9 + 0 * VERTEX_STRIDE] = textureGroupIndex;
+        vertices[9 + 1 * VERTEX_STRIDE] = textureGroupIndex;
+        vertices[9 + 2 * VERTEX_STRIDE] = textureGroupIndex;
+        vertices[9 + 3 * VERTEX_STRIDE] = textureGroupIndex;
     }
 }

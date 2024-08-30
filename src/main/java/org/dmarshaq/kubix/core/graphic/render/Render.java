@@ -3,6 +3,7 @@ package org.dmarshaq.kubix.core.graphic.render;
 import org.dmarshaq.kubix.core.app.Context;
 import org.dmarshaq.kubix.core.graphic.data.Line;
 import org.dmarshaq.kubix.core.graphic.data.Quad;
+import org.dmarshaq.kubix.core.graphic.data.QuadStructure;
 import org.dmarshaq.kubix.core.graphic.data.Snapshot;
 import org.dmarshaq.kubix.core.graphic.base.Window;
 import org.dmarshaq.kubix.core.graphic.base.Shader;
@@ -149,6 +150,8 @@ public class Render {
     }
 
     public void render(Snapshot snapshot) {
+        debug();
+
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         loadCameraMatrix(snapshot);
@@ -162,6 +165,12 @@ public class Render {
         // Poll for window events. The key callback above will only be
         // invoked during this call.
         glfwPollEvents();
+    }
+
+    private void debug() {
+        if (Context.isDebugRender()) {
+            System.out.println("_____ Renderer render() BEGIN _____" );
+        }
     }
 
     private void loadCameraMatrix(Snapshot snapshot) {
@@ -193,7 +202,7 @@ public class Render {
     }
 
     public static class BatchRenderer {
-        public static final float[] QUAD_RENDER_VERTICES = new float[getMaxQuadsPerBatch() * Quad.STRIDE]; // quad array simplified into float array of stacked vertices
+        public static final float[] QUAD_RENDER_VERTICES = new float[getMaxQuadsPerBatch() * QuadStructure.QUAD_STRIDE]; // quad array simplified into float array of stacked vertices
         public static final int[] QUAD_RENDER_INDICES = new int[getMaxQuadsPerBatch() * 6];
         public static final int[] QUAD_RENDER_TEXTURES_USED = new int[32]; // 32 textures where texture at index 0 is a reserved space for color only
         public static int vertexQuadArrayObject, vertexLineArrayObject;

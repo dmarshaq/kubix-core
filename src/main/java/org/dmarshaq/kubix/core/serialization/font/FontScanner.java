@@ -1,7 +1,7 @@
 package org.dmarshaq.kubix.core.serialization.font;
 
 import org.dmarshaq.kubix.core.app.Context;
-import org.dmarshaq.kubix.core.graphic.base.text.CharacterData;
+import org.dmarshaq.kubix.core.graphic.base.text.Glyph;
 import org.dmarshaq.kubix.core.graphic.base.text.Font;
 import org.dmarshaq.kubix.core.graphic.base.texture.Texture;
 import org.dmarshaq.kubix.core.graphic.base.texture.TextureCroppedRegion;
@@ -39,7 +39,7 @@ public class FontScanner {
         Texture texture = Context.getInstance().TEXTURE_MANAGER.TEXTURE_MAP.get(textureFileName);
 
         int count = scanIntValueOf(scanner, FONT_CHARACTERS_COUNT_KEY);
-        HashMap<Character, CharacterData> atlas = new HashMap<>(count, 1.0f);
+        HashMap<Character, Glyph> atlas = new HashMap<>(count, 1.0f);
         for (int i = 0; i < count; i++) {
             Character key = scanCharValueOf(scanner, CHARACTER_ID_KEY);
             int x = scanIntValueOf(scanner, CHARACTER_X_KEY);
@@ -49,7 +49,7 @@ public class FontScanner {
             int xoffset = scanIntValueOf(scanner, CHARACTER_X_OFFSET_KEY);
             int yoffset = scanIntValueOf(scanner, CHARACTER_Y_OFFSET_KEY);
             int xadvance = scanIntValueOf(scanner, CHARACTER_X_ADVANCE_KEY);
-            CharacterData value = new CharacterData(
+            Glyph value = new Glyph(
                     new TextureCroppedRegion(
                             new Vector2(
                                     x,
@@ -65,7 +65,7 @@ public class FontScanner {
             );
             atlas.put(key, value);
         }
-        return new Font(atlas, lineHeight, base);
+        return new Font(atlas, lineHeight, base, texture);
     }
 
     private static int scanIntValueOf(Scanner scanner, String key) {

@@ -1,10 +1,12 @@
 package org.dmarshaq.kubix.core.graphic.render;
 
+import lombok.Getter;
 import org.dmarshaq.kubix.core.app.Context;
 import org.dmarshaq.kubix.core.graphic.base.layer.Layer;
-import org.dmarshaq.kubix.core.graphic.data.Quad;
 import org.dmarshaq.kubix.core.graphic.base.Shader;
-import org.dmarshaq.kubix.core.graphic.base.texture.Texture;
+import org.dmarshaq.kubix.core.graphic.data.QuadStructure;
+
+import java.util.Arrays;
 
 import static org.dmarshaq.kubix.core.graphic.render.Render.BatchRenderer.*;
 import static org.lwjgl.opengl.GL11.GL_FRONT_AND_BACK;
@@ -16,12 +18,13 @@ import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
 
 public class QuadRender {
+    private static Layer currentLayer;
     private static Shader currentShader;
     private static int currentTextureGroup;
-    private static int currentTextureGroupRenderOrder;
+    private static int currentTextureGroupIndex;
     private static int quadsInBatch;
 
-    public static void renderInBatch(Quad[] sortedQuads, int maxQuadsPerBatch) {
+    public static void renderInBatch(QuadStructure[] sortedQuads, int maxQuadsPerBatch) {
         int pointer = 0;
         while (pointer < sortedQuads.length) {
             // Vertices loading
@@ -39,30 +42,41 @@ public class QuadRender {
             // Drawing
 //            System.out.println("Quads rendered in Batch: " + quadsRenderedInBatch);
             glDrawElements(GL_TRIANGLES, quadsInBatch * 6, GL_UNSIGNED_INT, 0);
+            // Debug stats
+            debug();
             // Cleaning up
             flush();
         }
     }
 
-    private static int nextBatch(int pointer, Quad[] sortedQuads, int threshold) {
-        Layer currentLayer = sortedQuads[pointer].getLayer();
+    private static int nextBatch(int pointer, QuadStructure[] sortedQuads, int threshold) {
+        currentLayer = sortedQuads[pointer].getLayer();
         currentShader = sortedQuads[pointer].getShader();
         currentTextureGroup = sortedQuads[pointer].getTextureGroup();
-        currentTextureGroupRenderOrder = -1;
+        currentTextureGroupIndex = -1;
 
-        while(quadsInBatch < threshold
+        while(
+                quadsInBatch < threshold
                 && pointer < sortedQuads.length
                 && currentLayer == sortedQuads[pointer].getLayer()
                 && currentShader == sortedQuads[pointer].getShader()
                 && currentTextureGroup == sortedQuads[pointer].getTextureGroup()) {
 
-            if (currentTextureGroupRenderOrder != sortedQuads[pointer].getTextureGroupRenderOrder()) {
-                currentTextureGroupRenderOrder = sortedQuads[pointer].getTextureGroupRenderOrder();
-                QUAD_RENDER_TEXTURES_USED[currentTextureGroupRenderOrder] = sortedQuads[pointer].getTexture().getTextureId();
+            // Check for potential quad batch overflow if loading multiple quads at ones.
+            if (quadsInBatch + sortedQuads[pointer].getQuadCount() > threshold) {
+                break;
             }
-            copyQuadVertices(quadsInBatch * Quad.STRIDE, sortedQuads[pointer].getVertexData());
 
-            quadsInBatch++;
+            // If texture index in samplers is new, use its texture id in samplers by its index.
+            if (currentTextureGroupIndex != sortedQuads[pointer].getTextureGroupIndex()) {
+                currentTextureGroupIndex = sortedQuads[pointer].getTextureGroupIndex();
+                QUAD_RENDER_TEXTURES_USED[currentTextureGroupIndex] = sortedQuads[pointer].getTexture().getTextureId();
+            }
+
+            // Copy quads
+            copyQuadVertices(quadsInBatch * QuadStructure.QUAD_STRIDE, sortedQuads[pointer].getVertexData());
+
+            quadsInBatch += sortedQuads[pointer].getQuadCount();
             pointer++;
         }
 
@@ -74,18 +88,6 @@ public class QuadRender {
             QUAD_RENDER_VERTICES[pointer++] = f;
         }
     }
-
-//    private static void loadTextureGroup() {
-//        for (int i = 0; i < 32; i++) {
-//            Texture texture = Context.TEXTURES.get(i + currentTextureGroup * 32);
-//            if (texture == null) {
-//                break;
-//            }
-//            else {
-//                QUAD_RENDER_TEXTURES_USED[i] = texture.getTextureId();
-//            }
-//        }
-//    }
 
     private static void loadTexturesUsedIntoSlots() {
         for (int i = 0; i < QUAD_RENDER_TEXTURES_USED.length; i++) {
@@ -99,6 +101,16 @@ public class QuadRender {
         quadsInBatch = 0;
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         currentShader.disable();
+    }
+
+    private static void debug() {
+        if (Context.isDebugRender()) {
+            System.out.println("_____ Quad Renderer Batch report _____" );
+            System.out.println("Quads rendered: " + quadsInBatch);
+            System.out.println("Layer used: " + currentLayer);
+            System.out.println("Shader used: " + currentShader);
+            System.out.println("Textures used: " + Arrays.toString(QUAD_RENDER_TEXTURES_USED));
+        }
     }
 
     private static void unbindUsedTextures() {

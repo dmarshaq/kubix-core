@@ -10,10 +10,10 @@ public class Snapshot {
     private final List<Texture> textureUsedList;
     private int currentTextureGroup;
 
-    private final List<Quad> quadList;
+    private final List<QuadStructure> quadList;
     private final List<Line> lineList;
     @Getter
-    private Quad[] quadRenderArray;
+    private QuadStructure[] quadRenderArray;
     @Getter
     private Line[] lineRenderArray;
 
@@ -29,7 +29,7 @@ public class Snapshot {
         lineList = new ArrayList<>();
     }
 
-    public void addQuad(Quad quad) {
+    public void addQuad(QuadStructure quad) {
         if (textureUsedList.contains(quad.getTexture())) {
             quad.setTextureGroup(currentTextureGroup, textureUsedList.indexOf(quad.getTexture()));
         }
@@ -44,11 +44,6 @@ public class Snapshot {
             quad.setTextureGroup(++currentTextureGroup, 1);
         }
         quadList.add(quad);
-    }
-    public void addQuad(Quad[] quads) {
-        for (Quad quad : quads) {
-            addQuad(quad);
-        }
     }
 
     public void addLine(Line line) {
@@ -71,14 +66,12 @@ public class Snapshot {
     }
 
     public void releaseQuadRenderBuffer() {
-        quadRenderArray = quadList.toArray(new Quad[0]);
+        quadRenderArray = quadList.toArray(new QuadStructure[0]);
 
-        Comparator<Quad> comparator = Quad::compareTo;
+        Comparator<QuadStructure> comparator = QuadStructure::compareTo;
 
         Arrays.parallelSort(quadRenderArray, comparator);
 
         quadList.clear();
     }
-
-
 }

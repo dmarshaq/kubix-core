@@ -8,7 +8,7 @@ import org.dmarshaq.kubix.core.graphic.base.texture.TextureCroppedRegion;
 @Getter
 @AllArgsConstructor
 @ToString
-public class CharacterData {
+public class Glyph {
     private final TextureCroppedRegion textureCroppedRegion;
     private final int xOffset;
     private final int yOffset;
