@@ -29,16 +29,16 @@ public class MouseInput  {
                 return;
             }
             if (action == GLFW_PRESS) {
-                Input.KEY_PRESSED[InputManager.KEY_CODE_MAP.get(button).ordinal()] = true;
-                Input.PRESSED_KEY_INDICES.add(InputManager.KEY_CODE_MAP.get(button).ordinal());
+                KeyInput.KEY_PRESSED[InputManager.KEY_CODE_MAP.get(button).ordinal()] = true;
+                KeyInput.PRESSED_KEY_INDICES.add(InputManager.KEY_CODE_MAP.get(button).ordinal());
             }
             if (action == GLFW_PRESS) {
-                Input.KEY_HOLD[InputManager.KEY_CODE_MAP.get(button).ordinal()] = true;
+                KeyInput.KEY_HOLD[InputManager.KEY_CODE_MAP.get(button).ordinal()] = true;
             }
             else if (action == GLFW_RELEASE) {
-                Input.KEY_HOLD[InputManager.KEY_CODE_MAP.get(button).ordinal()] = false;
-                Input.KEY_RELEASED[InputManager.KEY_CODE_MAP.get(button).ordinal()] = true;
-                Input.RELEASED_KEY_INDICES.add(InputManager.KEY_CODE_MAP.get(button).ordinal());
+                KeyInput.KEY_HOLD[InputManager.KEY_CODE_MAP.get(button).ordinal()] = false;
+                KeyInput.KEY_RELEASED[InputManager.KEY_CODE_MAP.get(button).ordinal()] = true;
+                KeyInput.RELEASED_KEY_INDICES.add(InputManager.KEY_CODE_MAP.get(button).ordinal());
             }
         });
     }

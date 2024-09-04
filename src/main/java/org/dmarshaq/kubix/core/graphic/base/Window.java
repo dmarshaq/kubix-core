@@ -2,6 +2,7 @@ package org.dmarshaq.kubix.core.graphic.base;
 
 import lombok.Getter;
 import org.lwjgl.BufferUtils;
+import org.lwjgl.glfw.GLFWCharCallback;
 import org.lwjgl.glfw.GLFWKeyCallback;
 import org.lwjgl.glfw.GLFWWindowSizeCallback;
 
@@ -59,10 +60,31 @@ public class Window {
     }
 
     /**
+     * Sets character callback object that will be called whenever action happens on this window.
+     */
+    public void setCharacterCallback(GLFWCharCallback characterCallback) {
+        glfwSetCharCallback(window, characterCallback);
+    }
+
+    /**
+     * Sets clipboard string on this window to specified CharSequence.
+     */
+    public void setClipboardString(CharSequence clipboardString) {
+        glfwSetClipboardString(window, clipboardString);
+    }
+
+    /**
      * Sets size callback object that will be called whenever resize happens on this window.
      */
     public void setSizeCallback(GLFWWindowSizeCallback sizeCallback) {
         glfwSetWindowSizeCallback(window, sizeCallback);
+    }
+
+    /**
+     * Returns CharSequence that represents string stored in the clipboard.
+     */
+    public CharSequence getClipboardString() {
+        return glfwGetClipboardString(window);
     }
 
     /**

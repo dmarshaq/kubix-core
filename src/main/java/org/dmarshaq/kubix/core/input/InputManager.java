@@ -41,10 +41,12 @@ public class InputManager {
         KEY_CODE_MAP.put(GLFW_KEY_RIGHT_CONTROL, KeyCode.RIGHT_CONTROL);
         KEY_CODE_MAP.put(GLFW_MOUSE_BUTTON_1, KeyCode.LEFT_MOUSE_BUTTON);
         KEY_CODE_MAP.put(GLFW_MOUSE_BUTTON_2, KeyCode.RIGHT_MOUSE_BUTTON);
+        KEY_CODE_MAP.put(GLFW_KEY_BACKSPACE, KeyCode.BACKSPACE);
     }
 
     public static void resetReleasedKeyStates() {
-        Input.nullifyKeyIndices();
+        KeyInput.nullifyKeyIndices();
     }
+
 
 }

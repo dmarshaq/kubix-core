@@ -32,5 +32,7 @@ public enum KeyCode {
     LEFT_CONTROL,
     RIGHT_CONTROL,
     LEFT_MOUSE_BUTTON,
-    RIGHT_MOUSE_BUTTON;
+    RIGHT_MOUSE_BUTTON,
+    BACKSPACE,
+    ;
 }

@@ -4,7 +4,8 @@ import lombok.Getter;
 import org.dmarshaq.kubix.core.audio.Audio;
 import org.dmarshaq.kubix.core.graphic.base.Window;
 import org.dmarshaq.kubix.core.graphic.render.Render;
-import org.dmarshaq.kubix.core.input.Input;
+import org.dmarshaq.kubix.core.input.CharacterInput;
+import org.dmarshaq.kubix.core.input.KeyInput;
 import org.dmarshaq.kubix.core.input.MouseInput;
 import org.dmarshaq.kubix.core.graphic.data.Snapshot;
 import org.dmarshaq.kubix.core.math.vector.Vector3;
@@ -114,10 +115,11 @@ public abstract class Graphic implements Runnable {
         // Enable v-sync
         glfwSwapInterval(1);
 
-        // Input call back
-        window.setKeyCallback(new Input());
+        // Various input callbacks
+        window.setKeyCallback(new KeyInput());
+        window.setCharacterCallback(new CharacterInput());
         glfwSetInputMode(window.getWindow(), GLFW_STICKY_KEYS, 1);
-        // Mouse Input call back
+        // Mouse KeyInput call back
         new MouseInput().init(window.getWindow());
         // Size call back
         window.setSizeCallback(Window.windowDefaultSizeCallback(window));
