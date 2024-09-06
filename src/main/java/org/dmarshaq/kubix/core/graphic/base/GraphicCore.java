@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.regex.Pattern;
 
 import static org.dmarshaq.kubix.core.app.Context.SHADER_BASIC_LINE;
+import static org.dmarshaq.kubix.core.app.Context.getMaxQuadsPerBatch;
 
 public class GraphicCore {
 
@@ -215,17 +216,23 @@ public class GraphicCore {
      * Returns batch of quad from float text object.
      * Usually used to render text in the world.
      */
-    public static QuadBatch quadBatch(TextFloat text, float pixelsPerUnit, Color color) {
+    public static QuadBatch[] quadBatch(TextFloat text, float pixelsPerUnit, Color color) {
         // Getting color
         Vector4 vcolor = MathCore.vector4(color);
 
-
         HashMap<Character, Glyph> atlas = text.getFont().getAtlas();
-        QuadBatch result = new QuadBatch((int) Pattern.compile("\\S").matcher(text.getCharSequence()).results().count(), text.getShader(), text.getLayer(), text.getFont().getTexture());
+
+        int quadCount = (int) Pattern.compile("\\S").matcher(text.getCharSequence()).results().count();
+        // Result is all batches combined into QuadBatch object.
+        QuadBatch[] result = new QuadBatch[quadCount / getMaxQuadsPerBatch() + 1];
+
+        result[0] = new QuadBatch(getMaxQuadsPerBatch(), text.getShader(), text.getLayer(), text.getFont().getTexture());
+        QuadBatch batch = result[0];
 
         Vector3 cursor = new Vector3(MathCore.componentVector(text.getCursorOrigin(), "xyz"));
 
         int pointer = 0;
+        int currentBatchIndex = 0;
 
         for (int i = pointer; i < text.getCharSequence().length(); i++) {
             char c = text.getCharSequence().charAt(i);
@@ -261,14 +268,20 @@ public class GraphicCore {
                     Vector3 normal = MathCore.forward().negate();
 
                     // Setting vertices through 0 to 3.
-                    result.setVertex(pointer, 0, offset,                                             vcolor, percentPosition,                                                  normal);
-                    result.setVertex(pointer, 1, new Vector3(width, 0, 0).add(offset),         vcolor, new Vector2(percentWidth, 0).add(percentPosition),           normal);
-                    result.setVertex(pointer, 2, new Vector3(0, height, 0).add(offset),        vcolor, new Vector2(0, percentHeight).add(percentPosition),          normal);
-                    result.setVertex(pointer, 3, new Vector3(width, height, 0).add(offset),       vcolor, new Vector2(percentWidth, percentHeight).add(percentPosition),   normal);
+                    batch.setVertex(pointer - currentBatchIndex * getMaxQuadsPerBatch(), 0, offset,                                             vcolor, percentPosition,                                                  normal);
+                    batch.setVertex(pointer - currentBatchIndex * getMaxQuadsPerBatch(), 1, new Vector3(width, 0, 0).add(offset),         vcolor, new Vector2(percentWidth, 0).add(percentPosition),           normal);
+                    batch.setVertex(pointer - currentBatchIndex * getMaxQuadsPerBatch(), 2, new Vector3(0, height, 0).add(offset),        vcolor, new Vector2(0, percentHeight).add(percentPosition),          normal);
+                    batch.setVertex(pointer - currentBatchIndex * getMaxQuadsPerBatch(), 3, new Vector3(width, height, 0).add(offset),       vcolor, new Vector2(percentWidth, percentHeight).add(percentPosition),   normal);
 
                     // Advancing
                     cursor.getArrayOfValues()[0] += (float) data.getXAdvance() / pixelsPerUnit;
                     pointer++;
+                    // Checking for batch limit, if limit is hit => getting next batch
+                    if (pointer >= getMaxQuadsPerBatch() * (currentBatchIndex + 1)) {
+                        currentBatchIndex++;
+                        result[currentBatchIndex] = new QuadBatch(getMaxQuadsPerBatch(), text.getShader(), text.getLayer(), text.getFont().getTexture());
+                        batch = result[currentBatchIndex];
+                    }
                     break;
             }
         }
@@ -280,16 +293,22 @@ public class GraphicCore {
      * Returns batch of quad from int text object.
      * Usually used to render text on the screen.
      */
-    public static QuadBatch quadBatch(TextInt text, float scale, Color color) {
+    public static QuadBatch[] quadBatch(TextInt text, float scale, Color color) {
         // Getting color
         Vector4 vcolor = MathCore.vector4(color);
 
         HashMap<Character, Glyph> atlas = text.getFont().getAtlas();
-        QuadBatch result = new QuadBatch((int) Pattern.compile("\\S").matcher(text.getCharSequence()).results().count(), text.getShader(), text.getLayer(), text.getFont().getTexture());
+        int quadCount = (int) Pattern.compile("\\S").matcher(text.getCharSequence()).results().count();
+        // Result is all batches combined into QuadBatch object.
+        QuadBatch[] result = new QuadBatch[quadCount / getMaxQuadsPerBatch() + 1];
+
+        result[0] = new QuadBatch(getMaxQuadsPerBatch(), text.getShader(), text.getLayer(), text.getFont().getTexture());
+        QuadBatch batch = result[0];
 
         Vector3 cursor = new Vector3(text.getCursorOrigin().x(), text.getCursorOrigin().y(), 0);
 
         int pointer = 0;
+        int currentBatchIndex = 0;
 
         for (int i = pointer; i < text.getCharSequence().length(); i++) {
             char c = text.getCharSequence().charAt(i);
@@ -325,14 +344,20 @@ public class GraphicCore {
                     Vector3 normal = MathCore.forward().negate();
 
                     // Setting vertices through 0 to 3.
-                    result.setVertex(pointer, 0, offset,                                             vcolor, percentPosition,                                                  normal);
-                    result.setVertex(pointer, 1, new Vector3(width, 0, 0).add(offset),         vcolor, new Vector2(percentWidth, 0).add(percentPosition),           normal);
-                    result.setVertex(pointer, 2, new Vector3(0, height, 0).add(offset),        vcolor, new Vector2(0, percentHeight).add(percentPosition),          normal);
-                    result.setVertex(pointer, 3, new Vector3(width, height, 0).add(offset),       vcolor, new Vector2(percentWidth, percentHeight).add(percentPosition),   normal);
+                    batch.setVertex(pointer - currentBatchIndex * getMaxQuadsPerBatch(), 0, offset,                                             vcolor, percentPosition,                                                  normal);
+                    batch.setVertex(pointer - currentBatchIndex * getMaxQuadsPerBatch(), 1, new Vector3(width, 0, 0).add(offset),         vcolor, new Vector2(percentWidth, 0).add(percentPosition),           normal);
+                    batch.setVertex(pointer - currentBatchIndex * getMaxQuadsPerBatch(), 2, new Vector3(0, height, 0).add(offset),        vcolor, new Vector2(0, percentHeight).add(percentPosition),          normal);
+                    batch.setVertex(pointer - currentBatchIndex * getMaxQuadsPerBatch(), 3, new Vector3(width, height, 0).add(offset),       vcolor, new Vector2(percentWidth, percentHeight).add(percentPosition),   normal);
 
                     // Advancing
                     cursor.getArrayOfValues()[0] += data.getXAdvance() * scale;
                     pointer++;
+                    // Checking for batch limit, if limit is hit => getting next batch
+                    if (pointer >= getMaxQuadsPerBatch() * (currentBatchIndex + 1)) {
+                        currentBatchIndex++;
+                        result[currentBatchIndex] = new QuadBatch(getMaxQuadsPerBatch(), text.getShader(), text.getLayer(), text.getFont().getTexture());
+                        batch = result[currentBatchIndex];
+                    }
                     break;
             }
         }

@@ -45,6 +45,11 @@ public class Snapshot {
         }
         quadList.add(quad);
     }
+    public void addQuad(QuadStructure[] quads) {
+        for (QuadStructure quad : quads) {
+            addQuad(quad);
+        }
+    }
 
     public void addLine(Line line) {
         lineList.add(line);

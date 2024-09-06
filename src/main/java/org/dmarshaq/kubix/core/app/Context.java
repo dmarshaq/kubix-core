@@ -118,7 +118,7 @@ public abstract class Context {
     protected static void setMaxQuadsPerBatch(int maxQuadsPerBatch) {
         MAX_QUADS_PER_BATCH = maxQuadsPerBatch;
     }
-    protected static void setMaxQuadsPerBatch(boolean debugRender) {
+    protected static void setDebugRender(boolean debugRender) {
         DEBUG_RENDER = debugRender;
     }
     protected static void setMaxLinesPerBatch(int maxLinesPerBatch) {
