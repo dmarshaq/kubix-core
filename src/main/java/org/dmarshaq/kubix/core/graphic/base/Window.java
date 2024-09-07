@@ -81,6 +81,20 @@ public class Window {
     }
 
     /**
+     * Sets cursor input mode to hidden.
+     */
+    public void setCursorHidden() {
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+    }
+
+    /**
+     * Sets cursor input mode to normal.
+     */
+    public void setCursorNormal() {
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    }
+
+    /**
      * Returns CharSequence that represents string stored in the clipboard.
      */
     public CharSequence getClipboardString() {
