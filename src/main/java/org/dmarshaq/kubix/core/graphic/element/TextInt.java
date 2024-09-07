@@ -6,73 +6,70 @@ import lombok.ToString;
 import org.dmarshaq.kubix.core.graphic.base.Shader;
 import org.dmarshaq.kubix.core.graphic.base.layer.Layer;
 import org.dmarshaq.kubix.core.graphic.base.text.Font;
-import org.dmarshaq.kubix.core.math.vector.Vector2;
+import org.dmarshaq.kubix.core.graphic.base.text.Glyph;
+import org.dmarshaq.kubix.core.graphic.data.CachedGlyph;
 import org.dmarshaq.kubix.core.ui.math.Vector2Int;
 
-@Getter
-@Setter
+import java.util.HashMap;
+
+
 @ToString
+@Getter
 public class TextInt implements AbstractText<Integer, Vector2Int> {
+    private CachedGlyph[] cachedGlyphs;
     private final Vector2Int origin;
     private CharSequence charSequence;
     private Font font;
+    @Setter
     private Shader shader;
+    @Setter
     private Layer layer;
 
-    public TextInt(Vector2Int origin, CharSequence charSequence, Font font, Shader shader, Layer layer) {
+    public TextInt(Vector2Int origin, Font font, Shader shader, Layer layer) {
         this.origin = origin;
-        this.charSequence = charSequence;
+        this.charSequence = "";
         this.font = font;
         this.shader = shader;
         this.layer = layer;
     }
 
-    @Override
-    public CharSequence getCharSequence() {
-        return charSequence;
+    public void setCharSequence(CharSequence charSequence) {
+        this.charSequence = charSequence;
+        reCacheText();
     }
 
-    @Override
-    public Vector2Int getCursorOrigin() {
-        return origin;
+
+    public void setFont(Font font) {
+        this.font = font;
+        reCacheText();
     }
 
-//    public TextMetrics<Float, Vector2> getMetrics() {
-//        char[] chars = text.toCharArray();
-//        HashMap<Character, CharacterData> atlas = font.getAtlas();
-//
-//        Vector2 cursor = new Vector2(position.x(), position.y());
-//
-//        float maxWidth = 0;
-//        float lineCount = 1;
-//
-//        for (int i = 0; i < chars.length; i++) {
-//            // Regular loading
-//            CharacterData data = atlas.get(chars[i]);
-//
-//            // Advancing
-//            cursor.getArrayOfValues()[0] += (float) data.getXAdvance() / Context.getUnitSize();
-//
-//            // Checking if it ends the line with the word
-//            if (chars[i] == ' ') {
-//                int count = 1;
-//                float length = 0;
-//                while(i + count < chars.length && chars[i + count] != ' ') {
-//                    length += (float) atlas.get(chars[i + count]).getXAdvance() / Context.getUnitSize();
-//                    count++;
-//                }
-//                if (length + cursor.getArrayOfValues()[0] >= lineLimit) {
-//                    if (maxWidth < cursor.getArrayOfValues()[0] - position.x() - (float) atlas.get(' ').getXAdvance() / Context.getUnitSize()) {
-//                        maxWidth = cursor.getArrayOfValues()[0] - position.x() - (float) atlas.get(' ').getXAdvance() / Context.getUnitSize();
-//                    }
-//                    lineCount++;
-//
-//                    cursor.getArrayOfValues()[0] = position.x();
-//                    cursor.getArrayOfValues()[1] -= (float) font.getLineHeight() / Context.getUnitSize();
-//                }
-//            }
-//        }
-//        float height = lineCount * ((float) font.getLineHeight() / Context.getUnitSize());
-//        return new TextMetrics<>(new Vector2(0, -height).add(position), maxWidth, height);
-//    }
+    private void reCacheText() {
+        HashMap<Character, Glyph> atlas = font.getAtlas();
+        Vector2Int cursor = new Vector2Int(0, 0);
+
+        int length = charSequence.length();
+        cachedGlyphs = new CachedGlyph[length];
+        for (int i = 0; i < length; i++) {
+            char c = charSequence.charAt(i);
+            // Regular data loading
+            Glyph data = atlas.get(c);
+            switch (c) {
+                case ('\r'):
+                    // Return line operator, moving cursor back to the beginning of the line
+                    cursor.getArrayOfValues()[0] = origin.x();
+                    break;
+                case ('\n'):
+                    // New line operator, moving cursor down by one line
+                    cursor.getArrayOfValues()[1] -= font.getLineHeight();
+                    break;
+                default:
+                    cachedGlyphs[i] = new CachedGlyph(cursor.getArrayOfValues()[0], cursor.getArrayOfValues()[1]);
+                    // Advancing
+                    cursor.getArrayOfValues()[0] += data.getXAdvance();
+                    break;
+            }
+
+        }
+    }
 }

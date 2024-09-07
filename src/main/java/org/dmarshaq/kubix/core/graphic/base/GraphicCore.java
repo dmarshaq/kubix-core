@@ -221,15 +221,12 @@ public class GraphicCore {
         Vector4 vcolor = MathCore.vector4(color);
 
         HashMap<Character, Glyph> atlas = text.getFont().getAtlas();
-
         int quadCount = (int) Pattern.compile("\\S").matcher(text.getCharSequence()).results().count();
         // Result is all batches combined into QuadBatch object.
         QuadBatch[] result = new QuadBatch[quadCount / getMaxQuadsPerBatch() + 1];
 
         result[0] = new QuadBatch(getMaxQuadsPerBatch(), text.getShader(), text.getLayer(), text.getFont().getTexture());
         QuadBatch batch = result[0];
-
-        Vector3 cursor = new Vector3(MathCore.componentVector(text.getCursorOrigin(), "xyz"));
 
         int pointer = 0;
         int currentBatchIndex = 0;
@@ -239,23 +236,22 @@ public class GraphicCore {
             switch (c) {
                 case ('\r'):
                     // Return line operator, moving cursor back to the beginning of the line
-                    cursor.getArrayOfValues()[0] = text.getCursorOrigin().x();
                     break;
                 case ('\n'):
                     // New line operator, moving cursor down by one line
-                    cursor.getArrayOfValues()[1] -= text.getFont().getLineHeight() / pixelsPerUnit;
                     break;
                 case (' '):
-                    // Advancing, skipping loading because it is just space
-                    cursor.getArrayOfValues()[0] += (float) atlas.get(c).getXAdvance() / pixelsPerUnit;
+                    // Advancing, skipping loading because it is just empty space
                     break;
                 default:
-                    // Regular loading
+                    // Regular data loading
                     Glyph data = atlas.get(c);
                     TextureCroppedRegion textureCroppedRegion = data.getTextureCroppedRegion();
 
                     // Creating quad rect for character
-                    Vector3 offset = new Vector3((float) data.getXOffset() / pixelsPerUnit, -(data.getYOffset() + textureCroppedRegion.getHeight()) / pixelsPerUnit, 0).add(cursor);
+                    Vector3 offset = new Vector3(data.getXOffset() / pixelsPerUnit, -(data.getYOffset() + textureCroppedRegion.getHeight()) / pixelsPerUnit, 0);
+                    offset.getArrayOfValues()[0] += text.getCachedGlyphs()[i].getXOffsetFromOrigin().floatValue() / pixelsPerUnit + text.getOrigin().getArrayOfValues()[0];
+                    offset.getArrayOfValues()[1] += text.getCachedGlyphs()[i].getYOffsetFromOrigin().floatValue() / pixelsPerUnit + text.getOrigin().getArrayOfValues()[1];
                     float width = textureCroppedRegion.getWidth() / pixelsPerUnit;
                     float height = textureCroppedRegion.getHeight() / pixelsPerUnit;
 
@@ -274,7 +270,6 @@ public class GraphicCore {
                     batch.setVertex(pointer - currentBatchIndex * getMaxQuadsPerBatch(), 3, new Vector3(width, height, 0).add(offset),       vcolor, new Vector2(percentWidth, percentHeight).add(percentPosition),   normal);
 
                     // Advancing
-                    cursor.getArrayOfValues()[0] += (float) data.getXAdvance() / pixelsPerUnit;
                     pointer++;
                     // Checking for batch limit, if limit is hit => getting next batch
                     if (pointer >= getMaxQuadsPerBatch() * (currentBatchIndex + 1)) {
@@ -305,8 +300,6 @@ public class GraphicCore {
         result[0] = new QuadBatch(getMaxQuadsPerBatch(), text.getShader(), text.getLayer(), text.getFont().getTexture());
         QuadBatch batch = result[0];
 
-        Vector3 cursor = new Vector3(text.getCursorOrigin().x(), text.getCursorOrigin().y(), 0);
-
         int pointer = 0;
         int currentBatchIndex = 0;
 
@@ -315,15 +308,12 @@ public class GraphicCore {
             switch (c) {
                 case ('\r'):
                     // Return line operator, moving cursor back to the beginning of the line
-                    cursor.getArrayOfValues()[0] = text.getCursorOrigin().x();
                     break;
                 case ('\n'):
                     // New line operator, moving cursor down by one line
-                    cursor.getArrayOfValues()[1] -= text.getFont().getLineHeight() * scale;
                     break;
                 case (' '):
                     // Advancing, skipping loading because it is just empty space
-                    cursor.getArrayOfValues()[0] += atlas.get(c).getXAdvance() * scale;
                     break;
                 default:
                     // Regular data loading
@@ -331,7 +321,9 @@ public class GraphicCore {
                     TextureCroppedRegion textureCroppedRegion = data.getTextureCroppedRegion();
 
                     // Creating quad rect for character
-                    Vector3 offset = new Vector3(data.getXOffset() * scale, -(data.getYOffset() + textureCroppedRegion.getHeight()) * scale, 0).add(cursor);
+                    Vector3 offset = new Vector3(data.getXOffset() * scale, -(data.getYOffset() + textureCroppedRegion.getHeight()) * scale, 0);
+                    offset.getArrayOfValues()[0] += text.getCachedGlyphs()[i].getXOffsetFromOrigin().intValue() * scale + text.getOrigin().getArrayOfValues()[0];;
+                    offset.getArrayOfValues()[1] += text.getCachedGlyphs()[i].getYOffsetFromOrigin().intValue() * scale + text.getOrigin().getArrayOfValues()[1];;
                     float width = textureCroppedRegion.getWidth() * scale;
                     float height = textureCroppedRegion.getHeight() * scale;
 
@@ -350,7 +342,6 @@ public class GraphicCore {
                     batch.setVertex(pointer - currentBatchIndex * getMaxQuadsPerBatch(), 3, new Vector3(width, height, 0).add(offset),       vcolor, new Vector2(percentWidth, percentHeight).add(percentPosition),   normal);
 
                     // Advancing
-                    cursor.getArrayOfValues()[0] += data.getXAdvance() * scale;
                     pointer++;
                     // Checking for batch limit, if limit is hit => getting next batch
                     if (pointer >= getMaxQuadsPerBatch() * (currentBatchIndex + 1)) {

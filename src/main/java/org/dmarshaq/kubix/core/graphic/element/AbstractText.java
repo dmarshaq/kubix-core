@@ -6,5 +6,5 @@ import org.dmarshaq.kubix.core.math.vector.Vector;
 public interface AbstractText<T extends Number, E extends Vector<T>> {
     CharSequence getCharSequence();
     Font getFont();
-    E getCursorOrigin();
+    E getOrigin();
 }
