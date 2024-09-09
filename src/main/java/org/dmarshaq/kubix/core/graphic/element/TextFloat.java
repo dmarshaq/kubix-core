@@ -8,15 +8,17 @@ import org.dmarshaq.kubix.core.graphic.base.layer.Layer;
 import org.dmarshaq.kubix.core.graphic.base.text.Font;
 import org.dmarshaq.kubix.core.graphic.base.text.Glyph;
 import org.dmarshaq.kubix.core.graphic.data.CachedGlyph;
+import org.dmarshaq.kubix.core.graphic.data.TextMetrics;
 import org.dmarshaq.kubix.core.math.vector.Vector2;
 import org.dmarshaq.kubix.core.ui.math.Vector2Int;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 @Getter
 @ToString
 public class TextFloat implements AbstractText<Float, Vector2> {
-    private CachedGlyph[] cachedGlyphs;
+    private TextMetrics textMetrics;
     private final Vector2 origin;
     private CharSequence charSequence;
     private Font font;
@@ -47,28 +49,40 @@ public class TextFloat implements AbstractText<Float, Vector2> {
         HashMap<Character, Glyph> atlas = font.getAtlas();
         Vector2 cursor = new Vector2(0, 0);
 
-        int length = charSequence.length();
-        cachedGlyphs = new CachedGlyph[length];
+        float width = 0;
+        float height = font.getLineHeight();
+        int length = charSequence.length() + 1;
+        CachedGlyph[] cachedGlyphs = new CachedGlyph[length];
+        ArrayList<Integer> endLineIndices = new ArrayList<>();
         for (int i = 0; i < length; i++) {
-            char c = charSequence.charAt(i);
+            // Auto place termination at the end of the text;
+            char c = i + 1 >= length ? '\0' : charSequence.charAt(i);
             // Regular data loading
             Glyph data = atlas.get(c);
             switch (c) {
-                case ('\r'):
-                    // Return line operator, moving cursor back to the beginning of the line
-                    cursor.getArrayOfValues()[0] = origin.x();
-                    break;
                 case ('\n'):
                     // New line operator, moving cursor down by one line
+                    cachedGlyphs[i] = new CachedGlyph(cursor.getArrayOfValues()[0], cursor.getArrayOfValues()[1], c, null);
+                    width = Math.max(width, cursor.getArrayOfValues()[0]);
+                    height += font.getLineHeight();
+                    cursor.getArrayOfValues()[0] = 0;
                     cursor.getArrayOfValues()[1] -= font.getLineHeight();
+                    endLineIndices.add(i);
+                    break;
+                case ('\0'):
+                    // End of the string, termination character
+                    cachedGlyphs[i] = new CachedGlyph(cursor.getArrayOfValues()[0], cursor.getArrayOfValues()[1], c, null);
+                    width = Math.max(width, cursor.getArrayOfValues()[0]);
+                    endLineIndices.add(i);
                     break;
                 default:
-                    cachedGlyphs[i] = new CachedGlyph(cursor.getArrayOfValues()[0], cursor.getArrayOfValues()[1]);
+                    cachedGlyphs[i] = new CachedGlyph(cursor.getArrayOfValues()[0], cursor.getArrayOfValues()[1], c, data);
                     // Advancing
                     cursor.getArrayOfValues()[0] += data.getXAdvance();
                     break;
             }
         }
-    }
 
+        textMetrics = new TextMetrics(cachedGlyphs, height, width, endLineIndices.toArray(new Integer[0]));
+    }
 }

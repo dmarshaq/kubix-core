@@ -234,14 +234,8 @@ public class GraphicCore {
         for (int i = pointer; i < text.getCharSequence().length(); i++) {
             char c = text.getCharSequence().charAt(i);
             switch (c) {
-                case ('\r'):
-                    // Return line operator, moving cursor back to the beginning of the line
-                    break;
-                case ('\n'):
-                    // New line operator, moving cursor down by one line
-                    break;
-                case (' '):
-                    // Advancing, skipping loading because it is just empty space
+                case '\n', '\0', ' ':
+                    // Just skip those since they are not drawn
                     break;
                 default:
                     // Regular data loading
@@ -250,8 +244,8 @@ public class GraphicCore {
 
                     // Creating quad rect for character
                     Vector3 offset = new Vector3(data.getXOffset() / pixelsPerUnit, -(data.getYOffset() + textureCroppedRegion.getHeight()) / pixelsPerUnit, 0);
-                    offset.getArrayOfValues()[0] += text.getCachedGlyphs()[i].getXOffsetFromOrigin().floatValue() / pixelsPerUnit + text.getOrigin().getArrayOfValues()[0];
-                    offset.getArrayOfValues()[1] += text.getCachedGlyphs()[i].getYOffsetFromOrigin().floatValue() / pixelsPerUnit + text.getOrigin().getArrayOfValues()[1];
+                    offset.getArrayOfValues()[0] += text.getTextMetrics().cachedGlyphs()[i].getXOffsetFromOrigin().floatValue() / pixelsPerUnit + text.getOrigin().getArrayOfValues()[0];
+                    offset.getArrayOfValues()[1] += text.getTextMetrics().cachedGlyphs()[i].getYOffsetFromOrigin().floatValue() / pixelsPerUnit + text.getOrigin().getArrayOfValues()[1];
                     float width = textureCroppedRegion.getWidth() / pixelsPerUnit;
                     float height = textureCroppedRegion.getHeight() / pixelsPerUnit;
 
@@ -306,14 +300,8 @@ public class GraphicCore {
         for (int i = pointer; i < text.getCharSequence().length(); i++) {
             char c = text.getCharSequence().charAt(i);
             switch (c) {
-                case ('\r'):
-                    // Return line operator, moving cursor back to the beginning of the line
-                    break;
-                case ('\n'):
-                    // New line operator, moving cursor down by one line
-                    break;
-                case (' '):
-                    // Advancing, skipping loading because it is just empty space
+                case '\n', '\0', ' ':
+                    // Just skip those since they are not drawn
                     break;
                 default:
                     // Regular data loading
@@ -322,8 +310,8 @@ public class GraphicCore {
 
                     // Creating quad rect for character
                     Vector3 offset = new Vector3(data.getXOffset() * scale, -(data.getYOffset() + textureCroppedRegion.getHeight()) * scale, 0);
-                    offset.getArrayOfValues()[0] += text.getCachedGlyphs()[i].getXOffsetFromOrigin().intValue() * scale + text.getOrigin().getArrayOfValues()[0];;
-                    offset.getArrayOfValues()[1] += text.getCachedGlyphs()[i].getYOffsetFromOrigin().intValue() * scale + text.getOrigin().getArrayOfValues()[1];;
+                    offset.getArrayOfValues()[0] += text.getTextMetrics().cachedGlyphs()[i].getXOffsetFromOrigin().intValue() * scale + text.getOrigin().getArrayOfValues()[0];;
+                    offset.getArrayOfValues()[1] += text.getTextMetrics().cachedGlyphs()[i].getYOffsetFromOrigin().intValue() * scale + text.getOrigin().getArrayOfValues()[1];;
                     float width = textureCroppedRegion.getWidth() * scale;
                     float height = textureCroppedRegion.getHeight() * scale;
 

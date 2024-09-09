@@ -95,6 +95,13 @@ public class Window {
     }
 
     /**
+     * Sets specified cursor for this window.
+     */
+    public void setCursor(Cursor cursor) {
+        glfwSetCursor(window, cursor.getCursor());
+    }
+
+    /**
      * Returns CharSequence that represents string stored in the clipboard.
      */
     public CharSequence getClipboardString() {
@@ -109,7 +116,7 @@ public class Window {
     }
 
     /**
-     * Returns value of window width
+     * Returns value of window width.
      */
     public int width() {
         return ptrWidth.get(0);

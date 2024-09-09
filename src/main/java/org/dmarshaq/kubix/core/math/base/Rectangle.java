@@ -14,7 +14,7 @@ import org.dmarshaq.kubix.core.math.vector.Vector2;
 @Setter
 @ToString
 @EqualsAndHashCode
-public class Rectangle implements AbstractRectangle<Float, Vector2>, AbstractShape {
+public class Rectangle implements AbstractRectangle<Float, Vector2>, AbstractShape<Float, Vector2> {
     private Vector2 position;
     private float width;
     private float height;

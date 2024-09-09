@@ -2,6 +2,7 @@ package org.dmarshaq.kubix.core.app;
 
 import lombok.Getter;
 import org.dmarshaq.kubix.core.audio.Audio;
+import org.dmarshaq.kubix.core.graphic.base.Cursor;
 import org.dmarshaq.kubix.core.graphic.base.Window;
 import org.dmarshaq.kubix.core.graphic.render.Render;
 import org.dmarshaq.kubix.core.input.CharacterInput;
@@ -38,6 +39,17 @@ public abstract class Graphic implements Runnable {
     @Getter
     private Render render;
 
+    @Getter
+    private Cursor cursorArrow;
+    @Getter
+    private Cursor cursorIBeam;
+    @Getter
+    private Cursor cursorPointingHand;
+    @Getter
+    private Cursor cursorResizeVertical;
+    @Getter
+    private Cursor cursorResizeHorizontal;
+
     private Snapshot snapshot;
 
         @Override
@@ -71,6 +83,12 @@ public abstract class Graphic implements Runnable {
             // Free the window callbacks and destroy the window
             window.freeCallbacks();
             window.destroyWindow();
+            // Destroy cursors
+            cursorArrow.destroyCursor();
+            cursorIBeam.destroyCursor();
+            cursorPointingHand.destroyCursor();
+            cursorResizeVertical.destroyCursor();
+            cursorResizeHorizontal.destroyCursor();
 
         // Terminate GLFW and free the error callback
         glfwTerminate();
@@ -123,6 +141,13 @@ public abstract class Graphic implements Runnable {
         new MouseInput().init(window.getWindow());
         // Size call back
         window.setSizeCallback(Window.windowDefaultSizeCallback(window));
+        // Create cursors & set default
+        cursorArrow = new Cursor(GLFW_ARROW_CURSOR);
+        cursorIBeam = new Cursor(GLFW_IBEAM_CURSOR);
+        cursorPointingHand = new Cursor(GLFW_POINTING_HAND_CURSOR);
+        cursorResizeVertical = new Cursor(GLFW_RESIZE_NS_CURSOR);
+        cursorResizeHorizontal = new Cursor(GLFW_RESIZE_EW_CURSOR);
+        window.setCursor(cursorArrow);
 
         // Make the window visible
         window.show();

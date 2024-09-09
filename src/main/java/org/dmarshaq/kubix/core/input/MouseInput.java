@@ -6,8 +6,7 @@ import org.dmarshaq.kubix.core.math.base.MathCore;
 import org.dmarshaq.kubix.core.math.vector.Vector;
 import org.lwjgl.glfw.GLFW;
 
-import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
-import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
+import static org.lwjgl.glfw.GLFW.*;
 
 public class MouseInput  {
     public static final Vector<Integer> POSITION = MathCore.vector2(0, 0);
@@ -23,7 +22,6 @@ public class MouseInput  {
         GLFW.glfwSetCursorEnterCallback(windowHandle, (window, entered) -> {
             inWindow = entered;
         });
-
         GLFW.glfwSetMouseButtonCallback(windowHandle, (window, button, action, mode) -> {
             if (!InputManager.KEY_CODE_MAP.containsKey(button)) {
                 return;
