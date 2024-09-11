@@ -34,5 +34,5 @@ public enum KeyCode {
     LEFT_MOUSE_BUTTON,
     RIGHT_MOUSE_BUTTON,
     BACKSPACE,
-    ;
+    ENTER, RIGHT, LEFT, UP, DOWN;
 }
