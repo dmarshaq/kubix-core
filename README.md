@@ -127,7 +127,7 @@ In order to build the project using maven:
 
 About
 ----------------
-
+This project is a minimalistic game engine created to experiment with Java and LWJGL. It handles efficient rendering through batch processing, integrates basic vector and matrix math utilities, and includes a customizable game loop. A key goal is to provide surface-level tools that simplify game development, making it easier to prototype interactive games and applications while gaining hands-on experience with the essential building blocks of a game engine.
 
 License
 ----------------
