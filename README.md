@@ -23,22 +23,22 @@ Quick Start
 * Git
 
 #### Build
-In order to build the project using maven:
+In order to build the project using Maven:
 
-  + **Maven CLI** (Command Line Interface). In this case you need to install maven see <a href="https://maven.apache.org/install.html" target="_blank" title="Maven install">here</a> for more details.
-  Here the instruction:
-    1. **Open** terminal or your prompt and **navigate to** your projects location.
-    2. **Clone** git repository:
+  + **Maven CLI** (Command Line Interface). In this case you need to install Maven. See <a href="https://maven.apache.org/install.html" target="_blank" title="Maven install">here</a> for more detail.
+  Here is the instruction:
+    1. **Open** terminal or your prompt and **navigate to** the directory where your projects are stored.
+    2. **Clone** Git repository:
         ```
         git clone https://github.com/dmarshaq/kubix-core.git
         ```
-    3. **Execute** the following command in the cloned git project:
+    3. **Execute** the following command in the cloned Git project:
         ```
         mvn clean install
         ```
 #### How to use
 ***
-- To use this library add following dependency into your own project's pom file:
+- To use this library, add following dependency into your own project's pom file:
   ```xml
   <dependencies>
       <dependency>
@@ -51,7 +51,7 @@ In order to build the project using maven:
 
 #### Kubix Hello World
 ***
-- To start using kubix functionality create 3 following classes that inherit from kubix-core classes:
+- To start using the Kubix functionality, create 3 following classes that inherit from kubix-core classes:
 
   ``` java
   public class GameContext extends Context {
@@ -110,7 +110,7 @@ In order to build the project using maven:
   }
   ```
 ***
-- In order to initialize kubix engine add the following to your project's main file:
+- In order to initialize the Kubix engine, add the following to your project's main file:
   ```java
   public static void main(String[] args) {
           new GameContext(() -> Arrays.stream(new String[] {}).toList());
