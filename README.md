@@ -1,5 +1,5 @@
 # kubix-core
------------------
+
 Based on Java and [LWJGL](https://www.lwjgl.org/), this library provides core kubix engine functionality to create games.
 
 Table Of Contents
