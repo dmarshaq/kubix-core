@@ -69,7 +69,7 @@ In order to build the project using maven:
       }
   }
   ```
-  ``` java
+  ```java
   public class GameGraphic extends Graphic {
       @Override
       protected void initShaders() {
@@ -82,8 +82,8 @@ In order to build the project using maven:
       }
   }
   ``` 
-  ``` java
-  public class  GameUpdate extends Update {
+  ```java
+  public class GameUpdate extends Update {
       private Camera camera;
 
       @Override
@@ -94,7 +94,7 @@ In order to build the project using maven:
 
       @Override
       public void update () {
-          // Draws red square on the center of the screen.
+          // Draws green square in the center of the screen.
           getSnapshot().addQuad(GraphicCore.quad(
                   new Vector3(-1f, -1f, 0f),
                   2f,
