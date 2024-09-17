@@ -156,4 +156,4 @@ THE SOFTWARE.
 Collaboration
 ----------------
 Please enter an issue in the repositorty for any questions or problems.
-Alternatively, please contact us at mrshovdaniil@gmail.com
+Alternatively, please contact me at tewindale@gmail.com
